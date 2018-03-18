@@ -26,10 +26,12 @@ namespace Graphics {
 		SDL_Color color = {255, 255, 255, 255};
 		const char* text = luaL_checkstring(L, 1);
 		SDL_Surface* surface = TTF_RenderUTF8_Blended($font, text, color);
+		if (!surface) error("TTF_RenderUTF8() == NULL");
 		SDL_Texture** texture = (SDL_Texture**) lua_newuserdata(L, sizeof(void*));
 		luaL_getmetatable(L, "Texture");
 		lua_setmetatable(L, -2);
 		*texture = SDL_CreateTextureFromSurface($renderer, surface);
+		SDL_FreeSurface(surface);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
