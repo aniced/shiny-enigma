@@ -20,6 +20,18 @@ namespace Graphics {
 		}
 	}
 	//-------------------------------------------------------------------------
+	// ● draw_line(point1, point2, ...)
+	//-------------------------------------------------------------------------
+	int draw_line(lua_State* L) {
+		int count = lua_gettop(L);
+		SDL_Point points[count];
+		for (int i = 0; i < count; i++) {
+			Rect::to_point(L, i + 1, &points[i]);
+		}
+		SDL_RenderDrawLines($renderer, points, count);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● draw_rect(rect)
 	//-------------------------------------------------------------------------
 	int draw_rect(lua_State* L) {
@@ -79,12 +91,16 @@ namespace Graphics {
 		SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
 		return 0;
 	}
+	//-------------------------------------------------------------------------
+	// ● init
+	//-------------------------------------------------------------------------
 	void init() {
 		{
 			const luaL_reg reg[] = {
 				{"copy", copy},
 				{"render_text", render_text},
 				{"draw_rect", draw_rect},
+				{"draw_line", draw_line},
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);
