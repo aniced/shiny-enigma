@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------------
 //   Global variables and global helper functions are stored here.
 //=============================================================================
+
 #define APPLICATION_TITLE ""
 
 SDL_Window* $window;
@@ -10,6 +11,7 @@ SDL_Renderer* $renderer;
 SDL_Texture* $texture[100] = {NULL};
 TTF_Font* $font;
 lua_State* L;
+char msgbox_buf[4096];
 
 #define module_begin(name, n) \
 	void init_script_interface() { \
@@ -53,13 +55,16 @@ void msgbox(const char* s) {
 }
 
 void error(const char* m) {
-	char s[4096];
-	sprintf(s, "%s\nSDL_GetError(): %s", m, SDL_GetError());
-	msgbox(s);
+	sprintf(msgbox_buf, "%s\nSDL_GetError(): %s", m, SDL_GetError());
+	msgbox(msgbox_buf);
 	quit(1);
 }
 
 int panic(lua_State* L) {
-	msgbox(lua_tostring(L, -1));
+	luaL_where(L, 0);
+	strcpy(msgbox_buf, lua_tostring(L, -1));
+	if (*msgbox_buf) strcat(msgbox_buf, "\n");
+	strcat(msgbox_buf, lua_tostring(L, -2));
+	msgbox(msgbox_buf);
 	quit(1); // never returning
 }

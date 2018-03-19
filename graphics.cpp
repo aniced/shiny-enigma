@@ -22,7 +22,7 @@ namespace Graphics {
 		if (!dest.w) dest.w = src.w;
 		if (!dest.h) dest.h = src.h;
 		if (SDL_RenderCopy($renderer, texture, &src, &dest) < 0) {
-			error("SDL_RenderCopy() < 0");
+			return luaL_error(L, "SDL_RenderCopy() < 0");
 		}
 	}
 	//-------------------------------------------------------------------------
