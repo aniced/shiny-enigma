@@ -13,6 +13,7 @@ extern "C" {
 
 #include "global.cpp"
 #include "util.cpp"
+#include "rect.cpp"
 #include "graphics.cpp"
 #include "window.cpp"
 #include "base.cpp"

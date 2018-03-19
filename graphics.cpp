@@ -11,13 +11,22 @@ namespace Graphics {
 			texture = $texture[luaL_checkinteger(L, 2)];
 		}
 		SDL_Rect src, dest;
-		Util::to_rect(L, 1, &dest);
-		Util::to_rect(L, 3, &src);
+		Rect::to_rect(L, 1, &dest);
+		Rect::to_rect(L, 3, &src);
 		if (!dest.w) dest.w = src.w;
 		if (!dest.h) dest.h = src.h;
 		if (SDL_RenderCopy($renderer, texture, &src, &dest) < 0) {
 			error("SDL_RenderCopy() < 0");
 		}
+	}
+	//-------------------------------------------------------------------------
+	// ● draw_rect(rect)
+	//-------------------------------------------------------------------------
+	int draw_rect(lua_State* L) {
+		SDL_Rect rect;
+		Rect::to_rect(L, 1, &rect);
+		SDL_RenderDrawRect($renderer, &rect);
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● render_text(text) → texture reference
@@ -57,7 +66,7 @@ namespace Graphics {
 		int w, h, access;
 		SDL_QueryTexture(texture, &format, &access, &w, &h);
 		SDL_Rect rect = {0, 0, w, h};
-		Util::create_rect(L, &rect);
+		Rect::create_rect(L, &rect);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
@@ -75,6 +84,7 @@ namespace Graphics {
 			const luaL_reg reg[] = {
 				{"copy", copy},
 				{"render_text", render_text},
+				{"draw_rect", draw_rect},
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);

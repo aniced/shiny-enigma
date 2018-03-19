@@ -3,6 +3,7 @@ require 'label'
 function on_paint()
 	Graphics.copy({x = 0, y = 0}, 0, {x = 0, y = 0, w = 256, h = 256});
 	Graphics.copy({x = 0, y = 0}, t, t:get_rect());
+	Graphics.draw_rect({x = 50, y = 50, w = 100, h = 100})
 end
 
 function on_keydown(k)
