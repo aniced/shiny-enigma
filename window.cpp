@@ -15,6 +15,26 @@ namespace Window {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● set_fullscreen(mode)
+	//   mode: "fullscreen", "borderless" or "windowed"
+	//-------------------------------------------------------------------------
+	int set_fullscreen(lua_State* L) {
+		const char* mode = luaL_checkstring(L, 1);
+		Uint32 flags;
+		if (strcmp(mode, "fullscreen") == 0) {
+			flags = SDL_WINDOW_FULLSCREEN;
+		} else if (strcmp(mode, "borderless") == 0) {
+			flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+		} else if (strcmp(mode, "windowed") == 0) {
+			flags = 0;
+		} else {
+			return luaL_error(L, "unknown fullscreen mode");
+		}
+		if (SDL_SetWindowFullscreen($window, flags) < 0) {
+			error("SDL_SetWindowFullscreen() < 0");
+		}
+	}
+	//-------------------------------------------------------------------------
 	// ● set_title(title)
 	//-------------------------------------------------------------------------
 	int set_title(lua_State* L) {
@@ -26,6 +46,7 @@ namespace Window {
 		const luaL_reg reg[] = {
 			{"resize", resize},
 			{"set_title", set_title},
+			{"set_fullscreen", set_fullscreen},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Window", reg);

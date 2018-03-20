@@ -16,3 +16,5 @@ function on_keydown(k)
 		os.exit()
 	end
 end
+
+Window.set_fullscreen("borderless")
