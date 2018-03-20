@@ -6,6 +6,7 @@ w = Textbox.new()
 w:set_text("type here")
 
 function on_paint()
+	Graphics.copy(Window.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
 	w:draw()
 end
 

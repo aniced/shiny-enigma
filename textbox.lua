@@ -14,7 +14,7 @@ function Textbox:set_text(text)
 		self.texture = nil
 	else
 		self.texture = Graphics.render_text(self.text)
-		self.texture:set_color({r = 0, g = 255, b = 0})
+		self.texture:set_color({r = 0, g = 0, b = 0})
 	end
 end
 
