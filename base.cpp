@@ -5,9 +5,12 @@
 //=============================================================================
 
 void init() {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) error("SDL_init() != 0");
+	if (SDL_Init(0) < 0) error("/* 1st */ SDL_Init() < 0");
 	SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+		error("/* 2nd */ SDL_Init() < 0");
+	}
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
 	if (TTF_Init() == -1) error("TTF_Init() == -1");
 	$window = SDL_CreateWindow(
