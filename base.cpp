@@ -1,3 +1,9 @@
+//=============================================================================
+// ■ base.cpp
+//-----------------------------------------------------------------------------
+//   Initialization, application main loop, event handling, etc.
+//=============================================================================
+
 void init() {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) error("SDL_init() != 0");
 	SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
@@ -41,8 +47,13 @@ void loop() {
 			break;
 		case SDL_KEYDOWN:
 			lua_getglobal(L, "on_keydown");
-			lua_pushnumber(L, event.key.keysym.scancode);
-			if (lua_pcall(L, 1, 0, 0) != 0) panic(L);
+			if (lua_isnil(L, -1)) {
+				lua_pop(L, 1);
+				break;
+			} else {
+				lua_pushnumber(L, event.key.keysym.scancode);
+				lua_call(L, 1, 0);
+			}
 			break;
 	}
 	SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
