@@ -2,6 +2,7 @@ require 'widget'
 require 'label'
 require 'textbox'
 
+fullscreen = false
 w = Textbox.new()
 w:set_text("type here")
 
@@ -17,5 +18,8 @@ function on_keydown(k)
 		Window.resize(320, 240)
 	elseif k == 41 then
 		os.exit()
+	elseif k == 68 then
+		fullscreen = not fullscreen
+		Window.set_fullscreen(fullscreen and "borderless" or "windowed")
 	end
 end
