@@ -8,13 +8,25 @@
 
 namespace Graphics {
 	//-------------------------------------------------------------------------
+	// ● check_texture
+	//-------------------------------------------------------------------------
+	SDL_Texture* check_texture(lua_State* L, int index) {
+		return *((SDL_Texture**) luaL_checkudata(L, index, "Texture"));
+	}
+	//-------------------------------------------------------------------------
+	// ● check_font
+	//-------------------------------------------------------------------------
+	TTF_Font* check_font(lua_State* L, int index) {
+		return *((TTF_Font**) luaL_checkudata(L, index, "Font"));
+	}
+	//-------------------------------------------------------------------------
 	// ● copy(dest_rect, texture, src_rect)
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
 	int copy(lua_State* L) {
 		SDL_Texture* texture;
 		if (lua_isuserdata(L, 2)) {
-			texture = *((SDL_Texture**) luaL_checkudata(L, 2, "Texture"));
+			texture = check_texture(L, 2);
 		} else {
 			texture = $texture[luaL_checkinteger(L, 2)];
 		}
@@ -50,12 +62,12 @@ namespace Graphics {
 	}
 	//-------------------------------------------------------------------------
 	// ● render_text(font, text) → texture reference
-	//   font: font ID or reference, but only the former is implemented
+	//   font: font ID or reference
 	//-------------------------------------------------------------------------
 	int render_text(lua_State* L) {
 		TTF_Font* font;
 		if (lua_isuserdata(L, 1)) {
-			//font = *((TTF_Font**) luaL_checkudata(L, 1, "Font"));
+			font = check_font(L, 1);
 		} else {
 			font = $font[luaL_checkinteger(L, 1)];
 		}
@@ -71,16 +83,18 @@ namespace Graphics {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● to_texture
+	// ● ~Font()
 	//-------------------------------------------------------------------------
-	SDL_Texture* to_texture(lua_State* L, int index) {
-		return *((SDL_Texture**) luaL_checkudata(L, index, "Texture"));
+	int font_gc(lua_State* L) {
+		TTF_Font* font = check_font(L, 1);
+		TTF_CloseFont(font);
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● ~Texture()
 	//-------------------------------------------------------------------------
 	int texture_gc(lua_State* L) {
-		SDL_Texture* texture = to_texture(L, 1);
+		SDL_Texture* texture = check_texture(L, 1);
 		SDL_DestroyTexture(texture);
 		return 0;
 	}
@@ -88,7 +102,7 @@ namespace Graphics {
 	// ● Texture:get_rect() → rect
 	//-------------------------------------------------------------------------
 	int texture_get_rect(lua_State* L) {
-		SDL_Texture* texture = to_texture(L, 1);
+		SDL_Texture* texture = check_texture(L, 1);
 		Uint32 format;
 		int w, h, access;
 		SDL_QueryTexture(texture, &format, &access, &w, &h);
@@ -100,7 +114,7 @@ namespace Graphics {
 	// ● Texture:set_color(color)
 	//-------------------------------------------------------------------------
 	int texture_set_color(lua_State* L) {
-		SDL_Texture* texture = to_texture(L, 1);
+		SDL_Texture* texture = check_texture(L, 1);
 		SDL_Color color;
 		Util::to_color(L, 2, &color);
 		SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
