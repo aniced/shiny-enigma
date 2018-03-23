@@ -1,6 +1,4 @@
-Textbox = {}
-Textbox.__index = Textbox
-setmetatable(Textbox, Widget)
+Textbox = Util.class(Widget)
 
 function Textbox.new()
 	local self = setmetatable(Widget.new(), Textbox)

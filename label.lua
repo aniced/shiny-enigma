@@ -1,6 +1,4 @@
-Label = {}
-Label.__index = Label
-setmetatable(Label, Widget)
+Label = Util.class(Widget)
 
 function Label.new(text)
 	local self = setmetatable(Widget.new(), Label)

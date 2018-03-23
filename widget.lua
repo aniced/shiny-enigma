@@ -1,5 +1,4 @@
-Widget = {}
-Widget.__index = Widget
+Widget = Util.class()
 
 function Widget.new()
 	local self = setmetatable({}, Widget)
