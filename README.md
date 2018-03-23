@@ -14,6 +14,12 @@ Compiling
 
 ### Windows
 
-- MinGW GCC is the only tested compiler.
+- MinGW-w64 GCC is the only tested compiler.
 - You need to link with `-lSDL2main` in addition to the linker command above.
+- Compile everything.cpp as usual.
+
+### \*nix
+
+- This is not tested.
+- In theory, this project can run smoothly on these platforms. sdl2-config should be called to get the right command line.
 - Compile everything.cpp as usual.
