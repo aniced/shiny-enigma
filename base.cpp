@@ -43,6 +43,7 @@ void init() {
 	lua_pop(L, 1);
 	Graphics::init();
 	Window::init();
+	Util::init();
 	if (luaL_dofile(L, "main.lua") != 0) panic(L);
 }
 

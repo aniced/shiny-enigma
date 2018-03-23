@@ -28,4 +28,53 @@ namespace Util {
 		lua_pushnumber(L, color->b); lua_setfield(L, -2, "b");
 		lua_pushnumber(L, color->a); lua_setfield(L, -2, "a");
 	}
+	//-------------------------------------------------------------------------
+	// ● class.new closure
+	//   upvalue 1 = class
+	//   upvalue 2 = parent
+	//-------------------------------------------------------------------------
+	int new_instance(lua_State* L) {
+		lua_upvalueindex(1);
+		lua_newtable(L);
+		lua_setmetatable(
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● class(parent = nil)
+	//-------------------------------------------------------------------------
+	int new_class(lua_State* L) {
+		bool has_parent = !lua_isnoneornil(L, 1);
+		lua_createtable(L, 0, 2);
+		// t.__index = t
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+		// if arg[1] then
+		if (has_parent) {
+			// setmetatable(t, arg[1])
+			lua_pushvalue(L, 1);
+			lua_setmetatable(L, -2);
+		}
+		// capture t and parent
+		lua_pushvalue(L, -1);
+		if (has_parent) {
+			lua_pushvalue(L, 1);
+		} else {
+			lua_pushnil(L);
+		}
+		lua_pushcclosure(L, new_instance, 2);
+		// t.new = …
+		lua_setfield(L, -2, "new");
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● init
+	//-------------------------------------------------------------------------
+	void init() {
+		const luaL_reg reg[] = {
+			{"class", new_class},
+			{NULL, NULL}
+		};
+		luaL_register(L, "Util", reg);
+		lua_pop(L, 1);
+	}
 }
