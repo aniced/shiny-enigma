@@ -11,7 +11,7 @@ end
 
 function Label:set_text(text)
 	self.text = text
-	self.texture = Graphics.render_text(self.text)
+	self.texture = Graphics.render_text(0, self.text)
 	self.texture:set_color(self.color)
 end
 

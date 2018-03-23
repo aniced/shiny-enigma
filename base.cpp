@@ -27,8 +27,12 @@ void init() {
 		sprintf(filename, "tex%d.png", i);
 		$texture[i] = IMG_LoadTexture($renderer, filename);
 	}
-	$font = TTF_OpenFontIndex("fon0.ttf", 12, 0);
-	TTF_SetFontHinting($font, TTF_HINTING_NONE);
+	for (int i = 0; i < 1; i++) {
+		char filename[16];
+		sprintf(filename, "fon%d.ttf", i);
+		$font[i] = TTF_OpenFontIndex(filename, 12, 0);
+		TTF_SetFontHinting($font[i], TTF_HINTING_NONE);
+	}
 	SDL_ClearError();
 	L = luaL_newstate();
 	lua_atpanic(L, panic);

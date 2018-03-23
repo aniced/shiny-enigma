@@ -4,26 +4,17 @@
 //   Global variables and global helper functions are stored here.
 //=============================================================================
 
+using namespace std;
 #define APPLICATION_TITLE ""
+#define EXPAND(x) x
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 
 SDL_Window* $window;
 SDL_Renderer* $renderer;
 SDL_Texture* $texture[100] = {NULL};
-TTF_Font* $font;
+TTF_Font* $font[10] = {NULL};
 lua_State* L;
 char msgbox_buf[4096];
-
-#define module_begin(name, n) \
-	void init_script_interface() { \
-		const char* const module_name = #name; \
-		lua_createtable(L, 0, n); \
-		int index = lua_gettop(L);
-#define module_function(name) \
-		lua_pushcfunction(L, name); \
-		lua_setfield(L, index, #name);
-#define module_end \
-		lua_setglobal(L, module_name); \
-	}
 
 void quit(int rc) {
 	puts("Quitting");

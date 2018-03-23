@@ -1,7 +1,9 @@
 //=============================================================================
 // ■ Graphics
 //-----------------------------------------------------------------------------
-//   A Lua module for drawing.
+//   A Lua module for drawing with the following classes.
+//   Texture — a userdata of a pointer to SDL_Texture
+//   Font    — a userdata of a pointer to TTF_Font
 //=============================================================================
 
 namespace Graphics {
@@ -47,12 +49,19 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
-	// ● render_text(text) → texture reference
+	// ● render_text(font, text) → texture reference
+	//   font: font ID or reference, but only the former is implemented
 	//-------------------------------------------------------------------------
 	int render_text(lua_State* L) {
+		TTF_Font* font;
+		if (lua_isuserdata(L, 1)) {
+			//font = *((TTF_Font**) luaL_checkudata(L, 1, "Font"));
+		} else {
+			font = $font[luaL_checkinteger(L, 1)];
+		}
+		const char* text = luaL_checkstring(L, 2);
 		SDL_Color color = {255, 255, 255, 255};
-		const char* text = luaL_checkstring(L, 1);
-		SDL_Surface* surface = TTF_RenderUTF8_Blended($font, text, color);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended($font[0], text, color);
 		if (!surface) error("TTF_RenderUTF8() == NULL");
 		SDL_Texture** texture = (SDL_Texture**) lua_newuserdata(L, sizeof(void*));
 		luaL_getmetatable(L, "Texture");

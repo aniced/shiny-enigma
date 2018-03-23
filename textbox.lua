@@ -13,7 +13,7 @@ function Textbox:set_text(text)
 	if self.text:len() == 0 then
 		self.texture = nil
 	else
-		self.texture = Graphics.render_text(self.text)
+		self.texture = Graphics.render_text(0, self.text)
 		self.texture:set_color({r = 0, g = 0, b = 0})
 	end
 end
