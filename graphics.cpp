@@ -146,5 +146,14 @@ namespace Graphics {
 			luaL_register(L, NULL, reg);
 			lua_setfield(L, -1, "__index");
 		}
+		{
+			const luaL_reg reg[] = {
+				{"__gc", font_gc},
+				{NULL, NULL}
+			};
+			luaL_newmetatable(L, "Font");
+			luaL_register(L, NULL, reg);
+			lua_setfield(L, -1, "__index");
+		}
 	}
 }
