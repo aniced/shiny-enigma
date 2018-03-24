@@ -24,6 +24,20 @@ namespace Graphics {
 		return *((TTF_Font**) luaL_checkudata(L, index, "Font"));
 	}
 	//-------------------------------------------------------------------------
+	// ● get_fps & set_fps
+	//-------------------------------------------------------------------------
+	int fps = 60;
+	Uint32 frame_time = 1000 / fps;
+	int get_fps(lua_State* L) {
+		lua_pushnumber(L, fps);
+		return 1;
+	}
+	int set_fps(lua_State* L) {
+		fps = luaL_checkinteger(L, 1);
+		frame_time = 1000 / fps;
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● copy(dest_rect, texture, src_rect)
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
@@ -165,6 +179,8 @@ namespace Graphics {
 	void init() {
 		{
 			const luaL_reg reg[] = {
+				{"get_fps", get_fps},
+				{"set_fps", set_fps},
 				{"copy", copy},
 				{"render_text", render_text},
 				{"draw_rect", draw_rect},

@@ -68,7 +68,8 @@ void init() {
 
 void loop() {
 	SDL_Event event;
-	while (SDL_WaitEventTimeout(&event, 100)) switch (event.type) {
+	Uint32 frame_start = SDL_GetTicks();
+	while (SDL_PollEvent(&event)) switch (event.type) {
 		case SDL_QUIT:
 			quit(0);
 			break;
@@ -88,6 +89,10 @@ void loop() {
 	lua_getglobal(L, "on_paint");
 	lua_call(L, 0, 0);
 	SDL_RenderPresent($renderer);
+	Uint32 frame_time = SDL_GetTicks() - frame_start;
+	if (frame_time < Graphics::frame_time) {
+		SDL_Delay(Graphics::frame_time - frame_time);
+	}
 }
 
 int main(int argc, char *argv[]) {

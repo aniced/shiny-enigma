@@ -6,8 +6,12 @@ fullscreen = false
 w = Textbox.new()
 w:set_text("type here")
 
+x = 0
 function on_paint()
+	x = x + 1
+	if x >= 60 then x = 0 end
 	Graphics.copy(Window.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
+	Graphics.copy({x = x, y = 100, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
 	Graphics.draw_9patch({x = 50, y = 50, w = 80, h = 25}, {texture = 0, x = 0, y = 0, w = 4, h = 4, t = 1, r = 2, b = 2, l = 1})
 	w:draw()
 end
