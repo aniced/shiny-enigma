@@ -1,12 +1,12 @@
-Textbox = Util.class(Widget)
+Widget_Textbox = Util.class(Widget)
 
-function Textbox:init()
+function Widget_Textbox:init()
 	Widget.init(self)
 	self:set_text("")
 	self.rect.h = 22
 end
 
-function Textbox:set_text(text)
+function Widget_Textbox:set_text(text)
 	self.text = text
 	if self.text:len() == 0 then
 		self.texture = nil
@@ -16,7 +16,7 @@ function Textbox:set_text(text)
 	end
 end
 
-function Textbox:on_keydown(k)
+function Widget_Textbox:on_keydown(k)
 	if k >= 4 and k <= 29 then
 		self:set_text(self.text .. string.char(93 + k))
 	elseif k == 42 then
@@ -24,7 +24,7 @@ function Textbox:on_keydown(k)
 	end
 end
 
-function Textbox:draw()
+function Widget_Textbox:draw()
 	local patch = {texture = 0, x = 0, y = 16, w = 3, h = 3, t = 1, r = 1, b = 1, l = 1}
 	Graphics.draw_9patch(self.rect, patch)
 	local cursor_rect

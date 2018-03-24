@@ -1,9 +1,9 @@
 require 'widget'
-require 'label'
-require 'textbox'
+require 'widget_label'
+require 'widget_textbox'
 
 fullscreen = false
-w = Textbox.new()
+w = Widget_Textbox.new()
 w:set_text("type here")
 
 x = 0
