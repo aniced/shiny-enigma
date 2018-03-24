@@ -23,7 +23,8 @@ function Textbox:on_keydown(k)
 end
 
 function Textbox:draw()
-	Graphics.draw_rect(self.rect)
+	local patch = {texture = 0, x = 0, y = 16, w = 3, h = 3, t = 1, r = 1, b = 1, l = 1}
+	Graphics.draw_9patch(self.rect, patch)
 	if self.texture then
 		Graphics.copy(
 			{x = self.rect.x, y = self.rect.y},
