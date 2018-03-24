@@ -17,7 +17,7 @@ function on_paint()
 end
 
 function on_keydown(k)
-	io.write(string.format("%s: %d\n", "Hello", k))
+	io.write(string.format("[%d]", k))
 	w:on_keydown(k)
 	if k == 96 then
 		Window.resize(320, 240)

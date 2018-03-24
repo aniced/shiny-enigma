@@ -1,10 +1,9 @@
 Textbox = Util.class(Widget)
 
-function Textbox.new()
-	local self = setmetatable(Widget.new(), Textbox)
+function Textbox:init()
+	Widget.init(self)
 	self:set_text("")
 	self.rect.h = 22
-	return self
 end
 
 function Textbox:set_text(text)

@@ -1,10 +1,9 @@
 Label = Util.class(Widget)
 
-function Label.new(text)
-	local self = setmetatable(Widget.new(), Label)
+function Label:init(text)
+	Widget.init(self)
 	self.color = {r = 0, g = 0, b = 0}
 	self:set_text(text or "")
-	return self
 end
 
 function Label:set_text(text)

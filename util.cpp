@@ -29,10 +29,29 @@ namespace Util {
 		lua_pushnumber(L, color->a); lua_setfield(L, -2, "a");
 	}
 	//-------------------------------------------------------------------------
+	// ● class.new closure
+	//   upvalue 1 = class
+	//   upvalue 2 = parent
+	//-------------------------------------------------------------------------
+	int new_instance(lua_State* L) {
+		// local self = {}
+		lua_newtable(L);
+		// setmetatable(self, class)
+		lua_pushvalue(L, lua_upvalueindex(1));
+		lua_setmetatable(L, -2);
+		// class.init(self)
+		lua_getfield(L, lua_upvalueindex(1), "init");
+		lua_pushvalue(L, -2);
+		lua_call(L, 1, 0);
+		// return self
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● class(parent = nil)
 	//-------------------------------------------------------------------------
 	int new_class(lua_State* L) {
 		bool has_parent = !lua_isnoneornil(L, 1);
+		// t = {}
 		lua_createtable(L, 0, 2);
 		// t.__index = t
 		lua_pushvalue(L, -1);
@@ -43,6 +62,15 @@ namespace Util {
 			lua_pushvalue(L, 1);
 			lua_setmetatable(L, -2);
 		}
+		// t.new = …
+		lua_pushvalue(L, -1);
+		if (has_parent) {
+			lua_pushvalue(L, 1);
+		} else {
+			lua_pushnil(L);
+		}
+		lua_pushcclosure(L, new_instance, 2);
+		lua_setfield(L, -2, "new");
 		return 1;
 	}
 	//-------------------------------------------------------------------------

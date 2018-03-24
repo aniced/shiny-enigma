@@ -1,9 +1,7 @@
 Widget = Util.class()
 
-function Widget.new()
-	local self = setmetatable({}, Widget)
+function Widget:init()
 	self.rect = {x = 0, y = 0, w = 100, h = 100}
-	return self
 end
 
 function Widget:draw()
