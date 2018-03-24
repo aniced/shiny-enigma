@@ -3,6 +3,7 @@ Textbox = Util.class(Widget)
 function Textbox.new()
 	local self = setmetatable(Widget.new(), Textbox)
 	self:set_text("")
+	self.rect.h = 22
 	return self
 end
 
@@ -18,7 +19,7 @@ end
 
 function Textbox:on_keydown(k)
 	if k >= 4 and k <= 29 then
-		self:set_text(string.char(93 + k))
+		self:set_text(self.text .. string.char(93 + k))
 	end
 end
 
@@ -27,7 +28,7 @@ function Textbox:draw()
 	Graphics.draw_9patch(self.rect, patch)
 	if self.texture then
 		Graphics.copy(
-			{x = self.rect.x, y = self.rect.y},
+			{x = self.rect.x + 2, y = self.rect.y + 2},
 			self.texture,
 			self.texture:get_rect()
 		)
