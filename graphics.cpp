@@ -11,11 +11,15 @@ namespace Graphics {
 	// ● check_texture
 	//-------------------------------------------------------------------------
 	SDL_Texture* check_texture(lua_State* L, int index) {
-		return *((SDL_Texture**) luaL_checkudata(L, index, "Texture"));
+		if (lua_isuserdata(L, index)) {
+			return *((SDL_Texture**) luaL_checkudata(L, index, "Texture"));
+		} else {
+			return $texture[luaL_checkinteger(L, index)];
+		}
 	}
 	//-------------------------------------------------------------------------
 	// ● check_font
-	//-------------------------------------------------------------------------
+	//-------------------- ----------------------------------------
 	TTF_Font* check_font(lua_State* L, int index) {
 		return *((TTF_Font**) luaL_checkudata(L, index, "Font"));
 	}
@@ -24,12 +28,7 @@ namespace Graphics {
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
 	int copy(lua_State* L) {
-		SDL_Texture* texture;
-		if (lua_isuserdata(L, 2)) {
-			texture = check_texture(L, 2);
-		} else {
-			texture = $texture[luaL_checkinteger(L, 2)];
-		}
+		SDL_Texture* texture = check_texture(L, 2);
 		SDL_Rect src, dest;
 		Rect::to_rect(L, 1, &dest);
 		Rect::to_rect(L, 3, &src);
@@ -58,6 +57,46 @@ namespace Graphics {
 		SDL_Rect rect;
 		Rect::to_rect(L, 1, &rect);
 		SDL_RenderDrawRect($renderer, &rect);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● draw_9patch(dest_rect, patch_info)
+	//   patch_info has the following keys.
+	//   - texture: texture ID or reference
+	//   - x, y, w and h: source rectangle
+	//   - t, r, b and l: margins
+	//-------------------------------------------------------------------------
+	int draw_9patch(lua_State* L) {
+		// rectangles for SDL_RenderCopy
+		SDL_Rect src_rect, dest_rect;
+		// get the texture
+		lua_getfield(L, 2, "texture");
+		SDL_Texture* texture = check_texture(L, -1);
+		lua_pop(L, 1);
+		// retrieve the coordinates, sizes and margins
+		Rect::to_rect(L, 1, &dest_rect);
+		Rect::to_rect(L, 2, &src_rect);
+		int x = dest_rect.x, y = dest_rect.y, w = dest_rect.w, h = dest_rect.h;
+		lua_getfield(L, 2, "t"); int t = lua_tointeger(L, -1);
+		lua_getfield(L, 2, "r"); int r = lua_tointeger(L, -1);
+		lua_getfield(L, 2, "b"); int b = lua_tointeger(L, -1);
+		lua_getfield(L, 2, "l"); int l = lua_tointeger(L, -1);
+		lua_pop(L, 4);
+		int sx = src_rect.x, sy = src_rect.y, sw = src_rect.w, sh = src_rect.h;
+		#define RCP(sx, sy, sw, sh, dx, dy, dw, dh) \
+			src_rect.x = sx; src_rect.y = sy; src_rect.w = sw; src_rect.h = sh; \
+			dest_rect.x = dx; dest_rect.y = dy; dest_rect.w = dw; dest_rect.h = dh; \
+			SDL_RenderCopy($renderer, texture, &src_rect, &dest_rect)
+		RCP(sx, sy, l, t, x, y, l, t);
+		RCP(sx + l, sy, sw - l - r, t, x + l, y, w - l - r, t);
+		RCP(sx + sw - r, sy, r, t, x + w - r, y, r, t);
+		RCP(sx, sy + t, l, sh - t - b, x, y + t, l, h - t - b);
+		RCP(sx + l, sy + t, sw - l - r, sh - t - b, x + l, y + t, w - l - r, h - t - b);
+		RCP(sx + sw - r, sy + t, r, sh - t - b, x + w - r, y + t, r, h - t - b);
+		RCP(sx, sy + sh - b, l, b, x, y + h - b, l, b);
+		RCP(sx + l, sy + sh - b, sw - l - r, b, x + l, y + h - b, w - l - r, b);
+		RCP(sx + sw - r, sy + sh - b, r, b, x + w - r, y + h - b, r, b);
+		#undef RCP
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -130,6 +169,7 @@ namespace Graphics {
 				{"render_text", render_text},
 				{"draw_rect", draw_rect},
 				{"draw_line", draw_line},
+				{"draw_9patch", draw_9patch},
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);
