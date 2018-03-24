@@ -1,19 +1,9 @@
-Widget_Textbox = Util.class(Widget)
+Widget_Textbox = Util.class(Widget_TextBase)
 
 function Widget_Textbox:init()
-	Widget.init(self)
+	Widget_TextBase.init(self)
 	self:set_text("")
 	self.rect.h = 22
-end
-
-function Widget_Textbox:set_text(text)
-	self.text = text
-	if self.text:len() == 0 then
-		self.texture = nil
-	else
-		self.texture = Graphics.render_text(0, self.text)
-		self.texture:set_color({r = 0, g = 0, b = 0})
-	end
 end
 
 function Widget_Textbox:on_keydown(k)

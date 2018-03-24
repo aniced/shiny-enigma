@@ -1,5 +1,8 @@
 Widget = Util.class()
 
+-- WLH = Window Line Height
+Widget.WLH = 24
+
 function Widget:init()
 	self.rect = {x = 0, y = 0, w = 100, h = 100}
 end

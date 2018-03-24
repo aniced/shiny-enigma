@@ -1,10 +1,12 @@
 require 'widget'
+require 'widget_textbase'
 require 'widget_label'
 require 'widget_textbox'
 
 fullscreen = false
 w = Widget_Textbox.new()
 w:set_text("type here")
+w:set_color({r = 128, g = 0, b = 128})
 
 x = 0
 function on_paint()
