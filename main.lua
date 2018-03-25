@@ -10,7 +10,6 @@ w:set_color({r = 128, g = 0, b = 128})
 
 x = 0
 function on_paint()
-	x = x + 1
 	if x >= 60 then x = 0 end
 	Graphics.copy(Window.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
 	Graphics.copy({x = x, y = 100, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
@@ -18,14 +17,15 @@ function on_paint()
 	w:draw()
 end
 
-function on_keydown(k)
-	io.write(string.format("[%d]", k))
-	w:on_keydown(k)
-	if k == 96 then
-		Window.resize(320, 240)
-	elseif k == 41 then
+function on_update()
+	if Input.key_pressed(96) then
+		x = x + 1
+	end
+	if Input.key_pressed(41) then
 		os.exit()
-	elseif k == 68 then
+	end
+	--if Input.key_trigger(68) then
+	if false then
 		fullscreen = not fullscreen
 		Window.set_fullscreen(fullscreen and "borderless" or "windowed")
 	end

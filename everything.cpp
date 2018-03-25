@@ -22,4 +22,5 @@ extern "C" {
 #include "rect.cpp"
 #include "graphics.cpp"
 #include "window.cpp"
+#include "input.cpp"
 #include "base.cpp"

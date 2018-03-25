@@ -8,6 +8,16 @@
 
 namespace Graphics {
 	//-------------------------------------------------------------------------
+	// ● update
+	//-------------------------------------------------------------------------
+	void update() {
+		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
+		SDL_RenderClear($renderer);
+		lua_getglobal(L, "on_paint");
+		lua_call(L, 0, 0);
+		SDL_RenderPresent($renderer);
+	}
+	//-------------------------------------------------------------------------
 	// ● check_texture
 	//-------------------------------------------------------------------------
 	SDL_Texture* check_texture(lua_State* L, int index) {

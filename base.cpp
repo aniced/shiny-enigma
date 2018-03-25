@@ -57,6 +57,7 @@ void init() {
 	// open game libraries
 	Graphics::init();
 	Window::init();
+	Input::init();
 	Util::init();
 	// execute the main script
 	char* script_filename;
@@ -67,28 +68,11 @@ void init() {
 }
 
 void loop() {
-	SDL_Event event;
 	Uint32 frame_start = SDL_GetTicks();
-	while (SDL_PollEvent(&event)) switch (event.type) {
-		case SDL_QUIT:
-			quit(0);
-			break;
-		case SDL_KEYDOWN:
-			lua_getglobal(L, "on_keydown");
-			if (lua_isnil(L, -1)) {
-				lua_pop(L, 1);
-				break;
-			} else {
-				lua_pushnumber(L, event.key.keysym.scancode);
-				lua_call(L, 1, 0);
-			}
-			break;
-	}
-	SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
-	SDL_RenderClear($renderer);
-	lua_getglobal(L, "on_paint");
+	Input::update();
+	lua_getglobal(L, "on_update");
 	lua_call(L, 0, 0);
-	SDL_RenderPresent($renderer);
+	Graphics::update();
 	Uint32 frame_time = SDL_GetTicks() - frame_start;
 	if (frame_time < Graphics::frame_time) {
 		SDL_Delay(Graphics::frame_time - frame_time);
