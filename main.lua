@@ -18,6 +18,7 @@ function on_paint()
 	w:draw()
 end
 
+Input.text_start()
 function on_update()
 	w:update()
 	if Input.key_pressed(96) then

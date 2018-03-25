@@ -7,10 +7,16 @@ function Widget_Textbox:init()
 end
 
 function Widget_Textbox:update()
+	--[[
 	for k = 4, 29 do
 		if Input.key_repeated(k) then
 			self:set_text(self.text .. string.char(93 + k))
 		end
+	end
+	--]]
+	local text = Input.text_get_text()
+	if text then
+		self:set_text(self.text .. text)
 	end
 	if Input.key_repeated(42) then
 		self:set_text(self.text:sub(1, -2))

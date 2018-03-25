@@ -11,6 +11,8 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// 0 = released; 1 = pressed; 2 = repeated; 3 = triggered
 	int key_states[SDL_NUM_SCANCODES] = {0};
+	bool text_composition, text_input;
+	char text_text[32];
 	//-------------------------------------------------------------------------
 	// ● update
 	//-------------------------------------------------------------------------
@@ -19,6 +21,7 @@ namespace Input {
 		for (size_t i = 0; i < SDL_NUM_SCANCODES; i++) {
 			key_states[i] = (bool) key_states[i];
 		}
+		text_input = false;
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) switch (e.type) {
@@ -34,6 +37,10 @@ namespace Input {
 			break;
 		case SDL_KEYUP:
 			key_states[e.key.keysym.scancode] = 0;
+			break;
+		case SDL_TEXTINPUT:
+			text_input = true;
+			memcpy(text_text, e.text.text, sizeof(text_text));
 			break;
 		}
 	}
@@ -86,6 +93,26 @@ namespace Input {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● text_set_rect()
+	//-------------------------------------------------------------------------
+	int text_set_rect(lua_State* L) {
+		SDL_Rect rect;
+		Rect::to_rect(L, 1, &rect);
+		SDL_SetTextInputRect(&rect);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● text_get_text()
+	//-------------------------------------------------------------------------
+	int text_get_text(lua_State* L) {
+		if (text_input) {
+			lua_pushstring(L, text_text);
+		} else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
@@ -95,6 +122,8 @@ namespace Input {
 			{"key_repeated", key_repeated},
 			{"text_start", text_start},
 			{"text_stop", text_stop},
+			{"text_set_rect", text_set_rect},
+			{"text_get_text", text_get_text},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Input", reg);
