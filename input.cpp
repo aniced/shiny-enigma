@@ -48,7 +48,7 @@ namespace Input {
 		return k;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_pressed()
+	// ● key_pressed(scancode)
 	//-------------------------------------------------------------------------
 	int key_pressed(lua_State* L) {
 		int k = check_key(L, 1);
@@ -56,7 +56,7 @@ namespace Input {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_triggered()
+	// ● key_triggered(scancode)
 	//-------------------------------------------------------------------------
 	int key_triggered(lua_State* L) {
 		int k = check_key(L, 1);
@@ -64,12 +64,26 @@ namespace Input {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_repeated()
+	// ● key_repeated(scancode)
 	//-------------------------------------------------------------------------
 	int key_repeated(lua_State* L) {
 		int k = check_key(L, 1);
 		lua_pushboolean(L, key_states[k] >= 2);
 		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● text_start()
+	//-------------------------------------------------------------------------
+	int text_start(lua_State* L) {
+		SDL_StartTextInput();
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● text_stop()
+	//-------------------------------------------------------------------------
+	int text_stop(lua_State* L) {
+		SDL_StopTextInput();
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● init
@@ -79,6 +93,8 @@ namespace Input {
 			{"key_pressed", key_pressed},
 			{"key_triggered", key_triggered},
 			{"key_repeated", key_repeated},
+			{"text_start", text_start},
+			{"text_stop", text_stop},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Input", reg);
