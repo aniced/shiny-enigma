@@ -19,6 +19,7 @@ function on_paint()
 end
 
 function on_update()
+	w:update()
 	if Input.key_pressed(96) then
 		x = x + 1
 	end

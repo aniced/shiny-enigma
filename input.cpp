@@ -3,9 +3,6 @@
 //-----------------------------------------------------------------------------
 //   A Lua module for handling input states which are updated per frame.
 //   All SDL events are dealt with here.
-//   In the script, you have two ways to check the input:
-//   - call Input.key_press and the like and
-//   - go through the table Input.events, which is refilled every frame.
 //=============================================================================
 
 namespace Input {

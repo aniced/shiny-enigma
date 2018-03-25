@@ -7,6 +7,9 @@ function Widget:init()
 	self.rect = {x = 0, y = 0, w = 100, h = 100}
 end
 
+function Widget:update()
+end
+
 function Widget:draw()
 	local rect = self.rect
 	Graphics.draw_rect(rect)
