@@ -89,14 +89,16 @@ namespace Graphics {
 		lua_pop(L, 1);
 		// retrieve the coordinates, sizes and margins
 		Rect::to_rect(L, 1, &dest_rect);
-		Rect::to_rect(L, 2, &src_rect);
 		int x = dest_rect.x, y = dest_rect.y, w = dest_rect.w, h = dest_rect.h;
+		Rect::to_rect(L, 2, &src_rect);
+		int sx = src_rect.x, sy = src_rect.y, sw = src_rect.w, sh = src_rect.h;
 		lua_getfield(L, 2, "t"); int t = lua_tointeger(L, -1);
 		lua_getfield(L, 2, "r"); int r = lua_tointeger(L, -1);
 		lua_getfield(L, 2, "b"); int b = lua_tointeger(L, -1);
 		lua_getfield(L, 2, "l"); int l = lua_tointeger(L, -1);
-		lua_pop(L, 4);
-		int sx = src_rect.x, sy = src_rect.y, sw = src_rect.w, sh = src_rect.h;
+		lua_getfield(L, 2, "fill"); bool fill = lua_toboolean(L, -1);
+		if (lua_isnil(L, -1)) fill = true;
+		lua_pop(L, 5);
 		#define RCP(sx, sy, sw, sh, dx, dy, dw, dh) \
 			src_rect.x = sx; src_rect.y = sy; src_rect.w = sw; src_rect.h = sh; \
 			dest_rect.x = dx; dest_rect.y = dy; dest_rect.w = dw; dest_rect.h = dh; \
@@ -105,11 +107,13 @@ namespace Graphics {
 		RCP(sx + l, sy, sw - l - r, t, x + l, y, w - l - r, t);
 		RCP(sx + sw - r, sy, r, t, x + w - r, y, r, t);
 		RCP(sx, sy + t, l, sh - t - b, x, y + t, l, h - t - b);
-		RCP(sx + l, sy + t, sw - l - r, sh - t - b, x + l, y + t, w - l - r, h - t - b);
 		RCP(sx + sw - r, sy + t, r, sh - t - b, x + w - r, y + t, r, h - t - b);
 		RCP(sx, sy + sh - b, l, b, x, y + h - b, l, b);
 		RCP(sx + l, sy + sh - b, sw - l - r, b, x + l, y + h - b, w - l - r, b);
 		RCP(sx + sw - r, sy + sh - b, r, b, x + w - r, y + h - b, r, b);
+		if (fill) {
+			RCP(sx + l, sy + t, sw - l - r, sh - t - b, x + l, y + t, w - l - r, h - t - b);
+		}
 		#undef RCP
 		return 0;
 	}
