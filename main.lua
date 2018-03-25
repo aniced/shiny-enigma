@@ -9,10 +9,11 @@ w:set_text("type here")
 w:set_color({r = 128, g = 0, b = 128})
 
 x = 0
+y = 100
 function on_paint()
 	if x >= 60 then x = 0 end
 	Graphics.copy(Window.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
-	Graphics.copy({x = x, y = 100, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
+	Graphics.copy({x = x, y = y, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
 	Graphics.draw_9patch({x = 50, y = 50, w = 80, h = 25}, {texture = 0, x = 0, y = 0, w = 4, h = 4, t = 1, r = 2, b = 2, l = 1})
 	w:draw()
 end
@@ -21,11 +22,13 @@ function on_update()
 	if Input.key_pressed(96) then
 		x = x + 1
 	end
-	if Input.key_pressed(41) then
+	if Input.key_repeated(97) then
+		y = y + 10
+	end
+	if Input.key_triggered(41) then
 		os.exit()
 	end
-	--if Input.key_trigger(68) then
-	if false then
+	if Input.key_triggered(68) then
 		fullscreen = not fullscreen
 		Window.set_fullscreen(fullscreen and "borderless" or "windowed")
 	end
