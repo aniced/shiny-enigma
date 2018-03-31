@@ -61,7 +61,16 @@ namespace Rect {
 		lua_pushnumber(L, point->y); lua_setfield(L, -2, "y");
 	}
 	//-------------------------------------------------------------------------
-	// ● point_in_rect
+	// ● rect_empty(rect)
+	//-------------------------------------------------------------------------
+	int rect_empty(lua_State* L) {
+		SDL_Rect rect;
+		check_rect(L, 1, &rect);
+		lua_pushboolean(L, SDL_RectEmpty(&rect));
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● point_in_rect(point, rect)
 	//-------------------------------------------------------------------------
 	int point_in_rect(lua_State* L) {
 		SDL_Point point;
@@ -72,13 +81,39 @@ namespace Rect {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● has_intersection(rect1, rect2)
+	//-------------------------------------------------------------------------
+	int has_intersection(lua_State* L) {
+		SDL_Rect rect1, rect2;
+		check_rect(L, 1, &rect1);
+		check_rect(L, 2, &rect2);
+		lua_pushboolean(L, SDL_HasIntersection(&rect1, &rect1));
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● intersect_rect(rect1, rect2)
+	//   nil will be returned if there's no intersection.
+	//-------------------------------------------------------------------------
+	int intersect_rect(lua_State* L) {
+		SDL_Rect rect1, rect2, rect3;
+		check_rect(L, 1, &rect1);
+		check_rect(L, 2, &rect2);
+		if (SDL_IntersectRect(&rect1, &rect2, &rect3)) {
+			create_rect(L, &rect3);
+		} else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
+			{"rect_empty", rect_empty},
 			{"point_in_rect", point_in_rect},
-			//{"has_intersection", has_intersection},
-			//{"rect_empty", rect_empty},
+			{"has_intersection", has_intersection},
+			{"intersect_rect", intersect_rect},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Rect", reg);
