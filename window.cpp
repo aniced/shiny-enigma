@@ -6,16 +6,6 @@
 
 namespace Window {
 	//-------------------------------------------------------------------------
-	// ● get_rect()
-	//   Use this size for drawing.
-	//-------------------------------------------------------------------------
-	int get_rect(lua_State* L) {
-		SDL_Rect rect = {0, 0, -1, -1};
-		SDL_GetRendererOutputSize($renderer, &rect.w, &rect.h);
-		Rect::create_rect(L, &rect);
-		return 1;
-	}
-	//-------------------------------------------------------------------------
 	// ● resize(width, height)
 	//-------------------------------------------------------------------------
 	int resize(lua_State* L) {
@@ -54,7 +44,6 @@ namespace Window {
 	}
 	void init() {
 		const luaL_reg reg[] = {
-			{"get_rect", get_rect},
 			{"resize", resize},
 			{"set_title", set_title},
 			{"set_fullscreen", set_fullscreen},

@@ -48,6 +48,26 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● get_size()
+	//   Use this size for drawing.
+	//-------------------------------------------------------------------------
+	int get_size(lua_State* L) {
+		SDL_Rect rect = {0, 0, -1, -1};
+		SDL_GetRendererOutputSize($renderer, &rect.w, &rect.h);
+		lua_pushnumber(L, rect.w);
+		lua_pushnumber(L, rect.h);
+		return 2;
+	}
+	//-------------------------------------------------------------------------
+	// ● get_rect()
+	//-------------------------------------------------------------------------
+	int get_rect(lua_State* L) {
+		SDL_Rect rect = {0, 0, -1, -1};
+		SDL_GetRendererOutputSize($renderer, &rect.w, &rect.h);
+		Rect::create_rect(L, &rect);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● copy(dest_rect, texture, src_rect)
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
@@ -195,6 +215,8 @@ namespace Graphics {
 			const luaL_reg reg[] = {
 				{"get_fps", get_fps},
 				{"set_fps", set_fps},
+				{"get_size", get_size},
+				{"get_rect", get_rect},
 				{"copy", copy},
 				{"render_text", render_text},
 				{"draw_rect", draw_rect},
