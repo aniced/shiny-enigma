@@ -26,6 +26,7 @@ function on_paint()
 	local m = Input.mouse_get_point()
 	draw_debug_line(1, string.format("set FPS = %d", Graphics.get_fps()))
 	draw_debug_line(2, string.format("M(%d, %d)", m.x, m.y))
+	draw_debug_line(3, Rect.point_in_rect(Input.mouse_get_point(), {x = 50, y = 50, w = 80, h = 25}) and "Good" or "Not")
 end
 
 Input.text_start()

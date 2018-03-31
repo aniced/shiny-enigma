@@ -55,6 +55,7 @@ void init() {
 	lua_setfield(L, -2, "exit");
 	lua_pop(L, 1);
 	// open game libraries
+	Rect::init();
 	Graphics::init();
 	Window::init();
 	Input::init();
