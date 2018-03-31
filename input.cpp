@@ -113,6 +113,15 @@ namespace Input {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● mouse_get_point()
+	//-------------------------------------------------------------------------
+	int mouse_get_point(lua_State* L) {
+		SDL_Point point;
+		SDL_GetMouseState(&point.x, &point.y);
+		Rect::create_point(L, &point);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
@@ -124,6 +133,7 @@ namespace Input {
 			{"text_stop", text_stop},
 			{"text_set_rect", text_set_rect},
 			{"text_get_text", text_get_text},
+			{"mouse_get_point", mouse_get_point},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Input", reg);

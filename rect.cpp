@@ -1,7 +1,7 @@
 //=============================================================================
 // ■ Rect
 //-----------------------------------------------------------------------------
-//   A module for dealing with rectangles in Lua.
+//   A Lua module for dealing with rectangles.
 //=============================================================================
 
 namespace Rect {
@@ -33,5 +33,13 @@ namespace Rect {
 		lua_getfield(L, index, "x"); point->x = lua_tointeger(L, -1);
 		lua_getfield(L, index, "y"); point->y = lua_tointeger(L, -1);
 		lua_pop(L, 2);
+	}
+	//-------------------------------------------------------------------------
+	// ● create_point
+	//-------------------------------------------------------------------------
+	void create_point(lua_State* L, const SDL_Point* point) {
+		lua_createtable(L, 0, 2);
+		lua_pushnumber(L, point->x); lua_setfield(L, -2, "x");
+		lua_pushnumber(L, point->y); lua_setfield(L, -2, "y");
 	}
 }
