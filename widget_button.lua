@@ -2,8 +2,6 @@ Widget_Button = Util.class(Widget_TextBase)
 
 function Widget_Button:init()
 	Widget_TextBase.init(self)
-	self:set_text("")
-	self.rect.h = Widget.WLH
 end
 
 function Widget_Button:update()

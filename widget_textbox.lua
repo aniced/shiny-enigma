@@ -2,18 +2,9 @@ Widget_Textbox = Util.class(Widget_TextBase)
 
 function Widget_Textbox:init()
 	Widget_TextBase.init(self)
-	self:set_text("")
-	self.rect.h = 22
 end
 
 function Widget_Textbox:update()
-	--[[
-	for k = 4, 29 do
-		if Input.key_repeated(k) then
-			self:set_text(self.text .. string.char(93 + k))
-		end
-	end
-	--]]
 	local text = Input.text_get_text()
 	if text then
 		self:set_text(self.text .. text)

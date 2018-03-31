@@ -18,7 +18,7 @@ function draw_debug_line(i, s)
 	local h = Graphics.get_rect().h
 	t = Graphics.render_text(0, s)
 	t:set_color({r = 0, g = 0, b = 0})
-	Graphics.copy({x = 0, y = h - (8 - i) * Widget.WLH}, t, t:get_rect())
+	Graphics.copy({x = 0, y = h - (8 - i) * WLH}, t, t:get_rect())
 end
 
 function on_paint()

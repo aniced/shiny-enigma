@@ -4,7 +4,7 @@ function Widget_TextBase:init(text)
 	Widget.init(self)
 	self.color = {r = 0, g = 0, b = 0}
 	self:set_text(text or "")
-	self.rect.h = Widget.WLH
+	self.rect.h = WLH
 end
 
 function Widget_TextBase:set_text(text)
