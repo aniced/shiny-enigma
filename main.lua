@@ -1,3 +1,5 @@
+require 'binaryfilereader'
+require 'binaryfilewriter'
 require 'widget'
 require 'widget_textbase'
 require 'widget_label'
