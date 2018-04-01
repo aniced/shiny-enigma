@@ -31,11 +31,30 @@ function on_paint()
 	local m = Input.mouse_get_point()
 	draw_debug_line(1, string.format("set FPS = %d", Graphics.get_fps()))
 	draw_debug_line(2, string.format("M(%d, %d)", m.x, m.y))
+	draw_debug_line(3, Input.key_get_mods().num and "NUM" or "---")
+	draw_debug_line(4, Input.key_get_mods().caps and "CAPS" or "----")
 end
 
 Input.text_start()
+
 function on_update()
+	-- only for first frame
+	if Input.key_pressed(97) then
+		on_update = on_update_c
+	else
+		on_update = on_update_g
+	end
+end
+
+function on_update_c()
+	os.exit()
+end
+
+function on_update_g()
 	w:update()
+	if first_frame then
+		first_frame = false
+	end
 	if Input.key_pressed(96) then
 		x = x + 1
 	end

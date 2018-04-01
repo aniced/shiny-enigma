@@ -79,6 +79,17 @@ namespace Input {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● key_get_mods()
+	//-------------------------------------------------------------------------
+	int key_get_mods(lua_State* L) {
+		SDL_Keymod mods = SDL_GetModState();
+		lua_createtable(L, 0, 4);
+		lua_pushboolean(L, mods & KMOD_NUM   ); lua_setfield(L, -2, "num");
+		lua_pushboolean(L, mods & KMOD_CAPS  ); lua_setfield(L, -2, "caps");
+		lua_pushboolean(L, mods & KMOD_MODE  ); lua_setfield(L, -2, "altgr");
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● text_start()
 	//-------------------------------------------------------------------------
 	int text_start(lua_State* L) {
@@ -129,6 +140,7 @@ namespace Input {
 			{"key_pressed", key_pressed},
 			{"key_triggered", key_triggered},
 			{"key_repeated", key_repeated},
+			{"key_get_mods", key_get_mods},
 			{"text_start", text_start},
 			{"text_stop", text_stop},
 			{"text_set_rect", text_set_rect},
