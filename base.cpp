@@ -47,6 +47,11 @@ void init(int argc, char* argv[]) {
 		lua_rawseti(L, -2, i);
 	}
 	lua_setglobal(L, "arg");
+	// replace package.path
+	lua_getglobal(L, "package");
+	lua_pushstring(L, Util::rtp("?.lua"));
+	lua_setfield(L, -2, "path");
+	lua_pop(L, 1);
 	// inject os.exit
 	lua_getglobal(L, "os");
 	lua_pushcfunction(L, quit_lua);
