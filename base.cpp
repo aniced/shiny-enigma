@@ -13,7 +13,7 @@ char* rtp(const char* path) {
 	return s;
 }
 
-void init() {
+void init(int argc, char* argv[]) {
 	if (SDL_Init(0) < 0) error("/* 1st */ SDL_Init() < 0");
 	SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
@@ -49,6 +49,13 @@ void init() {
 	L = luaL_newstate();
 	lua_atpanic(L, panic);
 	luaL_openlibs(L);
+	// set arg
+	lua_createtable(L, argc, 0);
+	for (int i = 0; i < argc; i++) {
+		lua_pushstring(L, argv[i]);
+		lua_rawseti(L, -2, i);
+	}
+	lua_setglobal(L, "arg");
 	// inject os.exit
 	lua_getglobal(L, "os");
 	lua_pushcfunction(L, quit_lua);
@@ -80,7 +87,7 @@ void loop() {
 	}
 }
 
-int main(int argc, char *argv[]) {
-	init();
+int main(int argc, char* argv[]) {
+	init(argc, argv);
 	for (;;) loop();
 }

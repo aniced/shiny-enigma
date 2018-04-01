@@ -32,7 +32,7 @@ function on_paint()
 	draw_debug_line(1, string.format("set FPS = %d", Graphics.get_fps()))
 	draw_debug_line(2, string.format("M(%d, %d)", m.x, m.y))
 	draw_debug_line(3, Input.key_get_mods().ctrl and "ctrl" or "---")
-	draw_debug_line(4, Input.key_get_mods().caps and "CAPS" or "----")
+	draw_debug_line(4, string.format("{[0] = %q, n = %d}", arg[0], #arg))
 end
 
 Input.text_start()
