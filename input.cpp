@@ -83,10 +83,25 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	int key_get_mods(lua_State* L) {
 		SDL_Keymod mods = SDL_GetModState();
-		lua_createtable(L, 0, 4);
-		lua_pushboolean(L, mods & KMOD_NUM   ); lua_setfield(L, -2, "num");
-		lua_pushboolean(L, mods & KMOD_CAPS  ); lua_setfield(L, -2, "caps");
-		lua_pushboolean(L, mods & KMOD_MODE  ); lua_setfield(L, -2, "altgr");
+		lua_createtable(L, 0, 15);
+		#define _(kmod, field) \
+			lua_pushboolean(L, mods & kmod); lua_setfield(L, -2, field)
+		_(KMOD_SHIFT, "shift");
+		_(KMOD_LSHIFT, "lshift");
+		_(KMOD_RSHIFT, "rshift");
+		_(KMOD_CTRL, "ctrl");
+		_(KMOD_LCTRL, "lctrl");
+		_(KMOD_RCTRL, "rctrl");
+		_(KMOD_ALT, "alt");
+		_(KMOD_LALT, "lalt");
+		_(KMOD_RALT, "ralt");
+		_(KMOD_GUI, "gui");
+		_(KMOD_LGUI, "lgui");
+		_(KMOD_RGUI, "rgui");
+		_(KMOD_NUM, "num");
+		_(KMOD_CAPS, "caps");
+		_(KMOD_MODE, "altgr");
+		#undef _
 		return 1;
 	}
 	//-------------------------------------------------------------------------
