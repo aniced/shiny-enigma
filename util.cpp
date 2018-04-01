@@ -8,6 +8,11 @@
 
 namespace Util {
 	//-------------------------------------------------------------------------
+	// ● Module variables
+	//-------------------------------------------------------------------------
+	// base_path is set in base.cpp
+	const char* base_path;
+	//-------------------------------------------------------------------------
 	// ● to_color
 	//   Unspecified alpha will be set to 255.
 	//-------------------------------------------------------------------------
@@ -27,6 +32,20 @@ namespace Util {
 		lua_pushnumber(L, color->g); lua_setfield(L, -2, "g");
 		lua_pushnumber(L, color->b); lua_setfield(L, -2, "b");
 		lua_pushnumber(L, color->a); lua_setfield(L, -2, "a");
+	}
+	//-------------------------------------------------------------------------
+	// ● rtp(filename)
+	//-------------------------------------------------------------------------
+	char* rtp(const char* path) {
+		static char s[256];
+		strcpy(s, base_path);
+		strcat(s, path);
+		return s;
+	}
+	int rtp_lua(lua_State* L) {
+		const char* path = luaL_checkstring(L, 1);
+		lua_pushstring(L, rtp(path));
+		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● class.new closure
@@ -79,6 +98,7 @@ namespace Util {
 	void init() {
 		const luaL_reg reg[] = {
 			{"class", new_class},
+			{"rtp", rtp_lua},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Util", reg);

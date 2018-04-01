@@ -33,6 +33,8 @@ function on_paint()
 	draw_debug_line(2, string.format("M(%d, %d)", m.x, m.y))
 	draw_debug_line(3, Input.key_get_mods().ctrl and "ctrl" or "---")
 	draw_debug_line(4, string.format("{[0] = %q, n = %d}", arg[0], #arg))
+	draw_debug_line(5, package.path)
+	draw_debug_line(6, Util.rtp("main.lua"))
 end
 
 Input.text_start()
