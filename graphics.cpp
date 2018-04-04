@@ -103,6 +103,24 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● set_blend(mode)
+	//   mode: "copy", "blend", "add", "mod"
+	//-------------------------------------------------------------------------
+	int set_blend(lua_State* L) {
+		const char* s = lua_tostring(L, 1);
+		SDL_BlendMode mode;
+		if (strcmp(s, "copy") == 0) {
+			mode = SDL_BLENDMODE_NONE;
+		} else if (strcmp(s, "blend") == 0 || !*s) {
+			mode = SDL_BLENDMODE_BLEND;
+		} else if (strcmp(s, "add") == 0) {
+			mode = SDL_BLENDMODE_ADD;
+		} else if (strcmp(s, "mod") == 0) {
+			mode = SDL_BLENDMODE_MOD;
+		}
+		SDL_SetRenderDrawBlendMode($renderer, mode);
+	}
+	//-------------------------------------------------------------------------
 	// ● draw_rect(rect)
 	//-------------------------------------------------------------------------
 	int draw_rect(lua_State* L) {
@@ -237,6 +255,7 @@ namespace Graphics {
 				{"copy", copy},
 				{"render_text", render_text},
 				{"set_color", set_color},
+				{"set_blend", set_blend},
 				{"draw_rect", draw_rect},
 				{"fill_rect", fill_rect},
 				{"draw_line", draw_line},
