@@ -66,7 +66,6 @@ void init(int argc, char* argv[]) {
 	// execute the main script
 	char* script_filename;
 	script_filename = Util::rtp("main.lua");
-	script_filename = SDL_iconv_utf8_locale(script_filename);
 	if (luaL_dofile(L, script_filename) != 0) panic(L);
 	SDL_free(script_filename);
 }
