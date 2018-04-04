@@ -62,10 +62,15 @@ namespace Util {
 	// ● call a handler function
 	//-------------------------------------------------------------------------
 	void call_handler(const char* name) {
-		// _G.on[name]()
+		// local f = _G.on[name]
 		lua_getglobal(L, "on");
 		lua_getfield(L, -1, name);
-		lua_call(L, 0, 0);
+		// if f then f() end
+		if (lua_isnil(L, -1)) {
+			lua_pop(L, 1);
+		} else {
+			lua_call(L, 0, 0);
+		}
 	}
 	//-------------------------------------------------------------------------
 	// ● class.new closure
