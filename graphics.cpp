@@ -13,8 +13,7 @@ namespace Graphics {
 	void update() {
 		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
 		SDL_RenderClear($renderer);
-		lua_getglobal(L, "on_paint");
-		lua_call(L, 0, 0);
+		Util::call_handler("paint");
 		SDL_RenderPresent($renderer);
 	}
 	//-------------------------------------------------------------------------

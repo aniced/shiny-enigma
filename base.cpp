@@ -13,7 +13,7 @@ void init(int argc, char* argv[]) {
 	}
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
 	if (TTF_Init() == -1) error("TTF_Init() == -1");
-	Util::base_path = SDL_GetBasePath();
+	Util::init_rtp();
 	$window = SDL_CreateWindow(
 		APPLICATION_TITLE,
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -40,7 +40,7 @@ void init(int argc, char* argv[]) {
 	L = luaL_newstate();
 	lua_atpanic(L, panic);
 	luaL_openlibs(L);
-	// set arg
+	// set _G.arg
 	lua_createtable(L, argc, 0);
 	for (int i = 0; i < argc; i++) {
 		lua_pushstring(L, argv[i]);
@@ -63,6 +63,9 @@ void init(int argc, char* argv[]) {
 	Window::init();
 	Input::init();
 	Util::init();
+	// _G.on = {}
+	lua_newtable(L);
+	lua_setglobal(L, "on");
 	// execute the main script
 	char* script_filename;
 	script_filename = Util::rtp("main.lua");
@@ -73,8 +76,7 @@ void init(int argc, char* argv[]) {
 void loop() {
 	Uint32 frame_start = SDL_GetTicks();
 	Input::update();
-	lua_getglobal(L, "on_update");
-	lua_call(L, 0, 0);
+	Util::call_handler("update");
 	Graphics::update();
 	Uint32 frame_time = SDL_GetTicks() - frame_start;
 	if (frame_time < Graphics::frame_time) {

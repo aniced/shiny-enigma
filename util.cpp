@@ -10,7 +10,6 @@ namespace Util {
 	//-------------------------------------------------------------------------
 	// ● Module variables
 	//-------------------------------------------------------------------------
-	// base_path is set in base.cpp
 	const char* base_path;
 	//-------------------------------------------------------------------------
 	// ● to_color
@@ -46,6 +45,27 @@ namespace Util {
 		const char* path = luaL_checkstring(L, 1);
 		lua_pushstring(L, rtp(path));
 		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● initialize rtp
+	//-------------------------------------------------------------------------
+	void init_rtp() {
+		const char* p = base_path = SDL_GetBasePath();
+		while (*p) {
+			if (*p & (char) 0x80) {
+				error("base path is not ASCII");
+			}
+			p++;
+		}
+	}
+	//-------------------------------------------------------------------------
+	// ● call a handler function
+	//-------------------------------------------------------------------------
+	void call_handler(const char* name) {
+		// _G.on[name]()
+		lua_getglobal(L, "on");
+		lua_getfield(L, -1, name);
+		lua_call(L, 0, 0);
 	}
 	//-------------------------------------------------------------------------
 	// ● class.new closure
@@ -94,6 +114,7 @@ namespace Util {
 	}
 	//-------------------------------------------------------------------------
 	// ● init
+	//   base_path is set independently.
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {

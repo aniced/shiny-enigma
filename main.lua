@@ -23,7 +23,7 @@ function draw_debug_line(i, s)
 	Graphics.copy({x = 0, y = h - (8 - i) * WLH}, t, t:get_rect())
 end
 
-function on_paint()
+function on.paint()
 	if x >= 60 then x = 0 end
 	Graphics.copy(Graphics.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
 	Graphics.copy({x = x, y = y, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
@@ -39,12 +39,12 @@ end
 
 Input.text_start()
 
-function on_update()
+function on.update()
 	-- only for first frame
 	if Input.key_get_mods().ctrl then
-		on_update = on_update_c
+		on.update = on_update_c
 	else
-		on_update = on_update_g
+		on.update = on_update_g
 	end
 end
 
