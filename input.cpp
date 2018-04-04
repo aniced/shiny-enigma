@@ -10,7 +10,7 @@ namespace Input {
 	// ● Module variables
 	//-------------------------------------------------------------------------
 	// 0 = released; 1 = pressed; 2 = repeated; 3 = triggered
-	int key_states[SDL_NUM_SCANCODES] = {0};
+	int states[SDL_NUM_SCANCODES] = {0};
 	bool text_composition, text_input;
 	char text_text[32];
 	//-------------------------------------------------------------------------
@@ -19,7 +19,7 @@ namespace Input {
 	void update() {
 		// reduce all key states to 0/1
 		for (size_t i = 0; i < SDL_NUM_SCANCODES; i++) {
-			key_states[i] = (bool) key_states[i];
+			states[i] = (bool) states[i];
 		}
 		text_input = false;
 
@@ -30,13 +30,13 @@ namespace Input {
 			break;
 		case SDL_KEYDOWN:
 			if (e.key.repeat) {
-				key_states[e.key.keysym.scancode] = 2;
+				states[e.key.keysym.scancode] = 2;
 			} else {
-				key_states[e.key.keysym.scancode] = 3;
+				states[e.key.keysym.scancode] = 3;
 			}
 			break;
 		case SDL_KEYUP:
-			key_states[e.key.keysym.scancode] = 0;
+			states[e.key.keysym.scancode] = 0;
 			break;
 		case SDL_TEXTINPUT:
 			text_input = true;
@@ -49,39 +49,39 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	int check_key(lua_State* L, int index) {
 		int k = luaL_checkinteger(L, index);
-		if (k < 0 || k >= ARRAY_SIZE(key_states)) {
+		if (k < 0 || k >= ARRAY_SIZE(states)) {
 			return luaL_error(L, "invalid key number: %d", k);
 		}
 		return k;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_pressed(scancode)
+	// ● pressed(scancode)
 	//-------------------------------------------------------------------------
-	int key_pressed(lua_State* L) {
+	int pressed(lua_State* L) {
 		int k = check_key(L, 1);
-		lua_pushboolean(L, key_states[k]);
+		lua_pushboolean(L, states[k]);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_triggered(scancode)
+	// ● triggered(scancode)
 	//-------------------------------------------------------------------------
-	int key_triggered(lua_State* L) {
+	int triggered(lua_State* L) {
 		int k = check_key(L, 1);
-		lua_pushboolean(L, key_states[k] == 3);
+		lua_pushboolean(L, states[k] == 3);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_repeated(scancode)
+	// ● repeated(scancode)
 	//-------------------------------------------------------------------------
-	int key_repeated(lua_State* L) {
+	int repeated(lua_State* L) {
 		int k = check_key(L, 1);
-		lua_pushboolean(L, key_states[k] >= 2);
+		lua_pushboolean(L, states[k] >= 2);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● key_get_mods()
+	// ● mods()
 	//-------------------------------------------------------------------------
-	int key_get_mods(lua_State* L) {
+	int mods(lua_State* L) {
 		SDL_Keymod mods = SDL_GetModState();
 		lua_createtable(L, 0, 15);
 		#define _(kmod, field) \
@@ -128,9 +128,9 @@ namespace Input {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
-	// ● text_get_text()
+	// ● text()
 	//-------------------------------------------------------------------------
-	int text_get_text(lua_State* L) {
+	int text(lua_State* L) {
 		if (text_input) {
 			lua_pushstring(L, text_text);
 		} else {
@@ -139,9 +139,9 @@ namespace Input {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● mouse_get_point()
+	// ● mouse()
 	//-------------------------------------------------------------------------
-	int mouse_get_point(lua_State* L) {
+	int mouse(lua_State* L) {
 		SDL_Point point;
 		SDL_GetMouseState(&point.x, &point.y);
 		Rect::create_point(L, &point);
@@ -152,15 +152,15 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"key_pressed", key_pressed},
-			{"key_triggered", key_triggered},
-			{"key_repeated", key_repeated},
-			{"key_get_mods", key_get_mods},
+			{"pressed", pressed},
+			{"triggered", triggered},
+			{"repeated", repeated},
+			{"mods", mods},
+			{"text", text},
 			{"text_start", text_start},
 			{"text_stop", text_stop},
 			{"text_set_rect", text_set_rect},
-			{"text_get_text", text_get_text},
-			{"mouse_get_point", mouse_get_point},
+			{"mouse", mouse},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Input", reg);

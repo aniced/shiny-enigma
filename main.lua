@@ -28,16 +28,16 @@ function on.update()
 	if first_frame then
 		first_frame = false
 	end
-	if Input.key_pressed(96) then
+	if Input.pressed(96) then
 		x = x + 1
 	end
-	if Input.key_repeated(97) then
+	if Input.repeated(97) then
 		y = y + 10
 	end
-	if Input.key_triggered(41) then
+	if Input.triggered(41) then
 		os.exit()
 	end
-	if Input.key_triggered(68) then
+	if Input.triggered(68) then
 		fullscreen = not fullscreen
 		Window.set_fullscreen(fullscreen and "borderless" or "windowed")
 	end
@@ -48,10 +48,8 @@ function on.paint()
 	Graphics.copy(Graphics.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
 	Graphics.copy({x = x, y = y, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
 	w:draw()
-	local m = Input.mouse_get_point()
 	draw_debug_line(1, string.format("set FPS = %d", Graphics.get_fps()))
-	draw_debug_line(2, string.format("M(%d, %d)", m.x, m.y))
-	draw_debug_line(3, Input.key_get_mods().ctrl and "ctrl" or "---")
+	draw_debug_line(3, Input.mods().ctrl and "ctrl" or "---")
 	draw_debug_line(4, string.format("{[0] = %q, n = %d}", arg[0], #arg))
 	draw_debug_line(5, package.path)
 	draw_debug_line(6, Util.rtp("main.lua"))
