@@ -94,12 +94,30 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● set_color(color)
+	//-------------------------------------------------------------------------
+	int set_color(lua_State* L) {
+		SDL_Color color;
+		Util::to_color(L, 1, &color);
+		SDL_SetRenderDrawColor($renderer, color.r, color.g, color.b, color.a);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● draw_rect(rect)
 	//-------------------------------------------------------------------------
 	int draw_rect(lua_State* L) {
 		SDL_Rect rect;
 		Rect::to_rect(L, 1, &rect);
 		SDL_RenderDrawRect($renderer, &rect);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● fill_rect(rect)
+	//-------------------------------------------------------------------------
+	int fill_rect(lua_State* L) {
+		SDL_Rect rect;
+		Rect::to_rect(L, 1, &rect);
+		SDL_RenderFillRect($renderer, &rect);
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -218,7 +236,9 @@ namespace Graphics {
 				{"get_rect", get_rect},
 				{"copy", copy},
 				{"render_text", render_text},
+				{"set_color", set_color},
 				{"draw_rect", draw_rect},
+				{"fill_rect", fill_rect},
 				{"draw_line", draw_line},
 				{"draw_9patch", draw_9patch},
 				{NULL, NULL}
