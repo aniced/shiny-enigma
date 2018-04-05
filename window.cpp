@@ -15,6 +15,14 @@ namespace Window {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● set_resizable(resizable)
+	//-------------------------------------------------------------------------
+	int set_resizable(lua_State* L) {
+		luaL_checkany(L, 1);
+		SDL_SetWindowResizable($window, (SDL_bool) lua_toboolean(L, 1));
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● set_fullscreen(mode)
 	//   mode: "fullscreen", "borderless" or "windowed"
 	//-------------------------------------------------------------------------
@@ -45,6 +53,7 @@ namespace Window {
 	void init() {
 		const luaL_reg reg[] = {
 			{"resize", resize},
+			{"set_resizable", set_resizable},
 			{"set_title", set_title},
 			{"set_fullscreen", set_fullscreen},
 			{NULL, NULL}
