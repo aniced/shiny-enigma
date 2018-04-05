@@ -13,6 +13,7 @@ namespace Input {
 	int states[SDL_NUM_SCANCODES] = {0};
 	bool text_composition, text_input;
 	char text_text[32];
+	bool pause_on_blur = true;
 	//-------------------------------------------------------------------------
 	// ● update
 	//-------------------------------------------------------------------------
@@ -27,6 +28,18 @@ namespace Input {
 		while (SDL_PollEvent(&e)) switch (e.type) {
 		case SDL_QUIT:
 			quit(0);
+			break;
+		case SDL_WINDOWEVENT:
+			switch (e.window.event) {
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				if (pause_on_blur) {
+					do {
+						SDL_WaitEvent(&e);
+					} while (e.type != SDL_WINDOWEVENT
+						|| e.window.event != SDL_WINDOWEVENT_FOCUS_GAINED);
+				}
+				break;
+			}
 			break;
 		case SDL_KEYDOWN:
 			if (e.key.repeat) {
@@ -148,6 +161,21 @@ namespace Input {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● set_pause_on_blur(enabled)
+	//-------------------------------------------------------------------------
+	int set_pause_on_blur(lua_State* L) {
+		luaL_checkany(L, 1);
+		pause_on_blur = lua_toboolean(L, 1);
+		if (!(SDL_GetWindowFlags($window) & SDL_WINDOW_INPUT_FOCUS)) {
+			SDL_Event e;
+			e.type = SDL_WINDOWEVENT;
+			e.window.windowID = SDL_GetWindowID($window);
+			e.window.event = SDL_WINDOWEVENT_FOCUS_GAINED;
+			SDL_PushEvent(&e);
+		}
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
@@ -161,6 +189,7 @@ namespace Input {
 			{"text_stop", text_stop},
 			{"text_set_rect", text_set_rect},
 			{"mouse", mouse},
+			{"set_pause_on_blur", set_pause_on_blur},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Input", reg);
