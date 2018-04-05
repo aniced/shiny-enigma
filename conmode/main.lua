@@ -1,18 +1,14 @@
+require 'conmode/graphics'
 require 'conmode/scenemanager'
 require 'conmode/scene'
 require 'conmode/scene_hello'
+require 'conmode/scene_message'
 
 WLH = 24
 Window.set_resizable(false)
 
-function draw_line(i, s)
-	t = Graphics.render_text(0, s)
-	t:set_color({r = 255, g = 255, b = 255})
-	Graphics.copy({x = 0, y = i * WLH}, t, t:get_rect())
-end
-
 function on.update()
-	SceneManager.on.update()
+	SceneManager.update()
 end
 
 function on.paint()
@@ -21,4 +17,4 @@ function on.paint()
 	SceneManager.on.paint()
 end
 
-SceneManager.push(Scene_Hello.new())
+SceneManager.call(Scene_Hello.new())
