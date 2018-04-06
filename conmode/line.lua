@@ -13,6 +13,17 @@ Line.styles = {
 			Graphics.copy(Line.get_rect(i), 0, {x = 40, y = 0, w = 8, h = 8})
 		end,
 	},
+	selected = {
+		color = {r = 45, g = 54, b = 9},
+		draw_background = function (i)
+			local patch = {
+				texture = 0,
+				x = 17, y = 0, w = 5, h = 5,
+				t = 2, r = 2, b = 2, l = 2
+			}
+			Graphics.draw_9patch(Line.get_rect(i), patch)
+		end,
+	},
 }
 
 function Line.get_rect(i)

@@ -9,7 +9,7 @@ function Scene_Hello:init()
 			self.x = 0
 		end
 		if Input.triggered(44) then
-			self.lines[1] = Line.new(SceneManager.call(Scene_Message.new()), nil)
+			self.lines[1] = Line.new(SceneManager.call(Scene_Message.new()), Line.styles.selected)
 		end
 	end
 end
