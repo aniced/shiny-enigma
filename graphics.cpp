@@ -74,11 +74,35 @@ namespace Graphics {
 		SDL_Texture* texture = check_texture(L, 2);
 		SDL_Rect src, dest;
 		Rect::to_rect(L, 1, &dest);
-		Rect::to_rect(L, 3, &src);
+		Rect::check_rect(L, 3, &src);
 		if (!dest.w) dest.w = src.w;
 		if (!dest.h) dest.h = src.h;
 		if (SDL_RenderCopy($renderer, texture, &src, &dest) < 0) {
 			return luaL_error(L, "SDL_RenderCopy() < 0");
+		}
+	}
+	//-------------------------------------------------------------------------
+	// ● tile(dest_rect, texture, src_rect)
+	//   The texture will be tiled using a loop. From this point of view,
+	//   it may be slower than stretching with the copy function.
+	//   The destination rectangle will not be fully covered if it can't be
+	//   divided exactly into source rectangles.
+	//-------------------------------------------------------------------------
+	int tile(lua_State* L) {
+		SDL_Texture* texture = check_texture(L, 2);
+		SDL_Rect src, dest, dest1;
+		Rect::check_rect(L, 1, &dest);
+		Rect::check_rect(L, 3, &src);
+		dest1.w = src.w;
+		dest1.h = src.h;
+		for (int ty = 0; ty < dest.h / src.h; ty++) {
+			dest1.y = dest.y + ty * src.h;
+			for (int tx = 0; tx < dest.w / src.w; tx++) {
+				dest1.x = dest.x + tx * src.w;
+				if (SDL_RenderCopy($renderer, texture, &src, &dest1) < 0) {
+					return luaL_error(L, "SDL_RenderCopy() < 0");
+				}
+			}
 		}
 	}
 	//-------------------------------------------------------------------------
@@ -253,6 +277,7 @@ namespace Graphics {
 				{"get_size", get_size},
 				{"get_rect", get_rect},
 				{"copy", copy},
+				{"tile", tile},
 				{"render_text", render_text},
 				{"set_color", set_color},
 				{"set_blend", set_blend},

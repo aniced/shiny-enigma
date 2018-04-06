@@ -12,8 +12,6 @@ function on.update()
 end
 
 function on.paint()
-	Graphics.set_color({r = 0, g = 128, b = 0, a = 255})
-	Graphics.fill_rect({x = 0, y = 0, w = 640, h = 480})
 	SceneManager.on.paint()
 end
 

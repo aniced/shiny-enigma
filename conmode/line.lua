@@ -4,13 +4,13 @@ Line.styles = {
 	normal = {
 		color = {r = 255, g = 255, b = 255},
 		draw_background = function (i)
-			Graphics.copy(Line.get_rect(i), 0, {x = 32, y = 0, w = 8, h = 8})
+			Graphics.tile(Line.get_rect(i), 0, {x = 32, y = 0, w = 8, h = 8})
 		end,
 	},
 	null = {
 		color = {r = 0, g = 0, b = 0},
 		draw_background = function (i)
-			Graphics.copy(Line.get_rect(i), 0, {x = 40, y = 0, w = 8, h = 8})
+			Graphics.tile(Line.get_rect(i), 0, {x = 40, y = 0, w = 8, h = 8})
 		end,
 	},
 	selected = {
