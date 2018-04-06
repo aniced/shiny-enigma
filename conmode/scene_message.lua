@@ -7,7 +7,4 @@ function Scene_Message:init()
 			SceneManager.back("123")
 		end
 	end
-	self.on.paint = function ()
-		Graphics.draw_line(0, "Message")
-	end
 end

@@ -12,8 +12,4 @@ function Scene_Hello:init()
 			Window.set_title(SceneManager.call(Scene_Message.new()))
 		end
 	end
-	self.on.paint = function ()
-		Graphics.set_color({r = 128, g = 0, b = 0, a = 255})
-		Graphics.fill_rect({x = self.x, y = 32, w = 128, h = 64})
-	end
 end

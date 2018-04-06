@@ -8,4 +8,9 @@ function Scene:init()
 			coroutine.yield()
 		end
 	end)
+	self.on.paint = function ()
+		for i = 0, 19 do
+			Graphics.draw_line(i)
+		end
+	end
 end

@@ -1,10 +1,10 @@
+WLH = 24
 require 'conmode/graphics'
 require 'conmode/scenemanager'
 require 'conmode/scene'
 require 'conmode/scene_hello'
 require 'conmode/scene_message'
 
-WLH = 24
 Window.set_resizable(false)
 
 function on.update()
