@@ -20,22 +20,29 @@ function Line.get_rect(i)
 end
 
 function Line:init(text, style)
-	self.style = style or Graphics.line_styles.normal
-	self:set_text(text)
+	self:set_style(style)
+	self:set_text(text or "")
+end
+
+function Line:set_style(style)
+	self.style = style or Line.styles.normal
+	if self.texture then
+		self.texture:set_color(self.style.color)
+	end
 end
 
 function Line:set_text(text)
-	if text then
-		self.texture = Graphics.render_text(0, text or "")
-		self.texture:set_color(style.color)
+	if text and #text ~= 0 then
+		self.texture = Graphics.render_text(0, text)
+		self.texture:set_color(self.style.color)
 	else
 		self.texture = nil
 	end
 end
 
 function Line:draw(i)
-	local rect = Graphics.get_line_rect(i)
-	self.style.draw_background(rect)
+	local rect = Line.get_rect(i)
+	self.style.draw_background(i)
 	if self.texture then
 		Graphics.copy({
 			x = 0,

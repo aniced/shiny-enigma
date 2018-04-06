@@ -10,12 +10,12 @@ function Scene:init()
 	end)
 	self.on.paint = function ()
 		self:draw_line(0, self.lines[0])
-		for i = 0, 15 do
-			self:draw_line(i + 1, self.lines[self.scroll_top + i])
+		for i = 1, 16 do
+			self:draw_line(i, self.lines[self.scroll_top + i - 1])
 		end
 	end
 	self.lines = {}
-	self.scroll_top = 0
+	self.scroll_top = 1
 end
 
 function Scene:draw_line(i, line)
