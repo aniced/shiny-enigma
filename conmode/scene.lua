@@ -29,3 +29,20 @@ function Scene:draw_line(i, line)
 		Line.styles.null.draw_background(i)
 	end
 end
+
+function Scene:provide_help(str)
+	local text, pos, i = nil, 1, 0
+	local _, count = str:gsub("\n", "\n")
+	count = count + 1
+	while true do
+		local pos_new
+		text, pos_new = str:match("^(.-)\n()", pos)
+		if not text then break end
+		i = i + 1
+		self.lines[-count + i - 1] = Line.new(text, Line.styles.help)
+		pos = pos_new
+	end
+	text = str:sub(pos)
+	self.lines[-1] = Line.new(text, Line.styles.help)
+	self.lines.help_lines = count
+end
