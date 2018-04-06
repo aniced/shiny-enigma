@@ -1,5 +1,5 @@
 WLH = 24
-require 'conmode/graphics'
+require 'conmode/line'
 require 'conmode/scenemanager'
 require 'conmode/scene'
 require 'conmode/scene_hello'
