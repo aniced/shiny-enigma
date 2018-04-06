@@ -10,7 +10,11 @@ function Scene:init()
 	end)
 	self.on.paint = function ()
 		self:draw_line(0, self.lines[0])
-		for i = 1, 16 do
+		local help_lines = self.lines.help_lines or 0
+		for i = -help_lines, -1 do
+			self:draw_line(20 + i, self.lines[i])
+		end
+		for i = 1, 19 - help_lines do
 			self:draw_line(i, self.lines[self.scroll_top + i - 1])
 		end
 	end

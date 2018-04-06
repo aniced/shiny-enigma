@@ -24,6 +24,12 @@ Line.styles = {
 			Graphics.draw_9patch(Line.get_rect(i), patch)
 		end,
 	},
+	help = {
+		color = {r = 147, g = 236, b = 147},
+		draw_background = function (i)
+			Graphics.copy(Line.get_rect(i), 0, {x = 48, y = 0, w = 1, h = 1})
+		end,
+	},
 }
 
 function Line.get_rect(i)
