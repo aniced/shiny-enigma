@@ -78,15 +78,19 @@ namespace Util {
 	//   upvalue 2 = parent
 	//-------------------------------------------------------------------------
 	int new_instance(lua_State* L) {
+		int nargs = lua_gettop(L);
 		// local self = {}
 		lua_newtable(L);
 		// setmetatable(self, class)
 		lua_pushvalue(L, lua_upvalueindex(1));
 		lua_setmetatable(L, -2);
-		// class.init(self)
+		// class.init(self, ...)
 		lua_getfield(L, lua_upvalueindex(1), "init");
 		lua_pushvalue(L, -2);
-		lua_call(L, 1, 0);
+		for (int i = 1; i <= nargs; i++) {
+			lua_pushvalue(L, i);
+		}
+		lua_call(L, nargs + 1, 0);
 		// return self
 		return 1;
 	}
