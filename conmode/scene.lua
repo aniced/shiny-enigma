@@ -12,6 +12,10 @@ function Scene:init()
 		end
 	end)
 	function self.on:update_cursor()
+		if #self.items == 0 then
+			-- nothing to scroll
+			return
+		end
 		local d = 0 -- change to the cursor index
 		if Input.repeated(81) then d = d + 1 end
 		if Input.repeated(82) then d = d - 1 end
