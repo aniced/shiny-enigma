@@ -30,37 +30,40 @@ Line.styles = {
 			Graphics.copy(Line.get_rect(i), 0, {x = 48, y = 0, w = 1, h = 1})
 		end,
 	},
+	title = {
+		color = {r = 147, g = 236, b = 147},
+		draw_background = function (i)
+			Graphics.copy(Line.get_rect(i), 0, {x = 48, y = 0, w = 1, h = 1})
+		end,
+	},
 }
 
 function Line.get_rect(i)
 	return {x = 0, y = i * WLH, w = Graphics.get_rect().w, h = WLH}
 end
 
-function Line:init(text, style)
-	self:set_style(style)
+-- state: nil or "disabled"
+function Line:init(text, state)
 	self:set_text(text or "")
-end
-
-function Line:set_style(style)
-	self.style = style or Line.styles.normal
-	if self.texture then
-		self.texture:set_color(self.style.color)
-	end
+	self.state = state
 end
 
 function Line:set_text(text)
 	if text and #text ~= 0 then
 		self.texture = Graphics.render_text(0, text)
-		self.texture:set_color(self.style.color)
 	else
 		self.texture = nil
 	end
 end
 
-function Line:draw(i)
+function Line:draw(i, style)
+	if type(style) ~= "table" then
+		style = Line.styles[style]
+	end
 	local rect = Line.get_rect(i)
-	self.style.draw_background(i)
+	style.draw_background(i)
 	if self.texture then
+		self.texture:set_color(style.color)
 		Graphics.copy({
 			x = 0,
 			y = (i + 0.5) * WLH - self.texture:get_rect().h / 2,
