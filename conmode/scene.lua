@@ -19,22 +19,30 @@ function Scene:init()
 		if Input.repeated(78) then d = d + 10 end
 		if cursor_delta == 0 then return end
 		self.cursor = self.cursor + d
-		if self.cursor < 1 then self.cursor = 1 end
+		if self.cursor > #self.items then
+			self.cursor = #self.items
+		elseif self.cursor < 1 then
+			self.cursor = 1
+		end
+		if self.cursor < self.scroll_top then
+			self.scroll_top = self.cursor
+		elseif self.cursor >= self.scroll_top + self.items.page_lines then
+			self.scroll_top = self.cursor - self.items.page_lines + 1
+		end
 	end
 	function self.on:paint()
 		self:draw_line(0, self.items[0], "title")
-		local help_lines = self.items.help_lines or 0
-		for i = -help_lines, -1 do
+		for i = -self.items.help_lines, -1 do
 			self:draw_line(20 + i, self.items[i], "help")
 		end
-		for i = 1, 19 - help_lines do
+		for i = 1, 19 - self.items.help_lines do
 			local j = self.scroll_top + i - 1
 			local style = "normal"
 			if j == self.cursor then style = "selected" end
 			self:draw_line(i, self.items[j], style)
 		end
 	end
-	self.items = {}
+	self.items = {help_lines = 0, page_lines = 19}
 	self.scroll_top = 1
 	self.cursor = 1
 end
@@ -51,6 +59,7 @@ function Scene:provide_help(str)
 	local _, count = str:gsub("\n", "\n")
 	count = count + 1
 	self.items.help_lines = count
+	self.items.page_lines = 19 - count
 	local i = 0
 	for text in str:gmatch("[^\n]+") do
 		i = i + 1
