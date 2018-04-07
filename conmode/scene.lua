@@ -6,10 +6,21 @@ function Scene:init()
 	self.on = {}
 	self.update = coroutine.wrap(function ()
 		while true do
+			self.on.update_cursor(self)
 			self.on.update(self)
 			coroutine.yield()
 		end
 	end)
+	function self.on:update_cursor()
+		local d = 0 -- change to the cursor index
+		if Input.repeated(81) then d = d + 1 end
+		if Input.repeated(82) then d = d - 1 end
+		if Input.repeated(75) then d = d - 10 end
+		if Input.repeated(78) then d = d + 10 end
+		if cursor_delta == 0 then return end
+		self.cursor = self.cursor + d
+		if self.cursor < 1 then self.cursor = 1 end
+	end
 	function self.on:paint()
 		self:draw_line(0, self.lines[0], "title")
 		local help_lines = self.lines.help_lines or 0
