@@ -6,11 +6,11 @@ function Scene:init()
 	self.on = {}
 	self.update = coroutine.wrap(function ()
 		while true do
-			self.on.update()
+			self.on.update(self)
 			coroutine.yield()
 		end
 	end)
-	self.on.paint = function ()
+	function self.on:paint()
 		self:draw_line(0, self.lines[0], "title")
 		local help_lines = self.lines.help_lines or 0
 		for i = -help_lines, -1 do

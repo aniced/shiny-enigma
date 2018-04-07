@@ -7,9 +7,9 @@ function Scene_Hello:init()
 		self.lines[i] = Line.new(tostring(math.sqrt(i)))
 	end
 	self:provide_help("Space = Fire a message")
-	self.on.update = function ()
+	function self.on:update()
 		if Input.triggered(44) then
-			self.lines[1] = Line.new(SceneManager.call(Scene_Message.new()), Line.styles.selected)
+			self.lines[1] = Line.new(SceneManager.call(Scene_Message.new()))
 		end
 	end
 end

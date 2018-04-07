@@ -12,7 +12,7 @@ function on.update()
 end
 
 function on.paint()
-	SceneManager.on.paint()
+	SceneManager.on.paint(SceneManager.peek())
 end
 
 SceneManager.call(Scene_Hello.new())
