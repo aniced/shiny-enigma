@@ -152,22 +152,28 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● check_blend
+	//   "copy", "blend", "add", "mod"
+	//-------------------------------------------------------------------------
+	SDL_BlendMode check_blend(lua_State* L, int index) {
+		const char* s = luaL_checkstring(L, index);
+		if (strcmp(s, "copy") == 0) {
+			return SDL_BLENDMODE_NONE;
+		} else if (strcmp(s, "blend") == 0) {
+			return SDL_BLENDMODE_BLEND;
+		} else if (strcmp(s, "add") == 0) {
+			return SDL_BLENDMODE_ADD;
+		} else if (strcmp(s, "mod") == 0) {
+			return SDL_BLENDMODE_MOD;
+		} else {
+			luaL_argerror(L, index, "unknown blend mode");
+		}
+	}
+	//-------------------------------------------------------------------------
 	// ● set_blend(mode)
-	//   mode: "copy", "blend", "add", "mod"
 	//-------------------------------------------------------------------------
 	int set_blend(lua_State* L) {
-		const char* s = lua_tostring(L, 1);
-		SDL_BlendMode mode;
-		if (strcmp(s, "copy") == 0) {
-			mode = SDL_BLENDMODE_NONE;
-		} else if (strcmp(s, "blend") == 0 || !*s) {
-			mode = SDL_BLENDMODE_BLEND;
-		} else if (strcmp(s, "add") == 0) {
-			mode = SDL_BLENDMODE_ADD;
-		} else if (strcmp(s, "mod") == 0) {
-			mode = SDL_BLENDMODE_MOD;
-		}
-		SDL_SetRenderDrawBlendMode($renderer, mode);
+		SDL_SetRenderDrawBlendMode($renderer, check_blend(L, 1));
 	}
 	//-------------------------------------------------------------------------
 	// ● draw_rect(rect)
@@ -329,6 +335,14 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● Texture:set_blend(mode)
+	//-------------------------------------------------------------------------
+	int texture_set_blend(lua_State* L) {
+		SDL_Texture* texture = check_texture(L, 1);
+		SDL_SetTextureBlendMode(texture, check_blend(L, 2));
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
@@ -359,6 +373,7 @@ namespace Graphics {
 				{"__gc", texture_gc},
 				{"get_rect", texture_get_rect},
 				{"set_color", texture_set_color},
+				{"set_blend", texture_set_blend},
 				{NULL, NULL}
 			};
 			luaL_newmetatable(L, "Texture");
