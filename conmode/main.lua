@@ -15,4 +15,4 @@ function on.paint()
 	SceneManager.on.paint(SceneManager.peek())
 end
 
-SceneManager.call(Scene_Hello.new())
+SceneManager.set_root(Scene_Hello.new())

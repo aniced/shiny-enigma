@@ -8,12 +8,37 @@
 
 namespace Graphics {
 	//-------------------------------------------------------------------------
+	// ● Module variables
+	//-------------------------------------------------------------------------
+	struct transition_state {
+		bool active = false;
+		int duration = 0;
+		int frame;
+		SDL_Texture* old_texture;
+		SDL_Texture* new_texture;
+	} transition_state;
+	//-------------------------------------------------------------------------
 	// ● update
 	//-------------------------------------------------------------------------
 	void update() {
 		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
 		SDL_RenderClear($renderer);
-		Util::call_handler("paint");
+		if (transition_state.active) {
+			float t = transition_state.frame;
+			t /= transition_state.duration;
+			t *= 255;
+			SDL_RenderCopy($renderer, transition_state.old_texture, NULL, NULL);
+			SDL_SetTextureAlphaMod(transition_state.new_texture, (Uint8) t);
+			SDL_RenderCopy($renderer, transition_state.new_texture, NULL, NULL);
+			transition_state.frame++;
+			if (transition_state.frame > transition_state.duration) {
+				transition_state.active = false;
+				SDL_DestroyTexture(transition_state.old_texture);
+				SDL_DestroyTexture(transition_state.new_texture);
+			}
+		} else {
+			Util::call_handler("paint");
+		}
 		SDL_RenderPresent($renderer);
 	}
 	//-------------------------------------------------------------------------
@@ -237,6 +262,43 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● create_target_texture
+	//-------------------------------------------------------------------------
+	SDL_Texture* create_target_texture() {
+		int w, h;
+		SDL_GetRendererOutputSize($renderer, &w, &h);
+		SDL_Texture* texture = SDL_CreateTexture(
+			$renderer,
+			SDL_PIXELFORMAT_RGBA32,
+			SDL_TEXTUREACCESS_TARGET,
+			w, h
+		);
+		if (!texture) error("SDL_CreateTexture(SDL_TEXTUREACCESS_TARGET) == NULL");
+		return texture;
+	}
+	//-------------------------------------------------------------------------
+	// ● freeze()
+	//-------------------------------------------------------------------------
+	int freeze(lua_State* L) {
+		transition_state.active = false;
+		transition_state.old_texture = create_target_texture();
+		SDL_SetRenderTarget($renderer, transition_state.old_texture);
+		update(); // paint
+	}
+	//-------------------------------------------------------------------------
+	// ● transition(duration = 10)
+	//-------------------------------------------------------------------------
+	int transition(lua_State* L) {
+		transition_state.duration = luaL_optint(L, 1, 10);
+		transition_state.frame = 0;
+		transition_state.new_texture = create_target_texture();
+		SDL_SetTextureBlendMode(transition_state.new_texture, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderTarget($renderer, transition_state.new_texture);
+		update(); // paint
+		transition_state.active = true;
+		SDL_SetRenderTarget($renderer, NULL);
+	}
+	//-------------------------------------------------------------------------
 	// ● ~Texture()
 	//-------------------------------------------------------------------------
 	int texture_gc(lua_State* L) {
@@ -285,6 +347,8 @@ namespace Graphics {
 				{"fill_rect", fill_rect},
 				{"draw_line", draw_line},
 				{"draw_9patch", draw_9patch},
+				{"freeze", freeze},
+				{"transition", transition},
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);
