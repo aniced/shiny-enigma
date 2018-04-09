@@ -283,18 +283,34 @@ namespace Graphics {
 		return texture;
 	}
 	//-------------------------------------------------------------------------
+	// ● get_animation_enabled()
+	//   set_animation_enabled(enabled)
+	//-------------------------------------------------------------------------
+	bool animation_enabled = true;
+	int get_animation_enabled(lua_State* L) {
+		lua_pushboolean(L, animation_enabled);
+		return 1;
+	}
+	int set_animation_enabled(lua_State* L) {
+		animation_enabled = Util::check_boolean(L, 1);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● freeze()
 	//-------------------------------------------------------------------------
 	int freeze(lua_State* L) {
+		if (!animation_enabled) return 0;
 		transition_state.active = false;
 		transition_state.old_texture = create_target_texture();
 		SDL_SetRenderTarget($renderer, transition_state.old_texture);
 		update(); // paint
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● transition(duration = 10)
 	//-------------------------------------------------------------------------
 	int transition(lua_State* L) {
+		if (!animation_enabled) return 0;
 		transition_state.duration = luaL_optint(L, 1, 10);
 		transition_state.frame = 0;
 		transition_state.new_texture = create_target_texture();
@@ -303,6 +319,7 @@ namespace Graphics {
 		update(); // paint
 		transition_state.active = true;
 		SDL_SetRenderTarget($renderer, NULL);
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● ~Texture()
@@ -361,6 +378,8 @@ namespace Graphics {
 				{"fill_rect", fill_rect},
 				{"draw_line", draw_line},
 				{"draw_9patch", draw_9patch},
+				{"get_animation_enabled", get_animation_enabled},
+				{"set_animation_enabled", set_animation_enabled},
 				{"freeze", freeze},
 				{"transition", transition},
 				{NULL, NULL}
