@@ -12,23 +12,21 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	struct transition_state {
 		bool active = false;
-		int duration = 0;
+		int duration;
 		int frame;
 		SDL_Texture* old_texture;
 		SDL_Texture* new_texture;
 	} transition_state;
 	//-------------------------------------------------------------------------
-	// ● update
+	// ● update_transition
 	//-------------------------------------------------------------------------
-	void update() {
-		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
-		SDL_RenderClear($renderer);
-		if (transition_state.active) {
-			float t = transition_state.frame;
-			t /= transition_state.duration;
-			t *= 255;
-			SDL_RenderCopy($renderer, transition_state.old_texture, NULL, NULL);
-			SDL_SetTextureAlphaMod(transition_state.new_texture, (Uint8) t);
+	void update_transition() {
+		// draw the frozen picture first
+		SDL_RenderCopy($renderer, transition_state.old_texture, NULL, NULL);
+		if (transition_state.duration) {
+			// duration != 0: transitioning
+			int alpha = 255 * transition_state.frame / transition_state.duration;
+			SDL_SetTextureAlphaMod(transition_state.new_texture, alpha);
 			SDL_RenderCopy($renderer, transition_state.new_texture, NULL, NULL);
 			transition_state.frame++;
 			if (transition_state.frame > transition_state.duration) {
@@ -36,6 +34,18 @@ namespace Graphics {
 				SDL_DestroyTexture(transition_state.old_texture);
 				SDL_DestroyTexture(transition_state.new_texture);
 			}
+		} else {
+			// duration == 0: freezing
+		}
+	}
+	//-------------------------------------------------------------------------
+	// ● update
+	//-------------------------------------------------------------------------
+	void update() {
+		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
+		SDL_RenderClear($renderer);
+		if (transition_state.active) {
+			update_transition();
 		} else {
 			Util::call_handler("paint");
 		}
@@ -300,10 +310,13 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	int freeze(lua_State* L) {
 		if (!animation_enabled) return 0;
+		// fill in the transition state partially
 		transition_state.active = false;
+		transition_state.duration = 0;
+		// capture the current picture
 		transition_state.old_texture = create_target_texture();
 		SDL_SetRenderTarget($renderer, transition_state.old_texture);
-		update(); // paint
+		update();
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -311,14 +324,15 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	int transition(lua_State* L) {
 		if (!animation_enabled) return 0;
+		// fill in the transition state
 		transition_state.duration = luaL_optint(L, 1, 10);
 		transition_state.frame = 0;
 		transition_state.new_texture = create_target_texture();
 		SDL_SetTextureBlendMode(transition_state.new_texture, SDL_BLENDMODE_BLEND);
 		SDL_SetRenderTarget($renderer, transition_state.new_texture);
 		update(); // paint
-		transition_state.active = true;
 		SDL_SetRenderTarget($renderer, NULL);
+		transition_state.active = true;
 		return 0;
 	}
 	//-------------------------------------------------------------------------
