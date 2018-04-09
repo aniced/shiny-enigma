@@ -6,11 +6,17 @@ function Scene:init()
 	self.on = {}
 	self.update = coroutine.wrap(function ()
 		while true do
+			self.on.update_general(self)
 			self.on.update_cursor(self)
 			self.on.update(self)
 			coroutine.yield()
 		end
 	end)
+	function self.on:update_general()
+		if Input.action() then
+			Graphics.stop_transition()
+		end
+	end
 	function self.on:update_cursor()
 		if #self.items == 0 then
 			-- nothing to scroll

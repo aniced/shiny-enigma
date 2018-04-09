@@ -53,7 +53,6 @@ namespace Input {
 			}
 			break;
 		case SDL_KEYUP:
-			state_action = true;
 			states[e.key.keysym.scancode] = 0;
 			break;
 		case SDL_TEXTINPUT:
@@ -65,7 +64,6 @@ namespace Input {
 			state_action = true;
 			break;
 		case SDL_MOUSEBUTTONUP:
-			state_action = true;
 			break;
 		}
 	}
