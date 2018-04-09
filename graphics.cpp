@@ -336,6 +336,16 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● stop_transition
+	//   This function makes no difference if any of the following:
+	//   - animation is disabled
+	//   - freeze() is called but not transition()
+	//-------------------------------------------------------------------------
+	int stop_transition(lua_State* L) {
+		transition_state.active = false;
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● ~Texture()
 	//-------------------------------------------------------------------------
 	int texture_gc(lua_State* L) {
@@ -396,6 +406,7 @@ namespace Graphics {
 				{"set_animation_enabled", set_animation_enabled},
 				{"freeze", freeze},
 				{"transition", transition},
+				{"stop_transition", stop_transition},
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);
