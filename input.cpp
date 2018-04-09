@@ -11,6 +11,8 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// 0 = released; 1 = pressed; 2 = repeated; 3 = triggered
 	int states[SDL_NUM_SCANCODES] = {0};
+	// see action()
+	bool state_action;
 	bool text_composition, text_input;
 	char text_text[32];
 	bool pause_on_blur = true;
@@ -22,6 +24,7 @@ namespace Input {
 		for (size_t i = 0; i < SDL_NUM_SCANCODES; i++) {
 			states[i] = (bool) states[i];
 		}
+		state_action = false;
 		text_input = false;
 
 		SDL_Event e;
@@ -42,6 +45,7 @@ namespace Input {
 			}
 			break;
 		case SDL_KEYDOWN:
+			state_action = true;
 			if (e.key.repeat) {
 				states[e.key.keysym.scancode] = 2;
 			} else {
@@ -49,13 +53,30 @@ namespace Input {
 			}
 			break;
 		case SDL_KEYUP:
+			state_action = true;
 			states[e.key.keysym.scancode] = 0;
 			break;
 		case SDL_TEXTINPUT:
+			state_action = true;
 			text_input = true;
 			memcpy(text_text, e.text.text, sizeof(text_text));
 			break;
+		case SDL_MOUSEBUTTONDOWN:
+			state_action = true;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			state_action = true;
+			break;
 		}
+	}
+	//-------------------------------------------------------------------------
+	// ● action()
+	//   true is returned if the user performed an action.
+	//   When this function returns true, animations should stop.
+	//-------------------------------------------------------------------------
+	int action(lua_State* L) {
+		lua_pushboolean(L, state_action);
+		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● check_key
@@ -180,6 +201,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
+			{"action", action},
 			{"pressed", pressed},
 			{"triggered", triggered},
 			{"repeated", repeated},
