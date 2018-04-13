@@ -1,4 +1,5 @@
 WLH = 24
+Typesetting = require 'typesetting'
 require 'conmode/line'
 require 'conmode/scenemanager'
 require 'conmode/scene'

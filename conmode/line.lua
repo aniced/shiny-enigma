@@ -49,11 +49,7 @@ function Line:init(text, state)
 end
 
 function Line:set_text(text)
-	if text and #text ~= 0 then
-		self.texture = Graphics.render_text(0, text)
-	else
-		self.texture = nil
-	end
+	self.text = text
 end
 
 function Line:draw(i, style)
@@ -62,11 +58,8 @@ function Line:draw(i, style)
 	end
 	local rect = Line.get_rect(i)
 	style.draw_background(i)
-	if self.texture then
-		self.texture:set_color(style.color)
-		Graphics.copy({
-			x = 0,
-			y = (i + 0.5) * WLH - self.texture:get_rect().h / 2,
-		}, self.texture, self.texture:get_rect())
-	end
+	Typesetting.draw_text({
+		x = 0,
+		y = i * WLH,
+	}, self.text, style.color)
 end
