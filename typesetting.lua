@@ -12,8 +12,9 @@ function self.get_glyph(ch)
 	end
 end
 
-function self.draw_text(point, text, color)
+function self.draw_text(point, text, initial_color)
 	local i, x, y = 1, point.x, point.y
+	local color = initial_color
 	while i <= #text do
 		local ch = text:sub(i, i)
 		if ch == "\n" then
@@ -25,6 +26,13 @@ function self.draw_text(point, text, color)
 			local param, t = nil, {}
 			ch, param, i = text:match("^([cit])%[(%-?[0-9]-)%]()", i)
 			param = tonumber(param)
+			function t.c()
+				color = {
+					r = bit.band(param, 255),
+					g = bit.band(bit.rshift(param, 8), 255),
+					b = bit.rshift(param, 16)
+				}
+			end
 			function t.t()
 				x = param * WLH
 				if x < 0 then
