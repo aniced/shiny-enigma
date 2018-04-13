@@ -4,7 +4,7 @@ function Scene_Hello:init()
 	Scene.init(self)
 	self.items[0] = Line.new("Hello!")
 	for i = 1, 30 do
-		self.items[i] = Line.new(tostring(math.sqrt(i)))
+		self.items[i] = Line.new(string.format("%d\bt[4]%f\bt[-1]|", i, math.sqrt(i)))
 	end
 	self:provide_help("Space = Fire a message; Esc = Exit")
 	function self.on:update()
