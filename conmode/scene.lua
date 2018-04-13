@@ -15,6 +15,7 @@ function Scene:init()
 	function self.on:update_general()
 		if Input.action() then
 			Graphics.stop_transition()
+			-- the update will continue processing the input
 		end
 	end
 	function self.on:update_cursor()
@@ -22,18 +23,19 @@ function Scene:init()
 			-- nothing to scroll
 			return
 		end
-		local d = 0 -- change to the cursor index
-		if Input.repeated(81) then d = d + 1 end
-		if Input.repeated(82) then d = d - 1 end
-		if Input.repeated(75) then d = d - 10 end
-		if Input.repeated(78) then d = d + 10 end
-		if cursor_delta == 0 then return end
-		self.cursor = self.cursor + d
-		if self.cursor > #self.items then
-			self.cursor = #self.items
-		elseif self.cursor < 1 then
-			self.cursor = 1
+		local n = self.cursor -- new cursor index
+		if Input.repeated(81) then n = n + 1 end
+		if Input.repeated(82) then n = n - 1 end
+		if Input.repeated(75) then n = n - 10 end
+		if Input.repeated(78) then n = n + 10 end
+		if Input.repeated(74) then n = 1 end
+		if Input.repeated(77) then n = #self.items end
+		if n > #self.items then
+			n = #self.items
+		elseif n < 1 then
+			n = 1
 		end
+		self.cursor = n
 		if self.cursor < self.scroll_top then
 			self.scroll_top = self.cursor
 		elseif self.cursor >= self.scroll_top + self.items.page_lines then
