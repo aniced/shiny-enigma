@@ -8,10 +8,7 @@ namespace UTF8 {
 	//-------------------------------------------------------------------------
 	// ● Module declarations
 	//-------------------------------------------------------------------------
-	const char charpattern[] = {
-		'[', 0, '-', 0x7f, (char) 0xc2, '-', (char) 0xf4, ']',
-		'[', (char) 0x80, '-', (char) 0xbf, ']', '*'
-	};
+	const char* charpattern = "[%z-\x7f\xc2-\xf4][\x80-\xbf]*";
 	//-------------------------------------------------------------------------
 	// ● add_encode
 	//-------------------------------------------------------------------------
@@ -209,7 +206,7 @@ namespace UTF8 {
 			{NULL, NULL}
 		};
 		luaL_register(L, "utf8", reg);
-		lua_pushlstring(L, charpattern, sizeof(charpattern));
+		lua_pushstring(L, charpattern);
 		lua_setfield(L, -2, "charpattern");
 		lua_pop(L, 1);
 	}

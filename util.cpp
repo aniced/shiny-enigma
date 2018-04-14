@@ -140,6 +140,20 @@ namespace Util {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● shallow_copy(obj)
+	//-------------------------------------------------------------------------
+	int shallow_copy(lua_State* L) {
+		lua_newtable(L);
+		lua_pushnil(L);
+		while (lua_next(L, 1)) {
+			lua_pushvalue(L, 3);
+			lua_pushvalue(L, 4);
+			lua_settable(L, 2);
+			lua_settop(L, 3);
+		}
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//   base_path is set independently.
 	//-------------------------------------------------------------------------
@@ -147,6 +161,7 @@ namespace Util {
 		const luaL_reg reg[] = {
 			{"class", new_class},
 			{"rtp", rtp_lua},
+			{"shallow_copy", shallow_copy},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Util", reg);

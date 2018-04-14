@@ -13,7 +13,11 @@ function self.get_glyph(ch)
 end
 
 function self.draw_text(point, text, initial_color)
-	local i, x, y, color = 1, point.x, point.y, initial_color
+	local i, x, y = 1, point.x, point.y
+	local color = {
+		r = initial_color.r, g = initial_color.g,
+		b = initial_color.b, a = initial_color.a
+	}
 	while i <= #text do
 		local ch = utf8.char(utf8.codepoint(text, i))
 		if ch == "\n" then
@@ -23,14 +27,11 @@ function self.draw_text(point, text, initial_color)
 		elseif ch == "\b" then
 			i = i + 1
 			local param, t = nil, {}
-			ch, param, i = text:match("^([cit])%[(%-?[0-9]-)%]()", i)
-			param = tonumber(param)
+			ch, param, i = text:match("^(.)%[(.-)%]()", i)
 			function t.c()
-				color = {
-					r = bit.band(param, 255),
-					g = bit.band(bit.rshift(param, 8), 255),
-					b = bit.rshift(param, 16)
-				}
+				for k, v in param:gmatch("([rgb])%d+") do
+					color[k] = tonumber(v)
+				end
 			end
 			function t.t()
 				x = param * WLH
