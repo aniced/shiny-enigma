@@ -43,31 +43,56 @@ namespace UTF8 {
 	}
 	//-------------------------------------------------------------------------
 	// ● decode
-	//   decode returns the first character codepoint.
+	//   seq: the string of which the first codepoint is desired
+	//   mov: a pointer to a pointer that should be increased
+	//        to track the next character
 	//-------------------------------------------------------------------------
-	uint32_t decode(const char* seq) {
+	uint32_t decode(const char* seq, const char** mov = NULL) {
 		uint8_t* s = (uint8_t*) seq;
 		if (*s < 0x80) {
+			if (mov) (*mov)++;
 			return *s;
 		} else {
 			uint32_t ch;
 			if (*s < 0b11100000) {
 				ch = (uint32_t) (*s++ & 0b00011111) << 6;
 				ch |= (*s & 0b00111111);
+				if (ch < 0x80) {
+					luaL_error(L, "overlong UTF-8 sequence for U+%04" PRIX32, ch);
+				}
+				if (mov) (*mov) += 2;
 			} else if (*s < 0b11110000) {
 				ch = (uint32_t) (*s++ & 0b00001111) << 12;
 				ch = (uint32_t) (*s++ & 0b00111111) << 6;
 				ch |= (*s & 0b00111111);
+				if (ch < 0x800) {
+					luaL_error(L, "overlong UTF-8 sequence for U+%04" PRIX32, ch);
+				}
+				if (mov) (*mov) += 3;
 			} else if (*s < 0b11111000) {
 				ch = (uint32_t) (*s++ & 0b00000111) << 18;
 				ch = (uint32_t) (*s++ & 0b00111111) << 12;
 				ch = (uint32_t) (*s++ & 0b00111111) << 6;
 				ch |= (*s & 0b00111111);
+				if (ch < 0x10000) {
+					luaL_error(L, "overlong UTF-8 sequence for U+%04" PRIX32, ch);
+				} else if (ch > 0x10ffff) {
+					luaL_error(L, "invalid Unicode codepoint U+%" PRIX32, ch);
+				}
+				if (mov) (*mov) += 4;
 			} else {
 				luaL_error(L, "invalid UTF-8 sequence prefix 0x%" PRIX8, *s);
 			}
 			return ch;
 		}
+	}
+	//-------------------------------------------------------------------------
+	// ● skip_char
+	//-------------------------------------------------------------------------
+	const char* skip_char(const char* s) {
+		s++;
+		while ((*((const uint8_t*) s) >> 6) == 2) s++;
+		return s;
 	}
 	//-------------------------------------------------------------------------
 	// ● char(...)
@@ -83,8 +108,32 @@ namespace UTF8 {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ●
+	// ● codes(s)
 	//-------------------------------------------------------------------------
+	int codes_iterator(lua_State* L) {
+  	size_t len;
+  	const char* s = luaL_checklstring(L, 1, &len);
+		const char* p;
+		if (lua_isnil(L, 2)) {
+			p = s;
+		} else {
+			p = skip_char(s + luaL_checkint(L, 2) - 1);
+		}
+		if (p < s + len) {
+			lua_pushnumber(L, p - s + 1);
+			lua_pushnumber(L, decode(p));
+			return 2;
+		} else {
+			return 0;
+		}
+	}
+	int codes(lua_State* L) {
+		luaL_checktype(L, 1, LUA_TSTRING);
+		lua_pushcfunction(L, codes_iterator);
+		lua_pushvalue(L, 1);
+		lua_pushnil(L);
+		return 3;
+	}
 	//-------------------------------------------------------------------------
 	// ●
 	//-------------------------------------------------------------------------
@@ -101,7 +150,7 @@ namespace UTF8 {
 		const luaL_reg reg[] = {
 			{"char", _char},
 			{"charpattern", NULL},
-			//{"codes", codes},
+			{"codes", codes},
 			//{"codepoint", codepoint},
 			//{"len", len},
 			//{"offset", offset},
