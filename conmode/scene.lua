@@ -1,8 +1,8 @@
-Scene = Util.class()
+local class = Util.class()
 -- Scene_Base doesn't really make sense here.
 -- Neither does Scene_Selectable because all scenes have a selectable interface.
 
-function Scene:init()
+function class:init()
 	self.on = {}
 	self.update = coroutine.wrap(function ()
 		while true do
@@ -59,7 +59,7 @@ function Scene:init()
 	self.cursor = 1
 end
 
-function Scene:draw_line(i, line, style)
+function class:draw_line(i, line, style)
 	if line then
 		line:draw(i, style)
 	else
@@ -67,7 +67,7 @@ function Scene:draw_line(i, line, style)
 	end
 end
 
-function Scene:provide_help(str)
+function class:provide_help(str)
 	local _, count = str:gsub("\n", "\n")
 	count = count + 1
 	self.items.help_lines = count
@@ -78,3 +78,5 @@ function Scene:provide_help(str)
 		self.items[-count + i - 1] = Line.new(text)
 	end
 end
+
+return class

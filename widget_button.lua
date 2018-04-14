@@ -1,13 +1,14 @@
-Widget_Button = Util.class(Widget_TextBase)
+local superclass = Widget_TextBase
+local class = Util.class(superclass)
 
-function Widget_Button:init()
+function class:init()
 	Widget_TextBase.init(self)
 end
 
-function Widget_Button:update()
+function class:update()
 end
 
-function Widget_Button:draw()
+function class:draw()
 	local patch = {texture = 0, x = 0, y = 0, w = 4, h = 4, t = 1, r = 2, b = 2, l = 1}
 	if Rect.point_in_rect(Input.mouse(), self.rect) then
 		patch.x = patch.x + 5
@@ -20,3 +21,5 @@ function Widget_Button:draw()
 		self.texture:get_rect()
 	)
 end
+
+return class

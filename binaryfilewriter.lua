@@ -1,28 +1,28 @@
-BinaryFileWriter = Util.class()
+local class = Util.class()
 
-function BinaryFileWriter:init(filename)
+function class:init(filename)
 	self.file = io.open(filename, "wb")
 	if not self.file then
 		error(string.format("error opening binary file %s", filename))
 	end
 end
 
-function BinaryFileWriter:close()
+function class:close()
 	self.file:close()
 end
 
-function BinaryFileWriter:u8(data)
+function class:u8(data)
 	self.file:write(string.char(data))
 end
 
-function BinaryFileWriter:u16(data)
+function class:u16(data)
 	self.file:write(string.char(
 		bit.band(data, 255),
 		bit.band(bit.rshift(data, 8), 255)
 	))
 end
 
-function BinaryFileWriter:i32(data)
+function class:i32(data)
 	self.file:write(string.char(
 		bit.band(data, 255),
 		bit.band(bit.rshift(data, 8), 255),
@@ -30,3 +30,5 @@ function BinaryFileWriter:i32(data)
 		bit.band(bit.rshift(data, 24), 255)
 	))
 end
+
+return class

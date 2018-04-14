@@ -1,8 +1,8 @@
-require 'widget'
-require 'widget_textbase'
-require 'widget_label'
-require 'widget_textbox'
-require 'widget_button'
+Widget = require 'widget'
+Widget_TextBase = require 'widget_textbase'
+Widget_Label = require 'widget_label'
+Widget_Textbox = require 'widget_textbox'
+Widget_Button = require 'widget_button'
 
 fullscreen = false
 w = Widget_Button.new()

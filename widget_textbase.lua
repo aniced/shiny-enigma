@@ -1,13 +1,14 @@
-Widget_TextBase = Util.class(Widget)
+local superclass = Widget
+local class = Util.class(superclass)
 
-function Widget_TextBase:init(text)
+function class:init(text)
 	Widget.init(self)
 	self.color = {r = 0, g = 0, b = 0}
 	self:set_text(text or "")
 	self.rect.h = WLH
 end
 
-function Widget_TextBase:set_text(text)
+function class:set_text(text)
 	self.text = text
 	if self.text:len() == 0 then
 		self.texture = nil
@@ -17,9 +18,11 @@ function Widget_TextBase:set_text(text)
 	end
 end
 
-function Widget_TextBase:set_color(color)
+function class:set_color(color)
 	self.color = color
 	if self.texture then
 		self.texture:set_color(self.color)
 	end
 end
+
+return class

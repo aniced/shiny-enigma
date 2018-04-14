@@ -1,7 +1,8 @@
-Scene_Hello = Util.class(Scene)
+local superclass = Scene
+local class = Util.class(superclass)
 
-function Scene_Hello:init()
-	Scene.init(self)
+function class:init()
+	superclass.init(self)
 	self.items[0] = Line.new("你好！")
 	for i = 1, 30 do
 		self.items[i] = Line.new(string.format(
@@ -19,3 +20,5 @@ function Scene_Hello:init()
 		end
 	end
 end
+
+return class

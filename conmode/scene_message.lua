@@ -1,7 +1,8 @@
-Scene_Message = Util.class(Scene)
+local superclass = Scene
+local class = Util.class(superclass)
 
-function Scene_Message:init()
-	Scene.init(self)
+function class:init()
+	superclass.init(self)
 	self.items[0] = Line.new("Message")
 	self:provide_help("Space = Return\nHello, world!")
 	function self.on:update()
@@ -10,3 +11,5 @@ function Scene_Message:init()
 		end
 	end
 end
+
+return class

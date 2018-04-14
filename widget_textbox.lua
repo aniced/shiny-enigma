@@ -1,10 +1,11 @@
-Widget_Textbox = Util.class(Widget_TextBase)
+local superclass = Widget_TextBase
+local class = Util.class(superclass)
 
-function Widget_Textbox:init()
-	Widget_TextBase.init(self)
+function class:init()
+	superclass.init(self)
 end
 
-function Widget_Textbox:update()
+function class:update()
 	local text = Input.text_get_text()
 	if text then
 		self:set_text(self.text .. text)
@@ -14,7 +15,7 @@ function Widget_Textbox:update()
 	end
 end
 
-function Widget_Textbox:draw()
+function class:draw()
 	local patch = {texture = 0, x = 0, y = 16, w = 3, h = 3, t = 1, r = 1, b = 1, l = 1}
 	Graphics.draw_9patch(self.rect, patch)
 	local cursor_rect
@@ -43,3 +44,5 @@ function Widget_Textbox:draw()
 		0, {x = 9, y = 3, w = 1, h = 1}
 	)
 end
+
+return class

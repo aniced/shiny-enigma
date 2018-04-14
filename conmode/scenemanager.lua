@@ -1,38 +1,40 @@
-SceneManager = {
+local self = {
 	stack = {},
-	on = nil
+	on = nil,
 }
 
-function SceneManager.peek()
-	return SceneManager.stack[#SceneManager.stack]
+function self.peek()
+	return self.stack[#self.stack]
 end
 
-function SceneManager.update(...)
-	SceneManager.peek().update(...)
+function self.update(...)
+	self.peek().update(...)
 end
 
-function SceneManager.set_root(scene)
+function self.set_root(scene)
 	print("Scene root ", scene)
-	SceneManager.stack = {scene}
-	SceneManager.on = scene.on
+	self.stack = {scene}
+	self.on = scene.on
 end
 
-function SceneManager.call(scene)
+function self.call(scene)
 	print("Scene call ", scene)
 	Graphics.freeze()
-	table.insert(SceneManager.stack, scene)
-	SceneManager.on = scene.on
+	table.insert(self.stack, scene)
+	self.on = scene.on
 	Graphics.transition()
 	if coroutine.running() then
 		return coroutine.yield()
 	end
 end
 
-function SceneManager.back(...) -- ‘return’ is a keyword
+function self.back(...) -- ‘return’ is a keyword
 	print("Scene back ", ...)
 	Graphics.freeze()
-	table.remove(SceneManager.stack)
-	SceneManager.on = SceneManager.peek().on
-	SceneManager.update(...)
+	table.remove(self.stack)
+	self.on = self.peek().on
+	self.update(...)
 	Graphics.transition()
 end
+
+return self
