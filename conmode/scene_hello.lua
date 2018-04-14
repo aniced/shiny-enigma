@@ -2,7 +2,7 @@ Scene_Hello = Util.class(Scene)
 
 function Scene_Hello:init()
 	Scene.init(self)
-	self.items[0] = Line.new("Hello!")
+	self.items[0] = Line.new("你好！")
 	for i = 1, 30 do
 		self.items[i] = Line.new(string.format(
 			"%d\bt[4]%f\bt[-1]\bc[0]|",

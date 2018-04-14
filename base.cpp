@@ -58,6 +58,7 @@ void init(int argc, char* argv[]) {
 	lua_setfield(L, -2, "exit");
 	lua_pop(L, 1);
 	// open game libraries
+	UTF8::init();
 	Rect::init();
 	Graphics::init();
 	Window::init();

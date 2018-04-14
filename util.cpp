@@ -1,7 +1,7 @@
 //=============================================================================
 // ■ Util
 //-----------------------------------------------------------------------------
-//   A module for dealing with random things in Lua.
+//   A Lua module for dealing with random things.
 //   As the number of the functions grows, they will eventually be moved
 //   to a new file and have their own category.
 //=============================================================================

@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cinttypes>
 #include <cstdlib>
 #include <cstdio>
 #include "SDL.h"
@@ -19,6 +20,7 @@ extern "C" {
 
 #include "global.cpp"
 #include "util.cpp"
+#include "utf8.cpp"
 #include "rect.cpp"
 #include "graphics.cpp"
 #include "window.cpp"
