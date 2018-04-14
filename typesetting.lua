@@ -19,7 +19,7 @@ function self.draw_text(point, text, initial_color)
 		b = initial_color.b, a = initial_color.a
 	}
 	while i <= #text do
-		local ch = utf8.char(utf8.codepoint(text, i))
+		local ch = text:match(utf8.charpattern, i)
 		if ch == "\n" then
 			x = point.x
 			y = y + WLH
@@ -27,7 +27,7 @@ function self.draw_text(point, text, initial_color)
 		elseif ch == "\b" then
 			i = i + 1
 			local param, t = nil, {}
-			ch, param, i = text:match("^(.)%[(.-)%]()", i)
+			ch, param, i = text:match("^(" .. utf8.charpattern .. ")%[(.-)%]()", i)
 			function t.c()
 				for k, v in param:gmatch("([rgb])%d+") do
 					color[k] = tonumber(v)
