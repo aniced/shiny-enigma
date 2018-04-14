@@ -6,7 +6,7 @@
 
 namespace UTF8 {
 	//-------------------------------------------------------------------------
-	// ● Module variables
+	// ● Module declarations
 	//-------------------------------------------------------------------------
 	const char charpattern[] = {
 		'[', 0, '-', 0x7f, (char) 0xc2, '-', (char) 0xf4, ']',
@@ -15,7 +15,7 @@ namespace UTF8 {
 	//-------------------------------------------------------------------------
 	// ● add_encode
 	//-------------------------------------------------------------------------
-	void add_encode(luaL_Buffer* B, uint32_t ch) {
+	void add_encode(luaL_Buffer* B, char32_t ch) {
 		if (ch < 0x80) {
 			luaL_addchar(B, ch);
 		} else {
@@ -47,32 +47,32 @@ namespace UTF8 {
 	//   mov: a pointer to a pointer that should be increased
 	//        to track the next character
 	//-------------------------------------------------------------------------
-	uint32_t decode(const char* seq, const char** mov = NULL) {
+	char32_t decode(const char* seq, const char** mov = NULL) {
 		uint8_t* s = (uint8_t*) seq;
 		if (*s < 0x80) {
 			if (mov) (*mov)++;
 			return *s;
 		} else {
-			uint32_t ch;
+			char32_t ch;
 			if (*s < 0b11100000) {
-				ch = (uint32_t) (*s++ & 0b00011111) << 6;
+				ch = (char32_t) (*s++ & 0b00011111) << 6;
 				ch |= (*s & 0b00111111);
 				if (ch < 0x80) {
 					luaL_error(L, "overlong UTF-8 sequence for %d", ch);
 				}
 				if (mov) (*mov) += 2;
 			} else if (*s < 0b11110000) {
-				ch = (uint32_t) (*s++ & 0b00001111) << 12;
-				ch |= (uint32_t) (*s++ & 0b00111111) << 6;
+				ch = (char32_t) (*s++ & 0b00001111) << 12;
+				ch |= (char32_t) (*s++ & 0b00111111) << 6;
 				ch |= (*s & 0b00111111);
 				if (ch < 0x800) {
 					luaL_error(L, "overlong UTF-8 sequence for %d", ch);
 				}
 				if (mov) (*mov) += 3;
 			} else if (*s < 0b11111000) {
-				ch = (uint32_t) (*s++ & 0b00000111) << 18;
-				ch |= (uint32_t) (*s++ & 0b00111111) << 12;
-				ch |= (uint32_t) (*s++ & 0b00111111) << 6;
+				ch = (char32_t) (*s++ & 0b00000111) << 18;
+				ch |= (char32_t) (*s++ & 0b00111111) << 12;
+				ch |= (char32_t) (*s++ & 0b00111111) << 6;
 				ch |= (*s & 0b00111111);
 				if (ch < 0x10000) {
 					luaL_error(L, "overlong UTF-8 sequence for %d", ch);
