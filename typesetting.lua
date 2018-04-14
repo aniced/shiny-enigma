@@ -13,10 +13,9 @@ function self.get_glyph(ch)
 end
 
 function self.draw_text(point, text, initial_color)
-	local i, x, y = 1, point.x, point.y
-	local color = initial_color
+	local i, x, y, color = 1, point.x, point.y, initial_color
 	while i <= #text do
-		local ch = text:sub(i, i)
+		local ch = utf8.char(utf8.codepoint(text, i))
 		if ch == "\n" then
 			x = point.x
 			y = y + WLH
@@ -46,7 +45,7 @@ function self.draw_text(point, text, initial_color)
 			local rect = g:get_rect()
 			Graphics.copy({x = x, y = y}, g, rect)
 			x = x + rect.w
-			i = i + 1
+			i = utf8.offset(text, 2, i)
 		end
 	end
 end
