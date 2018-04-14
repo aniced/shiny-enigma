@@ -87,11 +87,17 @@ namespace UTF8 {
 		}
 	}
 	//-------------------------------------------------------------------------
+	// ● is_continuation
+	//-------------------------------------------------------------------------
+	inline bool is_continuation(char c) {
+		return ((uint8_t) c >> 6) == 2;
+	}
+	//-------------------------------------------------------------------------
 	// ● skip_char
 	//-------------------------------------------------------------------------
 	const char* skip_char(const char* s) {
 		s++;
-		while ((*((const uint8_t*) s) >> 6) == 2) s++;
+		while (is_continuation(*s)) s++;
 		return s;
 	}
 	//-------------------------------------------------------------------------
@@ -161,8 +167,34 @@ namespace UTF8 {
 	// ●
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
-	// ●
+	// ● offset(s, n, i = (n >= 0 and 1 or #n + 1))
 	//-------------------------------------------------------------------------
+	int offset(lua_State* L) {
+		int len = lua_objlen(L, 1);
+		const char* s = luaL_checklstring(L, 1, NULL);
+		int n = luaL_checkint(L, 2);
+		int i = luaL_optint(L, 3, n >= 0 ? 1 : len + 1);
+		i = Util::translate_pos(L, 1, i);
+		const char* p = s + i - 1;
+		if (n == 0) {
+			while (is_continuation(*p)) p--;
+		} else if (n > 0) {
+			n--;
+			while (n) {
+				p = skip_char(p);
+				n--;
+			}
+		} else {
+			while (n) {
+				do {
+					p--;
+				} while (is_continuation(*p));
+				n++;
+			}
+		}
+		lua_pushnumber(L, p - s + 1);
+		return 1;
+	}
 	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
@@ -173,7 +205,7 @@ namespace UTF8 {
 			{"codes", codes},
 			{"codepoint", codepoint},
 			//{"len", len},
-			//{"offset", offset},
+			{"offset", offset},
 			{NULL, NULL}
 		};
 		luaL_register(L, "utf8", reg);
