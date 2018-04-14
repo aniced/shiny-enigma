@@ -58,30 +58,30 @@ namespace UTF8 {
 				ch = (uint32_t) (*s++ & 0b00011111) << 6;
 				ch |= (*s & 0b00111111);
 				if (ch < 0x80) {
-					luaL_error(L, "overlong UTF-8 sequence for U+%04" PRIX32, ch);
+					luaL_error(L, "overlong UTF-8 sequence for %d", ch);
 				}
 				if (mov) (*mov) += 2;
 			} else if (*s < 0b11110000) {
 				ch = (uint32_t) (*s++ & 0b00001111) << 12;
-				ch = (uint32_t) (*s++ & 0b00111111) << 6;
+				ch |= (uint32_t) (*s++ & 0b00111111) << 6;
 				ch |= (*s & 0b00111111);
 				if (ch < 0x800) {
-					luaL_error(L, "overlong UTF-8 sequence for U+%04" PRIX32, ch);
+					luaL_error(L, "overlong UTF-8 sequence for %d", ch);
 				}
 				if (mov) (*mov) += 3;
 			} else if (*s < 0b11111000) {
 				ch = (uint32_t) (*s++ & 0b00000111) << 18;
-				ch = (uint32_t) (*s++ & 0b00111111) << 12;
-				ch = (uint32_t) (*s++ & 0b00111111) << 6;
+				ch |= (uint32_t) (*s++ & 0b00111111) << 12;
+				ch |= (uint32_t) (*s++ & 0b00111111) << 6;
 				ch |= (*s & 0b00111111);
 				if (ch < 0x10000) {
-					luaL_error(L, "overlong UTF-8 sequence for U+%04" PRIX32, ch);
+					luaL_error(L, "overlong UTF-8 sequence for %d", ch);
 				} else if (ch > 0x10ffff) {
-					luaL_error(L, "invalid Unicode codepoint U+%" PRIX32, ch);
+					luaL_error(L, "invalid Unicode codepoint %d", ch);
 				}
 				if (mov) (*mov) += 4;
 			} else {
-				luaL_error(L, "invalid UTF-8 sequence prefix 0x%" PRIX8, *s);
+				luaL_error(L, "invalid UTF-8 sequence prefix %d", *s);
 			}
 			return ch;
 		}
@@ -135,8 +135,28 @@ namespace UTF8 {
 		return 3;
 	}
 	//-------------------------------------------------------------------------
-	// ●
+	// ● codepoint(s, i = 1, j = i)
+	//   Note that this function doesn't throw errors
+	//   if i or j is out of range.
 	//-------------------------------------------------------------------------
+	int codepoint(lua_State* L) {
+		size_t len1;
+		const char* s = luaL_checklstring(L, 1, &len1);
+		int len = len1;
+		int i = Util::translate_pos(L, 1, luaL_optint(L, 2, 1));
+		if (i < 1) i = 1;
+		if (i > len) return 0;
+		int j = Util::translate_pos(L, 1, luaL_optint(L, 3, i));
+		if (j < 1) return 0;
+		if (j > len) j = len;
+		const char* p = s + i - 1;
+		int count = 0;
+		while (p - s < j) {
+			lua_pushnumber(L, decode(p, &p));
+			count++;
+		}
+		return count;
+	}
 	//-------------------------------------------------------------------------
 	// ●
 	//-------------------------------------------------------------------------
@@ -151,7 +171,7 @@ namespace UTF8 {
 			{"char", _char},
 			{"charpattern", NULL},
 			{"codes", codes},
-			//{"codepoint", codepoint},
+			{"codepoint", codepoint},
 			//{"len", len},
 			//{"offset", offset},
 			{NULL, NULL}

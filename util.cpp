@@ -19,6 +19,17 @@ namespace Util {
 		return lua_toboolean(L, index);
 	}
 	//-------------------------------------------------------------------------
+	// ● translate_pos
+	//-------------------------------------------------------------------------
+	int translate_pos(lua_State* L, int index, int pos) {
+		if (pos >= 0) {
+			return pos;
+		} else {
+			int len = lua_objlen(L, index);
+			return len + pos + 1;
+		}
+	}
+	//-------------------------------------------------------------------------
 	// ● to_color
 	//   Unspecified alpha will be set to 255.
 	//-------------------------------------------------------------------------
