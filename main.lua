@@ -15,10 +15,9 @@ w:set_color({r = 0, g = 128, b = 128})
 x = 0
 y = 100
 function draw_debug_line(i, s)
-	local h = Graphics.get_rect().h
 	t = Graphics.render_text(0, s)
 	t:set_color({r = 0, g = 0, b = 0})
-	Graphics.copy({x = 0, y = h - (8 - i) * WLH}, t, t:get_rect())
+	Graphics.copy({x = 0, y = Graphics.h - (8 - i) * WLH}, t, t:get_rect())
 end
 
 Input.text_start()
@@ -45,7 +44,7 @@ end
 
 function on.paint()
 	if x >= 60 then x = 0 end
-	Graphics.copy(Graphics.get_rect(), 0, {x = 255, y = 255, w = 1, h = 1})
+	Graphics.copy(Graphics, 0, {x = 255, y = 255, w = 1, h = 1})
 	Graphics.copy({x = x, y = y, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
 	w:draw()
 	draw_debug_line(1, string.format("set FPS = %d", Graphics.get_fps()))

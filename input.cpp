@@ -42,6 +42,12 @@ namespace Input {
 						|| e.window.event != SDL_WINDOWEVENT_FOCUS_GAINED);
 				}
 				break;
+			case SDL_WINDOWEVENT_SIZE_CHANGED: {
+				int w, h;
+				SDL_GetRendererOutputSize($renderer, &w, &h);
+				Graphics::set_size(w, h);
+				break;
+			}
 			}
 			break;
 		case SDL_KEYDOWN:

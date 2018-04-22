@@ -68,6 +68,17 @@ namespace Graphics {
 		return *((TTF_Font**) luaL_checkudata(L, index, "Font"));
 	}
 	//-------------------------------------------------------------------------
+	// ● set_size
+	//   Call this function when the window size is changed to update
+	//   the field w and h in this module.
+	//-------------------------------------------------------------------------
+	void set_size(int w, int h) {
+		lua_pushlightuserdata(L, (void*) update);
+		lua_gettable(L, LUA_REGISTRYINDEX);
+		lua_pushnumber(L, w); lua_setfield(L, -2, "w");
+		lua_pushnumber(L, h); lua_setfield(L, -2, "h");
+	}
+	//-------------------------------------------------------------------------
 	// ● get_fps & set_fps
 	//-------------------------------------------------------------------------
 	int fps = 60;
@@ -80,26 +91,6 @@ namespace Graphics {
 		fps = luaL_checkinteger(L, 1);
 		frame_time = 1000 / fps;
 		return 0;
-	}
-	//-------------------------------------------------------------------------
-	// ● get_size()
-	//   Use this size for drawing.
-	//-------------------------------------------------------------------------
-	int get_size(lua_State* L) {
-		SDL_Rect rect = {0, 0, -1, -1};
-		SDL_GetRendererOutputSize($renderer, &rect.w, &rect.h);
-		lua_pushnumber(L, rect.w);
-		lua_pushnumber(L, rect.h);
-		return 2;
-	}
-	//-------------------------------------------------------------------------
-	// ● get_rect()
-	//-------------------------------------------------------------------------
-	int get_rect(lua_State* L) {
-		SDL_Rect rect = {0, 0, -1, -1};
-		SDL_GetRendererOutputSize($renderer, &rect.w, &rect.h);
-		Rect::create_rect(L, &rect);
-		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● copy(dest_rect, texture, src_rect)
@@ -389,10 +380,12 @@ namespace Graphics {
 	void init() {
 		{
 			const luaL_reg reg[] = {
+				{"x", NULL},
+				{"y", NULL},
+				{"w", NULL},
+				{"h", NULL},
 				{"get_fps", get_fps},
 				{"set_fps", set_fps},
-				{"get_size", get_size},
-				{"get_rect", get_rect},
 				{"copy", copy},
 				{"tile", tile},
 				{"render_text", render_text},
@@ -410,6 +403,13 @@ namespace Graphics {
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);
+			// Graphics.x = Graphics.y = 0
+			lua_pushnumber(L, 0); lua_setfield(L, -2, "x");
+			lua_pushnumber(L, 0); lua_setfield(L, -2, "y");
+			// (registry)[update] = Graphics
+			lua_pushlightuserdata(L, (void*) update);
+			lua_pushvalue(L, -2);
+			lua_settable(L, LUA_REGISTRYINDEX);
 			lua_pop(L, 1);
 		}
 		{

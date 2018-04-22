@@ -36,7 +36,7 @@ function self.draw_text(point, text, initial_color)
 			function t.t()
 				x = param * WLH
 				if x < 0 then
-					x = x + Graphics.get_size()
+					x = x + Graphics.w
 				end
 			end
 			t[ch]()
