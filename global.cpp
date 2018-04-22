@@ -55,7 +55,9 @@ int panic(lua_State* L) {
 	luaL_where(L, 0);
 	strcpy(msgbox_buf, lua_tostring(L, -1));
 	if (*msgbox_buf) strcat(msgbox_buf, "\n");
-	strcat(msgbox_buf, lua_tostring(L, -2));
+	strcat(msgbox_buf, luaL_gsub(L, lua_tostring(L, -2), ": ", ":\n"));
+	lua_pop(L, 1);
+	fprintf(stderr, "%s\n", msgbox_buf);
 	msgbox(msgbox_buf);
 	quit(1); // never returning
 }
