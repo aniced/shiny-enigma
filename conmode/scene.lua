@@ -11,7 +11,8 @@ function class:init()
 			coroutine.yield()
 		end
 	end)
-	self.items = {help_lines = 0, page_lines = 19}
+	self.items = {}
+	self.help_items = {}
 	self.scroll_top = 1
 	self.cursor = 1
 end
@@ -44,8 +45,8 @@ function class:update_cursor()
 	self.cursor = n
 	if self.cursor < self.scroll_top then
 		self.scroll_top = self.cursor
-	elseif self.cursor >= self.scroll_top + self.items.page_lines then
-		self.scroll_top = self.cursor - self.items.page_lines + 1
+	elseif self.cursor >= self.scroll_top + 19 - #self.help_items then
+		self.scroll_top = self.cursor - 18 + #self.help_items
 	end
 
 	local item = self.items[self.cursor]
@@ -56,10 +57,12 @@ end
 
 function class:on_paint()
 	self:draw_line(0, self.items[0], "title")
-	for i = -self.items.help_lines, -1 do
-		self:draw_line(20 + i, self.items[i], "help")
+	local help_lines = #self.help_items
+	local help_items = self.items[self.cursor].help_items or self.help_items
+	for i, v in ipairs(help_items) do
+		self:draw_line(19 - help_lines + i, v, "help")
 	end
-	for i = 1, 19 - self.items.help_lines do
+	for i = 1, 19 - help_lines do
 		local j = self.scroll_top + i - 1
 		local style = "normal"
 		if j == self.cursor then style = "selected" end
@@ -72,18 +75,6 @@ function class:draw_line(i, line, style)
 		line:draw(i, style)
 	else
 		Line.styles.null.draw_background(i)
-	end
-end
-
-function class:provide_help(str)
-	local _, count = str:gsub("\n", "\n")
-	count = count + 1
-	self.items.help_lines = count
-	self.items.page_lines = 19 - count
-	local i = 0
-	for text in str:gmatch("[^\n]+") do
-		i = i + 1
-		self.items[-count + i - 1] = Line.new(text)
 	end
 end
 

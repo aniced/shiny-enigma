@@ -10,7 +10,7 @@ function class:init()
 			i, math.sqrt(i))
 		)
 	end
-	self:provide_help("Space = Fire a message; Esc = Exit")
+	self.help_items[1] = Line.new("Space = Fire a message; Esc = Exit")
 end
 
 function class:on_update()
