@@ -42,14 +42,12 @@ function class.get_rect(i)
 	return {x = 0, y = i * WLH, w = Graphics.get_rect().w, h = WLH}
 end
 
--- state: nil or "disabled"
-function class:init(text, state)
-	self:set_text(text or "")
-	self.state = state
-end
-
-function class:set_text(text)
-	self.text = text
+-- update: an update function which will be called regardless of the state
+function class:init(text, help_text, update)
+	self.text = tostring(text)
+	self.help_text = help_text
+	self.state = nil
+	self.update = update
 end
 
 function class:draw(i, style)
