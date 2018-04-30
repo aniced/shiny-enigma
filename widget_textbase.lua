@@ -13,7 +13,7 @@ function class:set_text(text)
 	if self.text:len() == 0 then
 		self.texture = nil
 	else
-		self.texture = Graphics.render_text(0, self.text)
+		self.texture = Texture.render_text(0, self.text)
 		self.texture:set_color(self.color)
 	end
 end

@@ -15,7 +15,7 @@ w:set_color({r = 0, g = 128, b = 128})
 x = 0
 y = 100
 function draw_debug_line(i, s)
-	t = Graphics.render_text(0, s)
+	t = Texture.render_text(0, s)
 	t:set_color({r = 0, g = 0, b = 0})
 	Graphics.copy({x = 0, y = Graphics.h - (8 - i) * WLH}, t, t:get_rect())
 end

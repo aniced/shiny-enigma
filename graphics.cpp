@@ -6,6 +6,10 @@
 //   Font    — a userdata of a pointer to TTF_Font
 //=============================================================================
 
+namespace Texture {
+	SDL_Texture* check_texture(lua_State* L, int index);
+}
+
 namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● Module variables
@@ -52,16 +56,6 @@ namespace Graphics {
 		SDL_RenderPresent($renderer);
 	}
 	//-------------------------------------------------------------------------
-	// ● check_texture
-	//-------------------------------------------------------------------------
-	SDL_Texture* check_texture(lua_State* L, int index) {
-		if (lua_isuserdata(L, index)) {
-			return *((SDL_Texture**) luaL_checkudata(L, index, "Texture"));
-		} else {
-			return $texture[luaL_checkinteger(L, index)];
-		}
-	}
-	//-------------------------------------------------------------------------
 	// ● check_font
 	//-------------------- ----------------------------------------
 	TTF_Font* check_font(lua_State* L, int index) {
@@ -97,7 +91,7 @@ namespace Graphics {
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
 	int copy(lua_State* L) {
-		SDL_Texture* texture = check_texture(L, 2);
+		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest;
 		Rect::to_rect(L, 1, &dest);
 		Rect::check_rect(L, 3, &src);
@@ -115,7 +109,7 @@ namespace Graphics {
 	//   divided exactly into source rectangles.
 	//-------------------------------------------------------------------------
 	int tile(lua_State* L) {
-		SDL_Texture* texture = check_texture(L, 2);
+		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest, dest1;
 		Rect::check_rect(L, 1, &dest);
 		Rect::check_rect(L, 3, &src);
@@ -206,7 +200,7 @@ namespace Graphics {
 		SDL_Rect src_rect, dest_rect;
 		// get the texture
 		lua_getfield(L, 2, "texture");
-		SDL_Texture* texture = check_texture(L, -1);
+		SDL_Texture* texture = Texture::check_texture(L, -1);
 		lua_pop(L, 1);
 		// retrieve the coordinates, sizes and margins
 		Rect::to_rect(L, 1, &dest_rect);
@@ -237,28 +231,6 @@ namespace Graphics {
 		}
 		#undef RCP
 		return 0;
-	}
-	//-------------------------------------------------------------------------
-	// ● render_text(font, text) → texture reference
-	//   font: font ID or reference
-	//-------------------------------------------------------------------------
-	int render_text(lua_State* L) {
-		TTF_Font* font;
-		if (lua_isuserdata(L, 1)) {
-			font = check_font(L, 1);
-		} else {
-			font = $font[luaL_checkinteger(L, 1)];
-		}
-		const char* text = luaL_checkstring(L, 2);
-		SDL_Color color = {255, 255, 255, 255};
-		SDL_Surface* surface = TTF_RenderUTF8_Blended($font[0], text, color);
-		if (!surface) error("TTF_RenderUTF8() == NULL");
-		SDL_Texture** texture = (SDL_Texture**) lua_newuserdata(L, sizeof(void*));
-		luaL_getmetatable(L, "Texture");
-		lua_setmetatable(L, -2);
-		*texture = SDL_CreateTextureFromSurface($renderer, surface);
-		SDL_FreeSurface(surface);
-		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● ~Font()
@@ -337,44 +309,6 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
-	// ● ~Texture()
-	//-------------------------------------------------------------------------
-	int texture_gc(lua_State* L) {
-		SDL_Texture* texture = check_texture(L, 1);
-		SDL_DestroyTexture(texture);
-		return 0;
-	}
-	//-------------------------------------------------------------------------
-	// ● Texture:get_rect() → rect
-	//-------------------------------------------------------------------------
-	int texture_get_rect(lua_State* L) {
-		SDL_Texture* texture = check_texture(L, 1);
-		Uint32 format;
-		int w, h, access;
-		SDL_QueryTexture(texture, &format, &access, &w, &h);
-		SDL_Rect rect = {0, 0, w, h};
-		Rect::create_rect(L, &rect);
-		return 1;
-	}
-	//-------------------------------------------------------------------------
-	// ● Texture:set_color(color)
-	//-------------------------------------------------------------------------
-	int texture_set_color(lua_State* L) {
-		SDL_Texture* texture = check_texture(L, 1);
-		SDL_Color color;
-		Util::to_color(L, 2, &color);
-		SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
-		return 0;
-	}
-	//-------------------------------------------------------------------------
-	// ● Texture:set_blend(mode)
-	//-------------------------------------------------------------------------
-	int texture_set_blend(lua_State* L) {
-		SDL_Texture* texture = check_texture(L, 1);
-		SDL_SetTextureBlendMode(texture, check_blend(L, 2));
-		return 0;
-	}
-	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
@@ -388,7 +322,6 @@ namespace Graphics {
 				{"set_fps", set_fps},
 				{"copy", copy},
 				{"tile", tile},
-				{"render_text", render_text},
 				{"set_color", set_color},
 				{"set_blend", set_blend},
 				{"draw_rect", draw_rect},
@@ -411,18 +344,6 @@ namespace Graphics {
 			lua_pushvalue(L, -2);
 			lua_settable(L, LUA_REGISTRYINDEX);
 			lua_pop(L, 1);
-		}
-		{
-			const luaL_reg reg[] = {
-				{"__gc", texture_gc},
-				{"get_rect", texture_get_rect},
-				{"set_color", texture_set_color},
-				{"set_blend", texture_set_blend},
-				{NULL, NULL}
-			};
-			luaL_newmetatable(L, "Texture");
-			luaL_register(L, NULL, reg);
-			lua_setfield(L, -1, "__index");
 		}
 		{
 			const luaL_reg reg[] = {

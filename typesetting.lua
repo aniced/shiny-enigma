@@ -6,7 +6,7 @@ function self.get_glyph(ch)
 	if self.glyphs[ch] then
 		return self.glyphs[ch]
 	else
-		local g = Graphics.render_text(0, ch)
+		local g = Texture.render_text(0, ch)
 		self.glyphs[ch] = g
 		return g
 	end

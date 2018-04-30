@@ -61,6 +61,7 @@ void init(int argc, char* argv[]) {
 	UTF8::init();
 	Rect::init();
 	Graphics::init();
+	Texture::init();
 	Window::init();
 	Input::init();
 	Util::init();
