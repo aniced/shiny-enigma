@@ -1,10 +1,22 @@
 //=============================================================================
-// ■ Rect
+// ■ Geometry
 //-----------------------------------------------------------------------------
-//   A Lua module for dealing with rectangles.
+//   A Lua module for dealing with points, rectangles and margins.
+//   These are duck-typed pseudo classes, which need only a table with named
+//   fields present:
+//   - Point: x, y
+//   - Rect: x, y, w, h
+//   - Margin: t, r, b, l
 //=============================================================================
 
-namespace Rect {
+namespace Geometry {
+	//-------------------------------------------------------------------------
+	// ● Definitions
+	//   Point and Rect are defined by SDL.
+	//-------------------------------------------------------------------------
+	struct Margin {
+		int t, r, b, l;
+	};
 	//-------------------------------------------------------------------------
 	// ● to_rect
 	//   Unspecified values will be set to zero.
@@ -59,6 +71,16 @@ namespace Rect {
 		lua_createtable(L, 0, 2);
 		lua_pushnumber(L, point->x); lua_setfield(L, -2, "x");
 		lua_pushnumber(L, point->y); lua_setfield(L, -2, "y");
+	}
+	//-------------------------------------------------------------------------
+	// ● check_margin
+	//-------------------------------------------------------------------------
+	void check_margin(lua_State* L, int index, Margin* margin) {
+		lua_getfield(L, index, "t"); margin->t = luaL_checkinteger(L, -1);
+		lua_getfield(L, index, "r"); margin->r = luaL_checkinteger(L, -1);
+		lua_getfield(L, index, "b"); margin->b = luaL_checkinteger(L, -1);
+		lua_getfield(L, index, "l"); margin->l = luaL_checkinteger(L, -1);
+		lua_pop(L, 4);
 	}
 	//-------------------------------------------------------------------------
 	// ● rect_empty(rect)
@@ -116,7 +138,7 @@ namespace Rect {
 			{"intersect_rect", intersect_rect},
 			{NULL, NULL}
 		};
-		luaL_register(L, "Rect", reg);
+		luaL_register(L, "Geometry", reg);
 		lua_pop(L, 1);
 	}
 }

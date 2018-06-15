@@ -93,8 +93,8 @@ namespace Graphics {
 	int copy(lua_State* L) {
 		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest;
-		Rect::to_rect(L, 1, &dest);
-		Rect::check_rect(L, 3, &src);
+		Geometry::to_rect(L, 1, &dest);
+		Geometry::check_rect(L, 3, &src);
 		if (!dest.w) dest.w = src.w;
 		if (!dest.h) dest.h = src.h;
 		if (SDL_RenderCopy($renderer, texture, &src, &dest) < 0) {
@@ -111,8 +111,8 @@ namespace Graphics {
 	int tile(lua_State* L) {
 		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest, dest1;
-		Rect::check_rect(L, 1, &dest);
-		Rect::check_rect(L, 3, &src);
+		Geometry::check_rect(L, 1, &dest);
+		Geometry::check_rect(L, 3, &src);
 		dest1.w = src.w;
 		dest1.h = src.h;
 		for (int ty = 0; ty < dest.h / src.h; ty++) {
@@ -132,7 +132,7 @@ namespace Graphics {
 		int count = lua_gettop(L);
 		SDL_Point points[count];
 		for (int i = 0; i < count; i++) {
-			Rect::to_point(L, i + 1, &points[i]);
+			Geometry::to_point(L, i + 1, &points[i]);
 		}
 		SDL_RenderDrawLines($renderer, points, count);
 		return 0;
@@ -175,7 +175,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	int draw_rect(lua_State* L) {
 		SDL_Rect rect;
-		Rect::to_rect(L, 1, &rect);
+		Geometry::to_rect(L, 1, &rect);
 		SDL_RenderDrawRect($renderer, &rect);
 		return 0;
 	}
@@ -184,7 +184,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	int fill_rect(lua_State* L) {
 		SDL_Rect rect;
-		Rect::to_rect(L, 1, &rect);
+		Geometry::to_rect(L, 1, &rect);
 		SDL_RenderFillRect($renderer, &rect);
 		return 0;
 	}
@@ -203,9 +203,9 @@ namespace Graphics {
 		SDL_Texture* texture = Texture::check_texture(L, -1);
 		lua_pop(L, 1);
 		// retrieve the coordinates, sizes and margins
-		Rect::to_rect(L, 1, &dest_rect);
+		Geometry::to_rect(L, 1, &dest_rect);
 		int x = dest_rect.x, y = dest_rect.y, w = dest_rect.w, h = dest_rect.h;
-		Rect::to_rect(L, 2, &src_rect);
+		Geometry::to_rect(L, 2, &src_rect);
 		int sx = src_rect.x, sy = src_rect.y, sw = src_rect.w, sh = src_rect.h;
 		lua_getfield(L, 2, "t"); int t = lua_tointeger(L, -1);
 		lua_getfield(L, 2, "r"); int r = lua_tointeger(L, -1);

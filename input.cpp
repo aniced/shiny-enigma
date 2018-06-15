@@ -161,7 +161,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	int text_set_rect(lua_State* L) {
 		SDL_Rect rect;
-		Rect::to_rect(L, 1, &rect);
+		Geometry::to_rect(L, 1, &rect);
 		SDL_SetTextInputRect(&rect);
 		return 0;
 	}
@@ -182,7 +182,7 @@ namespace Input {
 	int mouse(lua_State* L) {
 		SDL_Point point;
 		SDL_GetMouseState(&point.x, &point.y);
-		Rect::create_point(L, &point);
+		Geometry::create_point(L, &point);
 		return 1;
 	}
 	//-------------------------------------------------------------------------

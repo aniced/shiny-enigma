@@ -72,7 +72,7 @@ namespace Texture {
 		int w, h, access;
 		SDL_QueryTexture(texture, &format, &access, &w, &h);
 		SDL_Rect rect = {0, 0, w, h};
-		Rect::create_rect(L, &rect);
+		Geometry::create_rect(L, &rect);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
