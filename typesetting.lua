@@ -1,6 +1,7 @@
 local self = {
 	glyphs = {}
 }
+Typesetting = self
 
 function self.get_glyph(ch)
 	if self.glyphs[ch] then
@@ -50,5 +51,3 @@ function self.draw_text(point, text, initial_color)
 		end
 	end
 end
-
-return self

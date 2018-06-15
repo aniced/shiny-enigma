@@ -1,6 +1,7 @@
 local self = {
 	stack = nil,
 }
+SceneManager = self
 
 function self.peek()
 	return self.stack[#self.stack]
@@ -32,5 +33,3 @@ function self.back(...) -- ‘return’ is a keyword
 	self.update(...)
 	Graphics.transition()
 end
-
-return self

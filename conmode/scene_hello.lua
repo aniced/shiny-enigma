@@ -1,8 +1,7 @@
-local superclass = Scene
-local class = Util.class(superclass)
+Scene_Hello = {}
 
-function class:init()
-	superclass.init(self)
+function Scene_Hello.new()
+	local self = Scene.new()
 	self.items[0] = Line.new("你好！")
 	for i = 1, 30 do
 		self.items[i] = Line.new(string.format(
@@ -11,15 +10,15 @@ function class:init()
 		)
 	end
 	self.help_items[1] = Line.new("Space = Fire a message; Esc = Exit")
-end
 
-function class:on_update()
-	if Input.triggered(44) then
-		self.items[1] = Line.new(SceneManager.call(Scene_Message.new()))
+	function self.on_update()
+		if Input.triggered(44) then
+			self.items[1] = Line.new(SceneManager.call(Scene_Message.new()))
+		end
+		if Input.triggered(41) then
+			os.exit()
+		end
 	end
-	if Input.triggered(41) then
-		os.exit()
-	end
-end
 
-return class
+	return self
+end

@@ -1,8 +1,7 @@
-local superclass = Scene
-local class = Util.class(superclass)
+Scene_Message = {}
 
-function class:init()
-	superclass.init(self)
+function Scene_Message.new()
+	local self = Scene.new()
 	local i, j = 0, 0
 	self.items[0] = Line.new("Message")
 	self.items[1] = Line.new("Press Ｚ on me", {
@@ -21,6 +20,5 @@ function class:init()
 	end)
 	self.items[2] = Line.new("---")
 	self.help_items[1] = Line.new("")
+	return self
 end
-
-return class
