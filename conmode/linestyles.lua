@@ -25,13 +25,13 @@ return {
 	help = {
 		color = {r = 147, g = 236, b = 147},
 		draw_background = function (i)
-			Graphics.copy(Line.get_rect(i), 0, {x = 48, y = 0, w = 1, h = 1})
+			Graphics.copy(Line.get_rect(i), 0, {x = 0, y = 6, w = 1, h = 1})
 		end,
 	},
 	title = {
 		color = {r = 147, g = 236, b = 147},
 		draw_background = function (i)
-			Graphics.copy(Line.get_rect(i), 0, {x = 48, y = 0, w = 1, h = 1})
+			Graphics.copy(Line.get_rect(i), 0, {x = 0, y = 6, w = 1, h = 1})
 		end,
 	},
 }
