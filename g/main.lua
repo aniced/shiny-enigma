@@ -44,8 +44,8 @@ end
 
 function on.paint()
 	if x >= 60 then x = 0 end
-	Graphics.copy(Graphics, 0, {x = 255, y = 255, w = 1, h = 1})
-	Graphics.copy({x = x, y = y, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
+	Graphics.stretch_copy(Graphics, 0, {x = 255, y = 255, w = 1, h = 1})
+	Graphics.stretch_copy({x = x, y = y, w = 10, h = 10}, 0, {x = 0, y = 0, w = 1, h = 1})
 	w.draw()
 	draw_debug_line(1, string.format("set FPS = %d", Graphics.get_fps()))
 	draw_debug_line(3, Input.mods().ctrl and "ctrl" or "---")

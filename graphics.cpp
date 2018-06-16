@@ -87,7 +87,7 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
-	// ● copy(dest_rect, texture, src_rect)
+	// ● copy(dest_point, texture, src_rect)
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
 	int copy(lua_State* L) {
@@ -95,11 +95,25 @@ namespace Graphics {
 		SDL_Rect src, dest;
 		Geometry::to_rect(L, 1, &dest);
 		Geometry::check_rect(L, 3, &src);
-		if (!dest.w) dest.w = src.w;
-		if (!dest.h) dest.h = src.h;
+		dest.w = src.w;
+		dest.h = src.h;
 		if (SDL_RenderCopy($renderer, texture, &src, &dest) < 0) {
 			return luaL_error(L, "SDL_RenderCopy() < 0");
 		}
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● stretch_copy(dest_rect, texture, src_rect)
+	//-------------------------------------------------------------------------
+	int stretch_copy(lua_State* L) {
+		SDL_Texture* texture = Texture::check_texture(L, 2);
+		SDL_Rect src, dest;
+		Geometry::check_rect(L, 1, &dest);
+		Geometry::check_rect(L, 3, &src);
+		if (SDL_RenderCopy($renderer, texture, &src, &dest) < 0) {
+			return luaL_error(L, "SDL_RenderCopy() < 0");
+		}
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● tile(dest_rect, texture, src_rect)
@@ -124,6 +138,7 @@ namespace Graphics {
 				}
 			}
 		}
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● draw_line(point1, point2, ...)
@@ -321,6 +336,7 @@ namespace Graphics {
 				{"get_fps", get_fps},
 				{"set_fps", set_fps},
 				{"copy", copy},
+				{"stretch_copy", stretch_copy},
 				{"tile", tile},
 				{"set_color", set_color},
 				{"set_blend", set_blend},

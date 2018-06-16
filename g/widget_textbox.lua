@@ -37,7 +37,7 @@ function Widget_TextBox.new()
 				h = self.rect.h - 4,
 			}
 		end
-		Graphics.copy(
+		Graphics.stretch_copy(
 			cursor_rect,
 			0, {x = 9, y = 3, w = 1, h = 1}
 		)
