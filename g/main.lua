@@ -1,8 +1,8 @@
-require 'widget'
-require 'widget_textbase'
-require 'widget_label'
-require 'widget_textbox'
-require 'widget_button'
+require 'g/widget'
+require 'g/widget_textbase'
+require 'g/widget_label'
+require 'g/widget_textbox'
+require 'g/widget_button'
 
 fullscreen = false
 w = Widget_Button.new()

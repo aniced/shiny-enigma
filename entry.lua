@@ -7,6 +7,6 @@ function on.update()
 	if #arg >= 1 then
 		dofile 'conmode/main.lua'
 	else
-		dofile 'main.lua'
+		dofile 'g/main.lua'
 	end
 end
