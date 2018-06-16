@@ -5,8 +5,9 @@
 //   These are duck-typed pseudo classes, which need only a table with named
 //   fields present:
 //   - Point: x, y
-//   - Rect: x, y, w, h
-//   - Margin: t, r, b, l
+//   - Rect: x, y, w (width) and h (height)
+//   - Margin: t (top), r (right), b (bottom) and l (left)
+//   Thus a rectangle is a point.
 //=============================================================================
 
 namespace Geometry {
@@ -128,6 +129,36 @@ namespace Geometry {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● expand_rect(rect, margin) → new rect
+	//-------------------------------------------------------------------------
+	int expand_rect(lua_State* L) {
+		SDL_Rect rect;
+		Margin margin;
+		check_rect(L, 1, &rect);
+		check_margin(L, 2, &margin);
+		rect.x -= margin.l;
+		rect.y -= margin.t;
+		rect.w += margin.l + margin.r;
+		rect.h += margin.t + margin.b;
+		create_rect(L, &rect);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● shrink_rect(rect, margin) → new rect
+	//-------------------------------------------------------------------------
+	int shrink_rect(lua_State* L) {
+		SDL_Rect rect;
+		Margin margin;
+		check_rect(L, 1, &rect);
+		check_margin(L, 2, &margin);
+		rect.x += margin.l;
+		rect.y += margin.t;
+		rect.w -= margin.l + margin.r;
+		rect.h -= margin.t + margin.b;
+		create_rect(L, &rect);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
@@ -136,6 +167,8 @@ namespace Geometry {
 			{"point_in_rect", point_in_rect},
 			{"has_intersection", has_intersection},
 			{"intersect_rect", intersect_rect},
+			{"expand_rect", expand_rect},
+			{"shrink_rect", shrink_rect},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Geometry", reg);

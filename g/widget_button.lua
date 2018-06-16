@@ -14,7 +14,7 @@ function Widget_Button.new()
 		end
 		Graphics.draw_9patch(self.rect, patch)
 		Graphics.copy(
-			{x = self.rect.x, y = self.rect.y},
+			Geometry.shrink_rect(self.rect, self.padding),
 			self.texture,
 			self.texture:get_rect()
 		)
