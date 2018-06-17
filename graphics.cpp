@@ -21,6 +21,13 @@ namespace Graphics {
 		SDL_Texture* old_texture;
 		SDL_Texture* new_texture;
 	} transition_state;
+	double brightness = 1.0;
+	struct fade_state {
+		bool active = false;
+		int duration;
+		int frame;
+		bool go_dark; // true = fade out
+	} fade_state;
 	//-------------------------------------------------------------------------
 	// ● update_transition
 	//-------------------------------------------------------------------------
@@ -43,6 +50,24 @@ namespace Graphics {
 		}
 	}
 	//-------------------------------------------------------------------------
+	// ● update_brightness
+	//-------------------------------------------------------------------------
+	void update_brightness() {
+		if (fade_state.active) {
+			// interpolate the brightness
+			brightness = (double) fade_state.frame / fade_state.duration;
+			if (fade_state.go_dark) brightness = 1 - brightness;
+			fade_state.frame++;
+			if (fade_state.frame > fade_state.duration) {
+				fade_state.active = false;
+			}
+		}
+		Uint8 b = brightness * 255;
+		SDL_SetTextureBlendMode($texture[1], SDL_BLENDMODE_MOD);
+		SDL_Rect src = {240 + (b & 15), 240 + (b >> 4), 1, 1};
+		SDL_RenderCopy($renderer, $texture[1], &src, NULL);
+	}
+	//-------------------------------------------------------------------------
 	// ● update
 	//-------------------------------------------------------------------------
 	void update() {
@@ -53,6 +78,7 @@ namespace Graphics {
 		} else {
 			Util::call_handler("paint");
 		}
+		update_brightness();
 		SDL_RenderPresent($renderer);
 	}
 	//-------------------------------------------------------------------------
@@ -177,6 +203,7 @@ namespace Graphics {
 			return SDL_BLENDMODE_MOD;
 		} else {
 			luaL_argerror(L, index, "unknown blend mode");
+			return SDL_BLENDMODE_NONE;
 		}
 	}
 	//-------------------------------------------------------------------------
@@ -184,6 +211,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	int set_blend(lua_State* L) {
 		SDL_SetRenderDrawBlendMode($renderer, check_blend(L, 1));
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● draw_rect(rect)
@@ -304,6 +332,7 @@ namespace Graphics {
 		if (!animation_enabled) return 0;
 		// fill in the transition state
 		transition_state.duration = luaL_optint(L, 1, 10);
+		if (!fade_state.duration) return luaL_error(L, "duration cannot be zero");
 		transition_state.frame = 0;
 		transition_state.new_texture = create_target_texture();
 		SDL_SetTextureBlendMode(transition_state.new_texture, SDL_BLENDMODE_BLEND);
@@ -314,13 +343,41 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
-	// ● stop_transition
+	// ● stop_transition()
 	//   This function makes no difference if any of the following:
 	//   - animation is disabled
 	//   - freeze() is called but not transition()
 	//-------------------------------------------------------------------------
 	int stop_transition(lua_State* L) {
 		transition_state.active = false;
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● set_brightness(brightness ∈ [0, 1])
+	//-------------------------------------------------------------------------
+	int set_brightness(lua_State* L) {
+		brightness = Util::clamp(luaL_checknumber(L, 1), 0.0, 1.0);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● fade_in/fade_out(duration = 10)
+	//-------------------------------------------------------------------------
+	int fade(lua_State* L) {
+		if (!animation_enabled) return 0;
+		// fill in the fade state
+		fade_state.duration = luaL_optint(L, 1, 10);
+		if (!fade_state.duration) return luaL_error(L, "duration cannot be zero");
+		fade_state.frame = 0;
+		fade_state.go_dark = lua_toboolean(L, lua_upvalueindex(1));
+		fade_state.active = true;
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● stop_fade
+	//   The brightness will remain!
+	//-------------------------------------------------------------------------
+	int stop_fade(lua_State* L) {
+		fade_state.active = false;
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -349,12 +406,23 @@ namespace Graphics {
 				{"freeze", freeze},
 				{"transition", transition},
 				{"stop_transition", stop_transition},
+				{"set_brightness", set_brightness},
+				{"fade_in", NULL},
+				{"fade_out", NULL},
 				{NULL, NULL}
 			};
 			luaL_register(L, "Graphics", reg);
 			// Graphics.x = Graphics.y = 0
 			lua_pushnumber(L, 0); lua_setfield(L, -2, "x");
 			lua_pushnumber(L, 0); lua_setfield(L, -2, "y");
+			// Graphics.fade_in = fade with false
+			// Graphics.fade_out = fade with true
+			lua_pushboolean(L, false);
+			lua_pushcclosure(L, fade, 1);
+			lua_setfield(L, -2, "fade_in");
+			lua_pushboolean(L, true);
+			lua_pushcclosure(L, fade, 1);
+			lua_setfield(L, -2, "fade_out");
 			// (registry)[update] = Graphics
 			lua_pushlightuserdata(L, (void*) update);
 			lua_pushvalue(L, -2);
