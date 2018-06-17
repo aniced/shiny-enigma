@@ -14,7 +14,7 @@ function Scene.new()
 		while true do
 			self.update_general()
 			self.update_cursor()
-			if self.on_update then self:on_update() end
+			if self.on_update then self.on_update() end
 			coroutine.yield()
 		end
 	end)

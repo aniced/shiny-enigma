@@ -14,7 +14,7 @@ function on.update()
 end
 
 function on.paint()
-	SceneManager.peek():on_paint()
+	SceneManager.peek().on_paint()
 end
 
 SceneManager.set_root(Scene_Hello.new())

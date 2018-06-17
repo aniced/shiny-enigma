@@ -332,7 +332,7 @@ namespace Graphics {
 		if (!animation_enabled) return 0;
 		// fill in the transition state
 		transition_state.duration = luaL_optint(L, 1, 10);
-		if (!fade_state.duration) return luaL_error(L, "duration cannot be zero");
+		if (!transition_state.duration) return luaL_error(L, "duration cannot be zero");
 		transition_state.frame = 0;
 		transition_state.new_texture = create_target_texture();
 		SDL_SetTextureBlendMode(transition_state.new_texture, SDL_BLENDMODE_BLEND);

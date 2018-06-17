@@ -14,6 +14,7 @@ end
 function self.set_root(scene)
 	print("Scene root ", scene)
 	self.stack = {scene}
+	Graphics.fade_in()
 end
 
 function self.call(scene)
