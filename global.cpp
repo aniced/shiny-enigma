@@ -60,4 +60,5 @@ int panic(lua_State* L) {
 	fprintf(stderr, "%s\n", msgbox_buf);
 	msgbox(msgbox_buf);
 	quit(1); // never returning
+	abort(); // never getting here
 }

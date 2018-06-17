@@ -203,7 +203,7 @@ namespace Graphics {
 			return SDL_BLENDMODE_MOD;
 		} else {
 			luaL_argerror(L, index, "unknown blend mode");
-			return SDL_BLENDMODE_NONE;
+			abort(); // never getting here
 		}
 	}
 	//-------------------------------------------------------------------------

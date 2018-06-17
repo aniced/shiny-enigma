@@ -87,7 +87,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	int check_key(lua_State* L, int index) {
 		int k = luaL_checkinteger(L, index);
-		if (k < 0 || k >= ARRAY_SIZE(states)) {
+		if (k < 0 || k >= (int) ARRAY_SIZE(states)) {
 			return luaL_error(L, "invalid key number: %d", k);
 		}
 		return k;

@@ -49,7 +49,7 @@ namespace Texture {
 		}
 		const char* text = luaL_checkstring(L, 2);
 		SDL_Color color = {255, 255, 255, 255};
-		SDL_Surface* surface = TTF_RenderUTF8_Blended($font[0], text, color);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text, color);
 		if (!surface) luaL_error(L, "TTF_RenderUTF8() == NULL");
 		create_texture(L, SDL_CreateTextureFromSurface($renderer, surface));
 		SDL_FreeSurface(surface);

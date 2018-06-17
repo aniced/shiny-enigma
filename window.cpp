@@ -41,6 +41,7 @@ namespace Window {
 		if (SDL_SetWindowFullscreen($window, flags) < 0) {
 			error("SDL_SetWindowFullscreen() < 0");
 		}
+		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● set_title(title)
