@@ -25,22 +25,34 @@ function self.draw_text(point, text, initial_color)
 			x = point.x
 			y = y + WLH
 			i = i + 1
-		elseif ch == "\b" then
+		elseif ch == "\f" then
 			i = i + 1
-			local param, t = nil, {}
+			local param, f = nil, {}
 			ch, param, i = text:match("^(" .. utf8.charpattern .. ")%[(.-)%]()", i)
-			function t.c()
-				for k, v in param:gmatch("([rgb])%d+") do
+			-- \fc[r255g255b255] = change text color to white
+			function f.c()
+				for k, v in param:gmatch("([rgb])(%d+)") do
 					color[k] = tonumber(v)
 				end
 			end
-			function t.t()
+			-- \ft[-1] = tab to the last column
+			function f.t()
 				x = param * WLH
 				if x < 0 then
 					x = x + Graphics.w
 				end
 			end
-			t[ch]()
+			-- \fi[16] = icon of a filled lozenge
+			function f.i()
+				local i = tonumber(param)
+				Graphics.copy(
+					{x = x, y = y + (WLH - 16) / 2},
+					1,
+					{x = (i % 16) * 16, y = math.floor(i / 16) * 16, w = 16, h = 16}
+				)
+				x = x + 16
+			end
+			f[ch]()
 		else
 			local g = self.get_glyph(ch)
 			g:set_color(color)

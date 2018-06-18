@@ -12,7 +12,7 @@ function Scene_Message.new()
 		end
 		if Input.pressed(29) then
 			j = j + 1
-			self.items[2].text = string.format("%d\bt[4]%d", i, j)
+			self.items[2].text = string.format("%d\ft[4]%d", i, j)
 		end
 		if Input.triggered(44) then
 			SceneManager.back(1.05)

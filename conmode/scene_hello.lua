@@ -5,7 +5,7 @@ function Scene_Hello.new()
 	self.items[0] = Line.new("你好！")
 	for i = 1, 30 do
 		self.items[i] = Line.new(string.format(
-			"%d\bt[4]%f\bt[-1]\bc[r0g0b0]|",
+			"%d\ft[4]%f\ft[-2]\fc[r255g0b0]{\fi[16]}",
 			i, math.sqrt(i))
 		)
 	end
