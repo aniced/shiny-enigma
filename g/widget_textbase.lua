@@ -11,7 +11,7 @@ function Widget_TextBase.new(text)
 			self.texture = nil
 		else
 			self.texture = Texture.render_text(0, self.text)
-			self.texture:set_color(self.color)
+			self.texture.set_color(self.color)
 		end
 	end
 	self.set_text(text or "")
@@ -19,7 +19,7 @@ function Widget_TextBase.new(text)
 	function self.set_color(color)
 		self.color = color
 		if self.texture then
-			self.texture:set_color(self.color)
+			self.texture.set_color(self.color)
 		end
 	end
 

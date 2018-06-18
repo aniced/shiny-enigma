@@ -16,7 +16,7 @@ function Widget_Button.new()
 		Graphics.copy(
 			Geometry.shrink_rect(self.rect, self.padding),
 			self.texture,
-			self.texture:get_rect()
+			self.texture.get_rect()
 		)
 	end
 

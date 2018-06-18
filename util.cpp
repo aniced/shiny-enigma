@@ -110,53 +110,17 @@ namespace Util {
 		}
 	}
 	//-------------------------------------------------------------------------
-	// ● class.new closure
-	//   upvalue 1 = class
-	//   upvalue 2 = parent
+	// ● register closures with an upvalue of self into the table on top
 	//-------------------------------------------------------------------------
-	int lua_new_instance(lua_State* L) {
-		int nargs = lua_gettop(L);
-		// local self = {}
-		lua_newtable(L);
-		// setmetatable(self, class)
-		lua_pushvalue(L, lua_upvalueindex(1));
-		lua_setmetatable(L, -2);
-		// class.init(self, ...)
-		lua_getfield(L, lua_upvalueindex(1), "init");
-		lua_pushvalue(L, -2);
-		for (int i = 1; i <= nargs; i++) {
-			lua_pushvalue(L, i);
+	void instance_register(lua_State* L, const luaL_Reg* l) {
+		while (l->name || l->func) {
+			if (l->name && l->func) {
+				lua_pushvalue(L, -1);
+				lua_pushcclosure(L, l->func, 1);
+				lua_setfield(L, -2, l->name);
+			}
+			l++;
 		}
-		lua_call(L, nargs + 1, 0);
-		// return self
-		return 1;
-	}
-	//-------------------------------------------------------------------------
-	// ● class(parent = nil)
-	//-------------------------------------------------------------------------
-	int lua_new_class(lua_State* L) {
-		bool has_parent = !lua_isnoneornil(L, 1);
-		// t = {}
-		lua_createtable(L, 0, 2);
-		// t.__index = t
-		lua_pushvalue(L, -1);
-		lua_setfield(L, -2, "__index");
-		// if arg[1] then
-		if (has_parent) {
-			// setmetatable(t, arg[1])
-			lua_pushvalue(L, 1);
-			lua_setmetatable(L, -2);
-		}
-		// t.new = …
-		lua_pushvalue(L, -1);
-		if (has_parent) {
-			lua_pushvalue(L, 1);
-		} else {
-			lua_pushnil(L);
-		}
-		lua_pushcclosure(L, lua_new_instance, 2);
-		lua_setfield(L, -2, "new");
-		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● shallow_copy(obj)
@@ -178,7 +142,6 @@ namespace Util {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"class", lua_new_class},
 			{"rtp", lua_rtp},
 			{"shallow_copy", lua_shallow_copy},
 			{NULL, NULL}

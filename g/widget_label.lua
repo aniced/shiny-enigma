@@ -7,7 +7,7 @@ function Widget_Label.new(text)
 		Graphics.copy(
 			self.rect,
 			self.texture,
-			self.texture:get_rect()
+			self.texture.get_rect()
 		)
 	end
 

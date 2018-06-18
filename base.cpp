@@ -69,6 +69,7 @@ void init(int argc, char* argv[]) {
 	Window::init();
 	Input::init();
 	Audio::init();
+	Font::init();
 	Util::init();
 	// _G.on = {}
 	lua_newtable(L);

@@ -22,6 +22,7 @@ extern "C" {
 #include "util.cpp"
 #include "utf8.cpp"
 #include "geometry.cpp"
+#include "font.cpp"
 #include "graphics.cpp"
 #include "texture.cpp"
 #include "window.cpp"

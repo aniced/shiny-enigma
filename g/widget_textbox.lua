@@ -9,7 +9,7 @@ function Widget_TextBox.new()
 			self.set_text(self.text .. text)
 		end
 		if Input.key_repeated(42) then
-			self.set_text(self.text:sub(1, -2))
+			self.set_text(self.text.sub(1, -2))
 		end
 	end
 
@@ -18,7 +18,7 @@ function Widget_TextBox.new()
 		Graphics.draw_9patch(self.rect, patch)
 		local cursor_rect
 		if self.texture then
-			local texture_rect = self.texture:get_rect()
+			local texture_rect = self.texture.get_rect()
 			cursor_rect = {
 				x = self.rect.x + 1 + texture_rect.w,
 				y = self.rect.y + 2,
