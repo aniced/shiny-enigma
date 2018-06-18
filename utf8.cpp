@@ -85,6 +85,7 @@ namespace UTF8 {
 	}
 	//-------------------------------------------------------------------------
 	// ● is_continuation
+	//   0x80..0xbf
 	//-------------------------------------------------------------------------
 	inline bool is_continuation(char c) {
 		return ((uint8_t) c >> 6) == 2;
@@ -132,7 +133,7 @@ namespace UTF8 {
 	}
 	int lua_codes(lua_State* L) {
 		luaL_checktype(L, 1, LUA_TSTRING);
-		lua_pushcfunction(L, codes_iterator);
+		lua_pushcfunction(L, lua_codes_iterator);
 		lua_pushvalue(L, 1);
 		lua_pushnil(L);
 		return 3;
@@ -164,6 +165,16 @@ namespace UTF8 {
 	// ● len(s, i = 1, j = -1)
 	//-------------------------------------------------------------------------
 	int lua_len(lua_State* L) {
+  	size_t bytes;
+  	const char* s = luaL_checklstring(L, 1, &bytes);
+		int i = Util::check_pos(L, 1, luaL_optint(L, 2, 1));
+		int j = Util::check_pos(L, 1, luaL_optint(L, 3, -1));
+		size_t result = 0;
+		while (i <= j) {
+			if (!is_continuation(s[i - 1])) result++;
+			i++;
+		}
+		lua_pushnumber(L, result);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
@@ -204,7 +215,7 @@ namespace UTF8 {
 			{"charpattern", NULL},
 			{"codes", lua_codes},
 			{"codepoint", lua_codepoint},
-			//{"len", lua_len},
+			{"len", lua_len},
 			{"offset", lua_offset},
 			{NULL, NULL}
 		};

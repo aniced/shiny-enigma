@@ -19,7 +19,16 @@ namespace Util {
 		return lua_toboolean(L, index);
 	}
 	//-------------------------------------------------------------------------
+	// ● clamp
+	//-------------------------------------------------------------------------
+	template <class T> inline T clamp(T x, T min, T max) {
+		if (x < min) return min;
+		if (x > max) return max;
+		return x;
+	}
+	//-------------------------------------------------------------------------
 	// ● translate_pos
+	//    index : the string
 	//-------------------------------------------------------------------------
 	int translate_pos(lua_State* L, int index, int pos) {
 		if (pos >= 0) {
@@ -30,12 +39,14 @@ namespace Util {
 		}
 	}
 	//-------------------------------------------------------------------------
-	// ● clamp
+	// ● check_pos
+	//   This can throw an error.
 	//-------------------------------------------------------------------------
-	template <class T> inline T clamp(T x, T min, T max) {
-		if (x < min) return min;
-		if (x > max) return max;
-		return x;
+	int check_pos(lua_State* L, int index, int pos) {
+		int len = lua_objlen(L, index);
+		int p = pos >= 0 ? pos : len + pos + 1;
+		if (p < 1 || p > len) luaL_error(L, "position %d out of string", pos);
+		return p;
 	}
 	//-------------------------------------------------------------------------
 	// ● to_color
