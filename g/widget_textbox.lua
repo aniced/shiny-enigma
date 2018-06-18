@@ -39,7 +39,8 @@ function Widget_TextBox.new()
 		end
 		Graphics.stretch_copy(
 			cursor_rect,
-			0, {x = 9, y = 3, w = 1, h = 1}
+			Texture.stock[0],
+			{x = 9, y = 3, w = 1, h = 1}
 		)
 	end
 

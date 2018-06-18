@@ -47,7 +47,7 @@ function self.draw_text(point, text, initial_color)
 				local i = tonumber(param)
 				Graphics.copy(
 					{x = x, y = y + (WLH - 16) / 2},
-					1,
+					Texture.stock[1],
 					{x = (i % 16) * 16, y = math.floor(i / 16) * 16, w = 16, h = 16}
 				)
 				x = x + 16
@@ -55,8 +55,8 @@ function self.draw_text(point, text, initial_color)
 			f[ch]()
 		else
 			local g = self.get_glyph(ch)
-			g:set_color(color)
-			local rect = g:get_rect()
+			g.set_color(color)
+			local rect = g.get_rect()
 			Graphics.copy({x = x, y = y}, g, rect)
 			x = x + rect.w
 			i = utf8.offset(text, 2, i)

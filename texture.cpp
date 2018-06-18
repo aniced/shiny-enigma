@@ -17,8 +17,6 @@ namespace Texture {
 			if (lua_isuserdata(L, -1)) {
 				return (SDL_Texture*) lua_touserdata(L, -1);
 			}
-		} else if (lua_isnumber(L, index)) {
-			return $texture[lua_tointeger(L, index)];
 		}
 		luaL_argerror(L, index, "not a texture");
 		abort();
@@ -117,6 +115,13 @@ namespace Texture {
 			{NULL, NULL}
 		};
 		luaL_register(L, "Texture", reg);
+		// Texture.stock = {…}
+		lua_createtable(L, 3, 0);
+		for (int i = 0; i < 3; i++) {
+			create_texture(L, $texture[0]);
+			lua_rawseti(L, -2, i);
+		}
+		lua_setfield(L, -2, "stock");
 		lua_pop(L, 1);
 	}
 }
