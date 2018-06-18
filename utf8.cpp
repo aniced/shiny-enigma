@@ -100,7 +100,7 @@ namespace UTF8 {
 	//-------------------------------------------------------------------------
 	// ● char(...)
 	//-------------------------------------------------------------------------
-	int _char(lua_State* L) {
+	int lua_char(lua_State* L) {
 		int n = lua_gettop(L);
 		luaL_Buffer b;
     luaL_buffinit(L, &b);
@@ -113,7 +113,7 @@ namespace UTF8 {
 	//-------------------------------------------------------------------------
 	// ● codes(s)
 	//-------------------------------------------------------------------------
-	int codes_iterator(lua_State* L) {
+	int lua_codes_iterator(lua_State* L) {
   	size_t len;
   	const char* s = luaL_checklstring(L, 1, &len);
 		const char* p;
@@ -130,7 +130,7 @@ namespace UTF8 {
 			return 0;
 		}
 	}
-	int codes(lua_State* L) {
+	int lua_codes(lua_State* L) {
 		luaL_checktype(L, 1, LUA_TSTRING);
 		lua_pushcfunction(L, codes_iterator);
 		lua_pushvalue(L, 1);
@@ -142,7 +142,7 @@ namespace UTF8 {
 	//   Note that this function doesn't throw errors
 	//   if i or j is out of range.
 	//-------------------------------------------------------------------------
-	int codepoint(lua_State* L) {
+	int lua_codepoint(lua_State* L) {
 		size_t len1;
 		const char* s = luaL_checklstring(L, 1, &len1);
 		int len = len1;
@@ -161,12 +161,15 @@ namespace UTF8 {
 		return count;
 	}
 	//-------------------------------------------------------------------------
-	// ●
+	// ● len(s, i = 1, j = -1)
 	//-------------------------------------------------------------------------
+	int lua_len(lua_State* L) {
+		return 1;
+	}
 	//-------------------------------------------------------------------------
 	// ● offset(s, n, i = (n >= 0 and 1 or #n + 1))
 	//-------------------------------------------------------------------------
-	int offset(lua_State* L) {
+	int lua_offset(lua_State* L) {
 		int len = lua_objlen(L, 1);
 		const char* s = luaL_checklstring(L, 1, NULL);
 		int n = luaL_checkint(L, 2);
@@ -197,12 +200,12 @@ namespace UTF8 {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"char", _char},
+			{"char", lua_char},
 			{"charpattern", NULL},
-			{"codes", codes},
-			{"codepoint", codepoint},
-			//{"len", len},
-			{"offset", offset},
+			{"codes", lua_codes},
+			{"codepoint", lua_codepoint},
+			//{"len", lua_len},
+			{"offset", lua_offset},
 			{NULL, NULL}
 		};
 		luaL_register(L, "utf8", reg);

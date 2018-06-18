@@ -78,7 +78,7 @@ namespace Input {
 	//   true is returned if the user performed an action.
 	//   When this function returns true, animations should stop.
 	//-------------------------------------------------------------------------
-	int action(lua_State* L) {
+	int lua_action(lua_State* L) {
 		lua_pushboolean(L, state_action);
 		return 1;
 	}
@@ -95,7 +95,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● pressed(scancode)
 	//-------------------------------------------------------------------------
-	int pressed(lua_State* L) {
+	int lua_pressed(lua_State* L) {
 		int k = check_key(L, 1);
 		lua_pushboolean(L, states[k]);
 		return 1;
@@ -103,7 +103,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● triggered(scancode)
 	//-------------------------------------------------------------------------
-	int triggered(lua_State* L) {
+	int lua_triggered(lua_State* L) {
 		int k = check_key(L, 1);
 		lua_pushboolean(L, states[k] == 3);
 		return 1;
@@ -111,7 +111,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● repeated(scancode)
 	//-------------------------------------------------------------------------
-	int repeated(lua_State* L) {
+	int lua_repeated(lua_State* L) {
 		int k = check_key(L, 1);
 		lua_pushboolean(L, states[k] >= 2);
 		return 1;
@@ -119,7 +119,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● mods()
 	//-------------------------------------------------------------------------
-	int mods(lua_State* L) {
+	int lua_mods(lua_State* L) {
 		SDL_Keymod mods = SDL_GetModState();
 		lua_createtable(L, 0, 15);
 		#define _(kmod, field) \
@@ -145,21 +145,21 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● text_start()
 	//-------------------------------------------------------------------------
-	int text_start(lua_State* L) {
+	int lua_text_start(lua_State* L) {
 		SDL_StartTextInput();
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● text_stop()
 	//-------------------------------------------------------------------------
-	int text_stop(lua_State* L) {
+	int lua_text_stop(lua_State* L) {
 		SDL_StopTextInput();
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● text_set_rect()
 	//-------------------------------------------------------------------------
-	int text_set_rect(lua_State* L) {
+	int lua_text_set_rect(lua_State* L) {
 		SDL_Rect rect;
 		Geometry::to_rect(L, 1, &rect);
 		SDL_SetTextInputRect(&rect);
@@ -168,7 +168,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● text()
 	//-------------------------------------------------------------------------
-	int text(lua_State* L) {
+	int lua_text(lua_State* L) {
 		if (text_input) {
 			lua_pushstring(L, text_text);
 		} else {
@@ -179,7 +179,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● mouse()
 	//-------------------------------------------------------------------------
-	int mouse(lua_State* L) {
+	int lua_mouse(lua_State* L) {
 		SDL_Point point;
 		SDL_GetMouseState(&point.x, &point.y);
 		Geometry::create_point(L, &point);
@@ -188,7 +188,7 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	// ● set_pause_on_blur(enabled)
 	//-------------------------------------------------------------------------
-	int set_pause_on_blur(lua_State* L) {
+	int lua_set_pause_on_blur(lua_State* L) {
 		luaL_checkany(L, 1);
 		pause_on_blur = lua_toboolean(L, 1);
 		if (!(SDL_GetWindowFlags($window) & SDL_WINDOW_INPUT_FOCUS)) {
@@ -205,17 +205,17 @@ namespace Input {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"action", action},
-			{"pressed", pressed},
-			{"triggered", triggered},
-			{"repeated", repeated},
-			{"mods", mods},
-			{"text", text},
-			{"text_start", text_start},
-			{"text_stop", text_stop},
-			{"text_set_rect", text_set_rect},
-			{"mouse", mouse},
-			{"set_pause_on_blur", set_pause_on_blur},
+			{"action", lua_action},
+			{"pressed", lua_pressed},
+			{"triggered", lua_triggered},
+			{"repeated", lua_repeated},
+			{"mods", lua_mods},
+			{"text", lua_text},
+			{"text_start", lua_text_start},
+			{"text_stop", lua_text_stop},
+			{"text_set_rect", lua_text_set_rect},
+			{"mouse", lua_mouse},
+			{"set_pause_on_blur", lua_set_pause_on_blur},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Input", reg);

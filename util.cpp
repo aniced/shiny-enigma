@@ -67,7 +67,7 @@ namespace Util {
 		strcat(s, path);
 		return s;
 	}
-	int rtp_lua(lua_State* L) {
+	int lua_rtp(lua_State* L) {
 		const char* path = luaL_checkstring(L, 1);
 		lua_pushstring(L, rtp(path));
 		return 1;
@@ -103,7 +103,7 @@ namespace Util {
 	//   upvalue 1 = class
 	//   upvalue 2 = parent
 	//-------------------------------------------------------------------------
-	int new_instance(lua_State* L) {
+	int lua_new_instance(lua_State* L) {
 		int nargs = lua_gettop(L);
 		// local self = {}
 		lua_newtable(L);
@@ -123,7 +123,7 @@ namespace Util {
 	//-------------------------------------------------------------------------
 	// ● class(parent = nil)
 	//-------------------------------------------------------------------------
-	int new_class(lua_State* L) {
+	int lua_new_class(lua_State* L) {
 		bool has_parent = !lua_isnoneornil(L, 1);
 		// t = {}
 		lua_createtable(L, 0, 2);
@@ -143,14 +143,14 @@ namespace Util {
 		} else {
 			lua_pushnil(L);
 		}
-		lua_pushcclosure(L, new_instance, 2);
+		lua_pushcclosure(L, lua_new_instance, 2);
 		lua_setfield(L, -2, "new");
 		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● shallow_copy(obj)
 	//-------------------------------------------------------------------------
-	int shallow_copy(lua_State* L) {
+	int lua_shallow_copy(lua_State* L) {
 		lua_newtable(L);
 		lua_pushnil(L);
 		while (lua_next(L, 1)) {
@@ -167,9 +167,9 @@ namespace Util {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"class", new_class},
-			{"rtp", rtp_lua},
-			{"shallow_copy", shallow_copy},
+			{"class", lua_new_class},
+			{"rtp", lua_rtp},
+			{"shallow_copy", lua_shallow_copy},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Util", reg);

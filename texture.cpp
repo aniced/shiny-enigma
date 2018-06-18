@@ -31,7 +31,7 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	// ● new(filename)
 	//-------------------------------------------------------------------------
-	int new_instance(lua_State* L) {
+	int lua_new_instance(lua_State* L) {
 		const char* filename = lua_tostring(L, 1);
 		create_texture(L, IMG_LoadTexture($renderer, Util::rtp(filename)));
 		return 1;
@@ -40,7 +40,7 @@ namespace Texture {
 	// ● render_text(font, text) → texture reference
 	//   font: font ID or reference
 	//-------------------------------------------------------------------------
-	int render_text(lua_State* L) {
+	int lua_render_text(lua_State* L) {
 		TTF_Font* font;
 		if (lua_isuserdata(L, 1)) {
 			font = Graphics::check_font(L, 1);
@@ -58,7 +58,7 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	// ● ~Texture()
 	//-------------------------------------------------------------------------
-	int gc(lua_State* L) {
+	int lua_gc(lua_State* L) {
 		SDL_Texture* texture = check_texture(L, 1);
 		SDL_DestroyTexture(texture);
 		return 0;
@@ -66,7 +66,7 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	// ● get_rect(self) → rect
 	//-------------------------------------------------------------------------
-	int get_rect(lua_State* L) {
+	int lua_get_rect(lua_State* L) {
 		SDL_Texture* texture = check_texture(L, 1);
 		Uint32 format;
 		int w, h, access;
@@ -78,7 +78,7 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	// ● set_color(self, color)
 	//-------------------------------------------------------------------------
-	int set_color(lua_State* L) {
+	int lua_set_color(lua_State* L) {
 		SDL_Texture* texture = check_texture(L, 1);
 		SDL_Color color;
 		Util::to_color(L, 2, &color);
@@ -88,7 +88,7 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	// ● set_blend(self, mode)
 	//-------------------------------------------------------------------------
-	int set_blend(lua_State* L) {
+	int lua_set_blend(lua_State* L) {
 		SDL_Texture* texture = check_texture(L, 1);
 		SDL_SetTextureBlendMode(texture, Graphics::check_blend(L, 2));
 		return 0;
@@ -98,11 +98,11 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"__gc", gc},
-			{"render_text", render_text},
-			{"get_rect", get_rect},
-			{"set_color", set_color},
-			{"set_blend", set_blend},
+			{"__gc", lua_gc},
+			{"render_text", lua_render_text},
+			{"get_rect", lua_get_rect},
+			{"set_color", lua_set_color},
+			{"set_blend", lua_set_blend},
 			{NULL, NULL}
 		};
 		luaL_newmetatable(L, tname);

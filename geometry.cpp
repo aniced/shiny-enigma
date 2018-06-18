@@ -86,7 +86,7 @@ namespace Geometry {
 	//-------------------------------------------------------------------------
 	// ● rect_empty(rect)
 	//-------------------------------------------------------------------------
-	int rect_empty(lua_State* L) {
+	int lua_rect_empty(lua_State* L) {
 		SDL_Rect rect;
 		check_rect(L, 1, &rect);
 		lua_pushboolean(L, SDL_RectEmpty(&rect));
@@ -95,7 +95,7 @@ namespace Geometry {
 	//-------------------------------------------------------------------------
 	// ● point_in_rect(point, rect)
 	//-------------------------------------------------------------------------
-	int point_in_rect(lua_State* L) {
+	int lua_point_in_rect(lua_State* L) {
 		SDL_Point point;
 		SDL_Rect rect;
 		check_point(L, 1, &point);
@@ -104,9 +104,9 @@ namespace Geometry {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● has_intersection(rect1, rect2)
+	// ● rect_has_intersection(rect1, rect2)
 	//-------------------------------------------------------------------------
-	int has_intersection(lua_State* L) {
+	int lua_rect_has_intersection(lua_State* L) {
 		SDL_Rect rect1, rect2;
 		check_rect(L, 1, &rect1);
 		check_rect(L, 2, &rect2);
@@ -117,7 +117,7 @@ namespace Geometry {
 	// ● intersect_rect(rect1, rect2)
 	//   nil will be returned if there's no intersection.
 	//-------------------------------------------------------------------------
-	int intersect_rect(lua_State* L) {
+	int lua_intersect_rect(lua_State* L) {
 		SDL_Rect rect1, rect2, rect3;
 		check_rect(L, 1, &rect1);
 		check_rect(L, 2, &rect2);
@@ -131,7 +131,7 @@ namespace Geometry {
 	//-------------------------------------------------------------------------
 	// ● expand_rect(rect, margin) → new rect
 	//-------------------------------------------------------------------------
-	int expand_rect(lua_State* L) {
+	int lua_expand_rect(lua_State* L) {
 		SDL_Rect rect;
 		Margin margin;
 		check_rect(L, 1, &rect);
@@ -146,7 +146,7 @@ namespace Geometry {
 	//-------------------------------------------------------------------------
 	// ● shrink_rect(rect, margin) → new rect
 	//-------------------------------------------------------------------------
-	int shrink_rect(lua_State* L) {
+	int lua_shrink_rect(lua_State* L) {
 		SDL_Rect rect;
 		Margin margin;
 		check_rect(L, 1, &rect);
@@ -163,12 +163,12 @@ namespace Geometry {
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
-			{"rect_empty", rect_empty},
-			{"point_in_rect", point_in_rect},
-			{"has_intersection", has_intersection},
-			{"intersect_rect", intersect_rect},
-			{"expand_rect", expand_rect},
-			{"shrink_rect", shrink_rect},
+			{"rect_empty", lua_rect_empty},
+			{"point_in_rect", lua_point_in_rect},
+			{"rect_has_intersection", lua_rect_has_intersection},
+			{"intersect_rect", lua_intersect_rect},
+			{"expand_rect", lua_expand_rect},
+			{"shrink_rect", lua_shrink_rect},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Geometry", reg);

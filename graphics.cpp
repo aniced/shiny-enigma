@@ -103,11 +103,11 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	int fps = 60;
 	Uint32 frame_time = 1000 / fps;
-	int get_fps(lua_State* L) {
+	int lua_get_fps(lua_State* L) {
 		lua_pushnumber(L, fps);
 		return 1;
 	}
-	int set_fps(lua_State* L) {
+	int lua_set_fps(lua_State* L) {
 		fps = luaL_checkinteger(L, 1);
 		frame_time = 1000 / fps;
 		return 0;
@@ -116,7 +116,7 @@ namespace Graphics {
 	// ● copy(dest_point, texture, src_rect)
 	//   texture: texture ID or reference
 	//-------------------------------------------------------------------------
-	int copy(lua_State* L) {
+	int lua_copy(lua_State* L) {
 		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest;
 		Geometry::to_rect(L, 1, &dest);
@@ -131,7 +131,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● stretch_copy(dest_rect, texture, src_rect)
 	//-------------------------------------------------------------------------
-	int stretch_copy(lua_State* L) {
+	int lua_stretch_copy(lua_State* L) {
 		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest;
 		Geometry::check_rect(L, 1, &dest);
@@ -148,7 +148,7 @@ namespace Graphics {
 	//   The destination rectangle will not be fully covered if it can't be
 	//   divided exactly into source rectangles.
 	//-------------------------------------------------------------------------
-	int tile(lua_State* L) {
+	int lua_tile(lua_State* L) {
 		SDL_Texture* texture = Texture::check_texture(L, 2);
 		SDL_Rect src, dest, dest1;
 		Geometry::check_rect(L, 1, &dest);
@@ -169,7 +169,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● draw_line(point1, point2, ...)
 	//-------------------------------------------------------------------------
-	int draw_line(lua_State* L) {
+	int lua_draw_line(lua_State* L) {
 		int count = lua_gettop(L);
 		SDL_Point points[count];
 		for (int i = 0; i < count; i++) {
@@ -181,7 +181,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● set_color(color)
 	//-------------------------------------------------------------------------
-	int set_color(lua_State* L) {
+	int lua_set_color(lua_State* L) {
 		SDL_Color color;
 		Util::to_color(L, 1, &color);
 		SDL_SetRenderDrawColor($renderer, color.r, color.g, color.b, color.a);
@@ -209,14 +209,14 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● set_blend(mode)
 	//-------------------------------------------------------------------------
-	int set_blend(lua_State* L) {
+	int lua_set_blend(lua_State* L) {
 		SDL_SetRenderDrawBlendMode($renderer, check_blend(L, 1));
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● draw_rect(rect)
 	//-------------------------------------------------------------------------
-	int draw_rect(lua_State* L) {
+	int lua_draw_rect(lua_State* L) {
 		SDL_Rect rect;
 		Geometry::to_rect(L, 1, &rect);
 		SDL_RenderDrawRect($renderer, &rect);
@@ -225,7 +225,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● fill_rect(rect)
 	//-------------------------------------------------------------------------
-	int fill_rect(lua_State* L) {
+	int lua_fill_rect(lua_State* L) {
 		SDL_Rect rect;
 		Geometry::to_rect(L, 1, &rect);
 		SDL_RenderFillRect($renderer, &rect);
@@ -238,7 +238,7 @@ namespace Graphics {
 	//   - x, y, w and h: source rectangle
 	//   - t, r, b and l: margins
 	//-------------------------------------------------------------------------
-	int draw_9patch(lua_State* L) {
+	int lua_draw_9patch(lua_State* L) {
 		// rectangles for SDL_RenderCopy
 		SDL_Rect src_rect, dest_rect;
 		// get the texture
@@ -278,7 +278,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● ~Font()
 	//-------------------------------------------------------------------------
-	int font_gc(lua_State* L) {
+	int lua_font_gc(lua_State* L) {
 		TTF_Font* font = check_font(L, 1);
 		TTF_CloseFont(font);
 		return 0;
@@ -303,18 +303,18 @@ namespace Graphics {
 	//   set_animation_enabled(enabled)
 	//-------------------------------------------------------------------------
 	bool animation_enabled = true;
-	int get_animation_enabled(lua_State* L) {
+	int lua_get_animation_enabled(lua_State* L) {
 		lua_pushboolean(L, animation_enabled);
 		return 1;
 	}
-	int set_animation_enabled(lua_State* L) {
+	int lua_set_animation_enabled(lua_State* L) {
 		animation_enabled = Util::check_boolean(L, 1);
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● freeze()
 	//-------------------------------------------------------------------------
-	int freeze(lua_State* L) {
+	int lua_freeze(lua_State* L) {
 		if (!animation_enabled) return 0;
 		// fill in the transition state partially
 		transition_state.active = false;
@@ -328,7 +328,7 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● transition(duration = 10)
 	//-------------------------------------------------------------------------
-	int transition(lua_State* L) {
+	int lua_transition(lua_State* L) {
 		if (!animation_enabled) return 0;
 		// fill in the transition state
 		transition_state.duration = luaL_optint(L, 1, 10);
@@ -348,21 +348,21 @@ namespace Graphics {
 	//   - animation is disabled
 	//   - freeze() is called but not transition()
 	//-------------------------------------------------------------------------
-	int stop_transition(lua_State* L) {
+	int lua_stop_transition(lua_State* L) {
 		transition_state.active = false;
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● set_brightness(brightness ∈ [0, 1])
 	//-------------------------------------------------------------------------
-	int set_brightness(lua_State* L) {
+	int lua_set_brightness(lua_State* L) {
 		brightness = Util::clamp(luaL_checknumber(L, 1), 0.0, 1.0);
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● fade_in/fade_out(duration = 10)
 	//-------------------------------------------------------------------------
-	int fade(lua_State* L) {
+	int lua_fade(lua_State* L) {
 		if (!animation_enabled) return 0;
 		// fill in the fade state
 		fade_state.duration = luaL_optint(L, 1, 10);
@@ -376,7 +376,7 @@ namespace Graphics {
 	// ● stop_fade
 	//   The brightness will remain!
 	//-------------------------------------------------------------------------
-	int stop_fade(lua_State* L) {
+	int lua_stop_fade(lua_State* L) {
 		fade_state.active = false;
 		return 0;
 	}
@@ -390,23 +390,23 @@ namespace Graphics {
 				{"y", NULL},
 				{"w", NULL},
 				{"h", NULL},
-				{"get_fps", get_fps},
-				{"set_fps", set_fps},
-				{"copy", copy},
-				{"stretch_copy", stretch_copy},
-				{"tile", tile},
-				{"set_color", set_color},
-				{"set_blend", set_blend},
-				{"draw_rect", draw_rect},
-				{"fill_rect", fill_rect},
-				{"draw_line", draw_line},
-				{"draw_9patch", draw_9patch},
-				{"get_animation_enabled", get_animation_enabled},
-				{"set_animation_enabled", set_animation_enabled},
-				{"freeze", freeze},
-				{"transition", transition},
-				{"stop_transition", stop_transition},
-				{"set_brightness", set_brightness},
+				{"get_fps", lua_get_fps},
+				{"set_fps", lua_set_fps},
+				{"copy", lua_copy},
+				{"stretch_copy", lua_stretch_copy},
+				{"tile", lua_tile},
+				{"set_color", lua_set_color},
+				{"set_blend", lua_set_blend},
+				{"draw_rect", lua_draw_rect},
+				{"fill_rect", lua_fill_rect},
+				{"draw_line", lua_draw_line},
+				{"draw_9patch", lua_draw_9patch},
+				{"get_animation_enabled", lua_get_animation_enabled},
+				{"set_animation_enabled", lua_set_animation_enabled},
+				{"freeze", lua_freeze},
+				{"transition", lua_transition},
+				{"stop_transition", lua_stop_transition},
+				{"set_brightness", lua_set_brightness},
 				{"fade_in", NULL},
 				{"fade_out", NULL},
 				{NULL, NULL}
@@ -418,10 +418,10 @@ namespace Graphics {
 			// Graphics.fade_in = fade with false
 			// Graphics.fade_out = fade with true
 			lua_pushboolean(L, false);
-			lua_pushcclosure(L, fade, 1);
+			lua_pushcclosure(L, lua_fade, 1);
 			lua_setfield(L, -2, "fade_in");
 			lua_pushboolean(L, true);
-			lua_pushcclosure(L, fade, 1);
+			lua_pushcclosure(L, lua_fade, 1);
 			lua_setfield(L, -2, "fade_out");
 			// (registry)[update] = Graphics
 			lua_pushlightuserdata(L, (void*) update);
@@ -431,7 +431,7 @@ namespace Graphics {
 		}
 		{
 			const luaL_reg reg[] = {
-				{"__gc", font_gc},
+				{"__gc", lua_font_gc},
 				{NULL, NULL}
 			};
 			luaL_newmetatable(L, "Font");
