@@ -8,7 +8,11 @@ void init(int argc, char* argv[]) {
 	if (SDL_Init(0) < 0) error("/* 1st */ SDL_Init() < 0");
 	SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+	if (SDL_InitSubSystem(
+		SDL_INIT_VIDEO
+		| SDL_INIT_TIMER
+		| SDL_INIT_AUDIO
+	) < 0) {
 		error("/* 2nd */ SDL_Init() < 0");
 	}
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
@@ -64,6 +68,7 @@ void init(int argc, char* argv[]) {
 	Texture::init();
 	Window::init();
 	Input::init();
+	Audio::init();
 	Util::init();
 	// _G.on = {}
 	lua_newtable(L);

@@ -11,6 +11,11 @@ w.rect.y = 100
 w.rect.w = 80
 w.set_text("CommandButton1")
 w.set_color({r = 0, g = 128, b = 128})
+ad = "Audio devices: "
+for i, name in Audio.devices() do
+	ad = ad .. string.format("[%d] = %q; ", i, name)
+	print(i, name)
+end
 
 x = 0
 y = 100
@@ -51,6 +56,6 @@ function on.paint()
 	draw_debug_line(2, string.format("%d", utf8.len("你好", 1, 6)))
 	draw_debug_line(3, Input.mods().ctrl and "ctrl" or "---")
 	draw_debug_line(4, string.format("{[0] = %q, n = %d}", arg[0], #arg))
-	draw_debug_line(5, package.path)
+	draw_debug_line(5, ad)
 	draw_debug_line(6, Util.rtp("main.lua"))
 end

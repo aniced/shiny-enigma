@@ -26,4 +26,5 @@ extern "C" {
 #include "texture.cpp"
 #include "window.cpp"
 #include "input.cpp"
+#include "audio.cpp"
 #include "base.cpp"
