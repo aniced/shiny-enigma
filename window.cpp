@@ -51,6 +51,9 @@ namespace Window {
 		SDL_SetWindowTitle($window, text);
 		return 0;
 	}
+	//-------------------------------------------------------------------------
+	// ● init
+	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
 			{"resize", lua_resize},

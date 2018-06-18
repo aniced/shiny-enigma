@@ -69,6 +69,9 @@ void init(int argc, char* argv[]) {
 	Window::init();
 	Input::init();
 	Audio::init();
+	#ifdef ENABLE_MIDI
+	MIDIOut::init();
+	#endif
 	Font::init();
 	Util::init();
 	// _G.on = {}

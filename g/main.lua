@@ -12,7 +12,7 @@ w.rect.w = 80
 w.set_text("CommandButton1")
 w.set_color({r = 0, g = 128, b = 128})
 ad = "Audio devices: "
-for i, name in Audio.devices() do
+for i, name in MIDIOut.devices() do
 	ad = ad .. string.format("[%d] = %q; ", i, name)
 	print(i, name)
 end

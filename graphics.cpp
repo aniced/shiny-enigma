@@ -370,50 +370,48 @@ namespace Graphics {
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
-		{
-			const luaL_reg reg[] = {
-				{"x", NULL},
-				{"y", NULL},
-				{"w", NULL},
-				{"h", NULL},
-				{"get_fps", lua_get_fps},
-				{"set_fps", lua_set_fps},
-				{"copy", lua_copy},
-				{"stretch_copy", lua_stretch_copy},
-				{"tile", lua_tile},
-				{"set_color", lua_set_color},
-				{"set_blend", lua_set_blend},
-				{"draw_rect", lua_draw_rect},
-				{"fill_rect", lua_fill_rect},
-				{"draw_line", lua_draw_line},
-				{"draw_9patch", lua_draw_9patch},
-				{"get_animation_enabled", lua_get_animation_enabled},
-				{"set_animation_enabled", lua_set_animation_enabled},
-				{"freeze", lua_freeze},
-				{"transition", lua_transition},
-				{"stop_transition", lua_stop_transition},
-				{"set_brightness", lua_set_brightness},
-				{"fade_in", NULL},
-				{"fade_out", NULL},
-				{NULL, NULL}
-			};
-			luaL_register(L, "Graphics", reg);
-			// Graphics.x = Graphics.y = 0
-			lua_pushnumber(L, 0); lua_setfield(L, -2, "x");
-			lua_pushnumber(L, 0); lua_setfield(L, -2, "y");
-			// Graphics.fade_in = fade with false
-			// Graphics.fade_out = fade with true
-			lua_pushboolean(L, false);
-			lua_pushcclosure(L, lua_fade, 1);
-			lua_setfield(L, -2, "fade_in");
-			lua_pushboolean(L, true);
-			lua_pushcclosure(L, lua_fade, 1);
-			lua_setfield(L, -2, "fade_out");
-			// (registry)[update] = Graphics
-			lua_pushlightuserdata(L, (void*) update);
-			lua_pushvalue(L, -2);
-			lua_settable(L, LUA_REGISTRYINDEX);
-			lua_pop(L, 1);
-		}
+		const luaL_reg reg[] = {
+			{"x", NULL},
+			{"y", NULL},
+			{"w", NULL},
+			{"h", NULL},
+			{"get_fps", lua_get_fps},
+			{"set_fps", lua_set_fps},
+			{"copy", lua_copy},
+			{"stretch_copy", lua_stretch_copy},
+			{"tile", lua_tile},
+			{"set_color", lua_set_color},
+			{"set_blend", lua_set_blend},
+			{"draw_rect", lua_draw_rect},
+			{"fill_rect", lua_fill_rect},
+			{"draw_line", lua_draw_line},
+			{"draw_9patch", lua_draw_9patch},
+			{"get_animation_enabled", lua_get_animation_enabled},
+			{"set_animation_enabled", lua_set_animation_enabled},
+			{"freeze", lua_freeze},
+			{"transition", lua_transition},
+			{"stop_transition", lua_stop_transition},
+			{"set_brightness", lua_set_brightness},
+			{"fade_in", NULL},
+			{"fade_out", NULL},
+			{NULL, NULL}
+		};
+		luaL_register(L, "Graphics", reg);
+		// Graphics.x = Graphics.y = 0
+		lua_pushnumber(L, 0); lua_setfield(L, -2, "x");
+		lua_pushnumber(L, 0); lua_setfield(L, -2, "y");
+		// Graphics.fade_in = fade with false
+		// Graphics.fade_out = fade with true
+		lua_pushboolean(L, false);
+		lua_pushcclosure(L, lua_fade, 1);
+		lua_setfield(L, -2, "fade_in");
+		lua_pushboolean(L, true);
+		lua_pushcclosure(L, lua_fade, 1);
+		lua_setfield(L, -2, "fade_out");
+		// (registry)[update] = Graphics
+		lua_pushlightuserdata(L, (void*) update);
+		lua_pushvalue(L, -2);
+		lua_settable(L, LUA_REGISTRYINDEX);
+		lua_pop(L, 1);
 	}
 }

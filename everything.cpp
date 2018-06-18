@@ -18,6 +18,12 @@ extern "C" {
 	#include <lauxlib.h>
 }
 
+#ifdef __WINDOWS__
+	#undef WIN32_LEAN_AND_MEAN
+	#include <windows.h>
+	#define ENABLE_MIDI
+#endif
+
 #include "global.cpp"
 #include "util.cpp"
 #include "utf8.cpp"
@@ -28,4 +34,9 @@ extern "C" {
 #include "window.cpp"
 #include "input.cpp"
 #include "audio.cpp"
+#ifdef ENABLE_MIDI
+	#ifdef __WINDOWS__
+		#include "midiout_windows.cpp"
+	#endif
+#endif
 #include "base.cpp"

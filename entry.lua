@@ -1,5 +1,6 @@
 require 'binaryfilereader'
 require 'binaryfilewriter'
+require 'typesetting'
 
 function on.update()
 	-- only for first frame as this function itself
