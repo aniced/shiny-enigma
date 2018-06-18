@@ -63,9 +63,9 @@ namespace Graphics {
 			}
 		}
 		Uint8 b = brightness * 255;
-		SDL_SetTextureBlendMode($texture[1], SDL_BLENDMODE_MOD);
-		SDL_Rect src = {240 + (b & 15), 240 + (b >> 4), 1, 1};
-		SDL_RenderCopy($renderer, $texture[1], &src, NULL);
+		SDL_SetRenderDrawBlendMode($renderer, SDL_BLENDMODE_MOD);
+		SDL_SetRenderDrawColor($renderer, b, b, b, 255);
+		SDL_RenderFillRect($renderer, NULL);
 	}
 	//-------------------------------------------------------------------------
 	// ● update
