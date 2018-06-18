@@ -118,7 +118,7 @@ namespace Texture {
 		// Texture.stock = {…}
 		lua_createtable(L, 3, 0);
 		for (int i = 0; i < 3; i++) {
-			create_texture(L, $texture[0]);
+			create_texture(L, $texture[i]);
 			lua_rawseti(L, -2, i);
 		}
 		lua_setfield(L, -2, "stock");
