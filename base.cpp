@@ -28,11 +28,6 @@ void init(int argc, char* argv[]) {
 	$renderer = SDL_CreateRenderer($window, -1, 0);
 	SDL_RenderSetIntegerScale($renderer, SDL_TRUE);
 	// load assets
-	for (int i = 0; i < 3; i++) {
-		char filename[16];
-		sprintf(filename, "tex%d.png", i);
-		$texture[i] = IMG_LoadTexture($renderer, Util::rtp(filename));
-	}
 	for (int i = 0; i < 1; i++) {
 		char filename[16];
 		sprintf(filename, "fon%d.ttf", i);

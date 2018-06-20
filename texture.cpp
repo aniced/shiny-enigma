@@ -106,9 +106,24 @@ namespace Texture {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● init_load_assets
+	//-------------------------------------------------------------------------
+	void init_load_assets() {
+		for (int i = 0; i < 3; i++) {
+			char* filename;
+			{
+				char name[16];
+				sprintf(name, "tex%d.png", i);
+				filename = Util::rtp(name);
+			}
+			$texture[i] = IMG_LoadTexture($renderer, filename);
+		}
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
+		init_load_assets();
 		const luaL_reg reg[] = {
 			{"new", lua_new_instance},
 			{"render_text", lua_render_text},
