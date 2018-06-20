@@ -137,6 +137,31 @@ namespace Util {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● os_encoding_to_utf8
+	//-------------------------------------------------------------------------
+	char* os_encoding_to_utf8(const char* os_string) {
+		static char r[1024]; // result
+		#ifdef __WINDOWS__
+			static wchar_t unicode[1024];
+			MultiByteToWideChar(
+				CP_ACP,
+				MB_PRECOMPOSED,
+				os_string, -1,
+				unicode, ARRAY_SIZE(unicode)
+			);
+			WideCharToMultiByte(
+				CP_UTF8,
+				0,
+				unicode, ARRAY_SIZE(unicode),
+				r, ARRAY_SIZE(r),
+				NULL, NULL
+			);
+			return r;
+		#else
+			return os_string;
+		#endif
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//   base_path is set independently.
 	//-------------------------------------------------------------------------
