@@ -20,9 +20,21 @@ namespace Font {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● init_load_assets
+	//-------------------------------------------------------------------------
+	void init_load_assets() {
+		for (int i = 0; i < 1; i++) {
+			char filename[16];
+			sprintf(filename, "fon%d.ttf", i);
+			$font[i] = TTF_OpenFontIndex(Util::rtp(filename), 20, 0);
+			TTF_SetFontHinting($font[i], TTF_HINTING_NONE);
+		}
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
+		init_load_assets();
 		const luaL_reg reg[] = {
 			{"__gc", lua_gc},
 			{NULL, NULL}

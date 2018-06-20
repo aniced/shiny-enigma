@@ -27,13 +27,6 @@ void init(int argc, char* argv[]) {
 	SDL_SetWindowMinimumSize($window, 320, 240);
 	$renderer = SDL_CreateRenderer($window, -1, 0);
 	SDL_RenderSetIntegerScale($renderer, SDL_TRUE);
-	// load assets
-	for (int i = 0; i < 1; i++) {
-		char filename[16];
-		sprintf(filename, "fon%d.ttf", i);
-		$font[i] = TTF_OpenFontIndex(Util::rtp(filename), 20, 0);
-		TTF_SetFontHinting($font[i], TTF_HINTING_NONE);
-	}
 	SDL_ClearError();
 	// initialize Lua
 	L = luaL_newstate();
