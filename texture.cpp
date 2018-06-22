@@ -14,7 +14,7 @@ namespace Texture {
 	SDL_Texture* check_texture(lua_State* L, int index) {
 		if (lua_istable(L, index)) {
 			lua_rawgeti(L, index, 0);
-			if (lua_isuserdata(L, -1)) {
+			if (lua_islightuserdata(L, -1)) {
 				return (SDL_Texture*) lua_touserdata(L, -1);
 			}
 		}

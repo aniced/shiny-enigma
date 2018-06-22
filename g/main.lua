@@ -19,6 +19,7 @@ end
 
 x = 0
 y = 100
+msg = "就绪"
 function draw_debug_line(i, s)
 	t = Texture.render_text(0, s)
 	t.set_color({r = 0, g = 0, b = 0})
@@ -32,11 +33,16 @@ function on.update()
 	if first_frame then
 		first_frame = false
 	end
-	if Input.pressed(96) then
-		x = x + 1
+	if Input.triggered(96) then
+		mo = MIDIOut.open(0)
+		msg = "打开MIDI输出设备#0"
 	end
-	if Input.repeated(97) then
-		y = y + 10
+	if Input.triggered(97) then
+		if mo then
+			mo.close()
+			mo = nil
+			msg = "关闭MIDI输出设备"
+		end
 	end
 	if Input.triggered(41) then
 		os.exit()
@@ -55,7 +61,7 @@ function on.paint()
 	draw_debug_line(1, string.format("%q", Util.os_encoding_to_utf8("\xc2\xd2\xc2\xeb")))
 	draw_debug_line(2, string.format("%d", utf8.len("你好", 1, 6)))
 	draw_debug_line(3, Input.mods().ctrl and "ctrl" or "---")
-	draw_debug_line(4, string.format("{[0] = %q, n = %d}", arg[0], #arg))
+	draw_debug_line(4, msg)
 	draw_debug_line(5, ad)
 	draw_debug_line(6, Util.rtp("main.lua"))
 end
