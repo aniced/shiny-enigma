@@ -39,9 +39,9 @@ function on.update()
 	end
 	if Input.triggered(97) then
 		if mo then
-			mo.close()
+			mo.send_short_message(0x90, 0x66, 0x7f)
 			mo = nil
-			msg = "关闭MIDI输出设备"
+			msg = ""
 		end
 	end
 	if Input.triggered(41) then

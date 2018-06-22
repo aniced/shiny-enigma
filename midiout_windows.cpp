@@ -62,6 +62,32 @@ namespace MIDIOut {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● send_short_message(byte1, byte2, byte3)
+	//-------------------------------------------------------------------------
+	int lua_send_short_message(lua_State* L) {
+		switch (midiOutShortMsg(
+			check_midiout(L, lua_upvalueindex(1)),
+			luaL_checkinteger(L, 1)
+			| (luaL_checkinteger(L, 2) << 8)
+			| (luaL_checkinteger(L, 3) << 16)
+		)) {
+		case MMSYSERR_NOERROR:
+			break;
+		case MIDIERR_BADOPENMODE:
+			luaL_error(L, "The application sent a message without a status byte to a stream handle.");
+			break;
+		case MIDIERR_NOTREADY:
+			luaL_error(L, "The hardware is busy with other data.");
+			break;
+		case MMSYSERR_INVALHANDLE:
+			luaL_error(L, "The specified device handle is invalid.");
+			break;
+		default:
+			luaL_error(L, "unknown error");
+		}
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● new(index)
 	//-------------------------------------------------------------------------
 	int lua_new_instance(lua_State* L) {
@@ -94,6 +120,7 @@ namespace MIDIOut {
 		lua_rawseti(L, -2, 0);
 		const luaL_reg reg[] = {
 			{"close", lua_close},
+			{"send_short_message", lua_send_short_message},
 			{NULL, NULL}
 		};
 		Util::instance_register(L, reg);
