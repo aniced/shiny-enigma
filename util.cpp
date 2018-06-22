@@ -138,6 +138,7 @@ namespace Util {
 	}
 	//-------------------------------------------------------------------------
 	// ● os_encoding_to_utf8
+	//   This function accepts no strings with embedded zeros.
 	//-------------------------------------------------------------------------
 	char* os_encoding_to_utf8(const char* os_string) {
 		static char r[1024]; // result
@@ -161,6 +162,10 @@ namespace Util {
 			return os_string;
 		#endif
 	}
+	int lua_os_encoding_to_utf8(lua_State* L) {
+		lua_pushstring(L, os_encoding_to_utf8(luaL_checkstring(L, 1)));
+		return 1;
+	}
 	//-------------------------------------------------------------------------
 	// ● init
 	//   base_path is set independently.
@@ -169,6 +174,7 @@ namespace Util {
 		const luaL_reg reg[] = {
 			{"rtp", lua_rtp},
 			{"shallow_copy", lua_shallow_copy},
+			{"os_encoding_to_utf8", lua_os_encoding_to_utf8},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Util", reg);
