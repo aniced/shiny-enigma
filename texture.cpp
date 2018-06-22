@@ -110,13 +110,41 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	void init_load_assets() {
 		for (int i = 0; i < 3; i++) {
+			SDL_Surface* surface;
+			SDL_Texture* texture;
 			char* filename;
 			{
 				char name[16];
 				sprintf(name, "tex%d.png", i);
 				filename = Util::rtp(name);
 			}
-			$texture[i] = IMG_LoadTexture($renderer, filename);
+			switch (i) {
+			case 1:
+				surface = IMG_Load(filename);
+				{
+					SDL_Surface* converted;
+					converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
+					SDL_FreeSurface(surface);
+					surface = converted;
+				}
+				#define pixel ((Uint32*) (((Uint8*) surface->pixels) + y * surface->pitch))[x]
+				for (int y = 0; y < surface->h; y++) {
+					for (int x = 0; x < surface->w; x++) {
+						SDL_Color color;
+						SDL_GetRGBA(pixel, surface->format, &color.r, &color.g, &color.b, &color.a);
+						color.a = color.r;
+						color.r = color.g = color.b = 255;
+						pixel = SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a);
+					}
+				}
+				#undef pixel
+				texture = SDL_CreateTextureFromSurface($renderer, surface);
+				SDL_FreeSurface(surface);
+				break;
+			default:
+				texture = IMG_LoadTexture($renderer, filename);
+			}
+			$texture[i] = texture;
 		}
 	}
 	//-------------------------------------------------------------------------

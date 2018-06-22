@@ -45,7 +45,7 @@ function self.draw_text(point, text, initial_color)
 			-- \fi[16] = icon of a filled lozenge
 			function f.i()
 				local i = tonumber(param)
-				Texture.stock[1].set_blend("add")
+				Texture.stock[1].set_blend("blend")
 				Texture.stock[1].set_color(color)
 				Graphics.copy(
 					{x = x, y = y + (WLH - 16) / 2},
