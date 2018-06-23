@@ -35,8 +35,8 @@ function on.update()
 		first_frame = false
 	end
 	if Input.triggered(96) then
-		mo = MIDIOut.open(0)
-		msg = "打开MIDI输出设备#0"
+		mo = MIDIOut.open(1)
+		msg = "打开MIDI输出设备#1"
 	end
 	if Input.triggered(97) then
 		if mo then

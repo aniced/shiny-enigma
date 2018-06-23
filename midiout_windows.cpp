@@ -17,6 +17,7 @@ namespace MIDIOut {
 	}
 	//-------------------------------------------------------------------------
 	// ● for index, name in devices()
+	//   index is 1-based.
 	//-------------------------------------------------------------------------
 	int lua_devices_iterator(lua_State* L) {
 		int count = lua_tointeger(L, 1);
@@ -66,7 +67,7 @@ namespace MIDIOut {
 		HMIDIOUT hmo;
 		ensure_success(midiOutOpen(
 			&hmo,
-			luaL_checkinteger(L, 1),
+			luaL_checkinteger(L, 1) - 1,
 			0, 0, CALLBACK_NULL
 		));
 		lua_pushlightuserdata(L, hmo);
