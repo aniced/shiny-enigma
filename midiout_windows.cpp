@@ -11,15 +11,8 @@ namespace MIDIOut {
 	//-------------------------------------------------------------------------
 	// ● check_midiout
 	//-------------------------------------------------------------------------
-	HMIDIOUT check_midiout(lua_State* L, int index) {
-		if (lua_istable(L, index)) {
-			lua_rawgeti(L, index, 0);
-			if (lua_islightuserdata(L, -1)) {
-				return (HMIDIOUT) lua_touserdata(L, -1);
-			}
-		}
-		luaL_argerror(L, index, "not a MIDIOut");
-		abort();
+	inline HMIDIOUT check_midiout(lua_State* L, int index) {
+		return (HMIDIOUT) Util::check_usertable(L, index, "MIDIOut");
 	}
 	//-------------------------------------------------------------------------
 	// ● ensure_success

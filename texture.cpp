@@ -11,15 +11,8 @@ namespace Texture {
 	//-------------------------------------------------------------------------
 	// ● check_texture
 	//-------------------------------------------------------------------------
-	SDL_Texture* check_texture(lua_State* L, int index) {
-		if (lua_istable(L, index)) {
-			lua_rawgeti(L, index, 0);
-			if (lua_islightuserdata(L, -1)) {
-				return (SDL_Texture*) lua_touserdata(L, -1);
-			}
-		}
-		luaL_argerror(L, index, "not a texture");
-		abort();
+	inline SDL_Texture* check_texture(lua_State* L, int index) {
+		return (SDL_Texture*) Util::check_usertable(L, index, "texture");
 	}
 	//-------------------------------------------------------------------------
 	// ● ~Texture()

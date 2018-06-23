@@ -70,6 +70,26 @@ namespace Util {
 		lua_pushnumber(L, color->a); lua_setfield(L, -2, "a");
 	}
 	//-------------------------------------------------------------------------
+	// ● check_usertable
+	//   A ‘user table’ is a table with a light userdata stored in index 0.
+	//-------------------------------------------------------------------------
+	void* check_usertable(lua_State* L, int index, const char* usertable_type) {
+		static char extramsg[100] = "definitely not a ";
+		void* result = NULL;
+		if (lua_istable(L, index)) {
+			lua_rawgeti(L, index, 0);
+			if (lua_islightuserdata(L, -1)) {
+				result = lua_touserdata(L, -1);
+			}
+			lua_pop(L, 1);
+		}
+		if (!result) {
+			strcpy(&extramsg[strlen("definitely not a ")], usertable_type);
+			luaL_argerror(L, index, extramsg);
+		}
+		return result;
+	}
+	//-------------------------------------------------------------------------
 	// ● rtp(filename)
 	//-------------------------------------------------------------------------
 	char* rtp(const char* path) {
