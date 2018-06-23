@@ -58,6 +58,7 @@ void init(int argc, char* argv[]) {
 	Input::init();
 	Audio::init();
 	#ifdef ENABLE_MIDI
+	MIDIIn::init();
 	MIDIOut::init();
 	#endif
 	Font::init();

@@ -8,26 +8,12 @@ namespace MIDIOut {
 	//-------------------------------------------------------------------------
 	// ● Module variables
 	//-------------------------------------------------------------------------
+	void (*const ensure_success)(MMRESULT result) = MIDIIn::ensure_success;
 	//-------------------------------------------------------------------------
 	// ● check_midiout
 	//-------------------------------------------------------------------------
 	inline HMIDIOUT check_midiout(lua_State* L, int index) {
 		return (HMIDIOUT) Util::check_usertable(L, index, "MIDIOut");
-	}
-	//-------------------------------------------------------------------------
-	// ● ensure_success
-	//-------------------------------------------------------------------------
-	void ensure_success(MMRESULT result) {
-		static char error_text[MAXERRORLENGTH];
-		if (result == MMSYSERR_NOERROR) return;
-		switch (midiOutGetErrorText(result, error_text, MAXERRORLENGTH)) {
-		case MMSYSERR_NOERROR:
-			break;
-		case MMSYSERR_BADERRNUM:
-		default:
-			strcpy(error_text, "unknown");
-		}
-		luaL_error(L, "midiOut error: %s", Util::os_encoding_to_utf8(error_text));
 	}
 	//-------------------------------------------------------------------------
 	// ● for index, name in devices()

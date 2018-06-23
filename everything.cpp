@@ -36,6 +36,7 @@ extern "C" {
 #include "audio.cpp"
 #ifdef ENABLE_MIDI
 	#ifdef __WINDOWS__
+		#include "midiin_windows.cpp"
 		#include "midiout_windows.cpp"
 	#endif
 #endif
