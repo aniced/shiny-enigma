@@ -6,6 +6,37 @@
 
 namespace MIDIOut {
 	//-------------------------------------------------------------------------
+	// ● Module variables
+	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
+	// ● check_midiout
+	//-------------------------------------------------------------------------
+	HMIDIOUT check_midiout(lua_State* L, int index) {
+		if (lua_istable(L, index)) {
+			lua_rawgeti(L, index, 0);
+			if (lua_islightuserdata(L, -1)) {
+				return (HMIDIOUT) lua_touserdata(L, -1);
+			}
+		}
+		luaL_argerror(L, index, "not a MIDIOut");
+		abort();
+	}
+	//-------------------------------------------------------------------------
+	// ● ensure_success
+	//-------------------------------------------------------------------------
+	void ensure_success(MMRESULT result) {
+		static char error_text[MAXERRORLENGTH];
+		if (result == MMSYSERR_NOERROR) return;
+		switch (midiOutGetErrorText(result, error_text, MAXERRORLENGTH)) {
+		case MMSYSERR_NOERROR:
+			break;
+		case MMSYSERR_BADERRNUM:
+		default:
+			strcpy(error_text, "unknown");
+		}
+		luaL_error(L, "midiOut error: %s", Util::os_encoding_to_utf8(error_text));
+	}
+	//-------------------------------------------------------------------------
 	// ● for index, name in devices()
 	//-------------------------------------------------------------------------
 	int lua_devices_iterator(lua_State* L) {
@@ -28,63 +59,22 @@ namespace MIDIOut {
 		return 3;
 	}
 	//-------------------------------------------------------------------------
-	// ● check_midiout
-	//-------------------------------------------------------------------------
-	HMIDIOUT check_midiout(lua_State* L, int index) {
-		if (lua_istable(L, index)) {
-			lua_rawgeti(L, index, 0);
-			if (lua_islightuserdata(L, -1)) {
-				return (HMIDIOUT) lua_touserdata(L, -1);
-			}
-		}
-		luaL_argerror(L, index, "not a MIDIOut");
-		abort();
-	}
-	//-------------------------------------------------------------------------
 	// ● close
 	//-------------------------------------------------------------------------
 	int lua_close(lua_State* L) {
-		switch (midiOutClose(check_midiout(L, lua_upvalueindex(1)))) {
-		case MMSYSERR_NOERROR:
-			break;
-		case MIDIERR_STILLPLAYING:
-			luaL_error(L, "Buffers are still in the queue.");
-			break;
-		case MMSYSERR_INVALHANDLE:
-			luaL_error(L, "The specified device handle is invalid.");
-			break;
-		case MMSYSERR_NOMEM:
-			luaL_error(L, "The system is unable to load mapper string description.");
-			break;
-		default:
-			luaL_error(L, "unknown error");
-		}
+		ensure_success(midiOutClose(check_midiout(L, lua_upvalueindex(1))));
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● send_short_message(byte1, byte2, byte3)
 	//-------------------------------------------------------------------------
 	int lua_send_short_message(lua_State* L) {
-		switch (midiOutShortMsg(
+		ensure_success(midiOutShortMsg(
 			check_midiout(L, lua_upvalueindex(1)),
 			luaL_checkinteger(L, 1)
 			| (luaL_checkinteger(L, 2) << 8)
 			| (luaL_checkinteger(L, 3) << 16)
-		)) {
-		case MMSYSERR_NOERROR:
-			break;
-		case MIDIERR_BADOPENMODE:
-			luaL_error(L, "The application sent a message without a status byte to a stream handle.");
-			break;
-		case MIDIERR_NOTREADY:
-			luaL_error(L, "The hardware is busy with other data.");
-			break;
-		case MMSYSERR_INVALHANDLE:
-			luaL_error(L, "The specified device handle is invalid.");
-			break;
-		default:
-			luaL_error(L, "unknown error");
-		}
+		));
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -95,27 +85,11 @@ namespace MIDIOut {
 		lua_createtable(L, 1, 4);
 		// t[0] = HMIDIOUT
 		HMIDIOUT hmo;
-		switch (midiOutOpen(&hmo, luaL_checkinteger(L, 1), 0, 0, CALLBACK_NULL)) {
-		case MMSYSERR_NOERROR:
-			break;
-		case MIDIERR_NODEVICE:
-			luaL_error(L, "No MIDI port was found.");
-			break;
-		case MMSYSERR_ALLOCATED:
-			luaL_error(L, "The specified resource is already allocated.");
-			break;
-		case MMSYSERR_BADDEVICEID:
-			luaL_error(L, "The specified device identifier is out of range.");
-			break;
-		case MMSYSERR_INVALPARAM:
-			luaL_error(L, "The specified pointer or structure is invalid.");
-			break;
-		case MMSYSERR_NOMEM:
-			luaL_error(L, "The system is unable to allocate or lock memory.");
-			break;
-		default:
-			luaL_error(L, "unknown error");
-		}
+		ensure_success(midiOutOpen(
+			&hmo,
+			luaL_checkinteger(L, 1),
+			0, 0, CALLBACK_NULL
+		));
 		lua_pushlightuserdata(L, hmo);
 		lua_rawseti(L, -2, 0);
 		const luaL_reg reg[] = {
