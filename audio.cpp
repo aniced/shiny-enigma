@@ -1,10 +1,16 @@
 //=============================================================================
 // ■ Audio
 //-----------------------------------------------------------------------------
-//   A Lua module for querying audio devices. No playing back or recording.
+//   A Lua module for playing back.
 //=============================================================================
 
 namespace Audio {
+	//-------------------------------------------------------------------------
+	// ● check_audio
+	//-------------------------------------------------------------------------
+	SDL_AudioDeviceID check_audio(lua_State* L, int index) {
+		return (SDL_AudioDeviceID) Util::check_usertable(L, index, "audio device");
+	}
 	//-------------------------------------------------------------------------
 	// ● for index, name in devices()
 	//-------------------------------------------------------------------------
@@ -26,10 +32,44 @@ namespace Audio {
 		return 3;
 	}
 	//-------------------------------------------------------------------------
+	// ● close
+	//-------------------------------------------------------------------------
+	int lua_close(lua_State* L) {
+		SDL_CloseAudioDevice(check_audio(L, lua_upvalueindex(1)));
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● new(name)
+	//-------------------------------------------------------------------------
+	int lua_new_instance(lua_State* L) {
+		// t = {}
+		lua_createtable(L, 1, 4);
+		// t[0] = (void*) AudioDeviceID
+		SDL_AudioSpec desired, obtained;
+		SDL_AudioDeviceID id = SDL_OpenAudioDevice(
+			luaL_checkstring(L, 1),
+			false,
+			&desired,
+			&obtained,
+			0
+		);
+		if (!id) error("SDL_OpenAudioDevice");
+		lua_pushlightuserdata(L, (void*) id);
+		lua_rawseti(L, -2, 0);
+		const luaL_reg reg[] = {
+			{"close", lua_close},
+			{NULL, NULL}
+		};
+		Util::instance_register(L, reg);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
 		const luaL_reg reg[] = {
+			{"new", lua_new_instance},
+			{"open", lua_new_instance},
 			{"devices", lua_devices},
 			{NULL, NULL}
 		};
