@@ -18,6 +18,7 @@ Compiling
 ### For all platforms
 
 - Compile everything.cpp with the required libraries linked as usual.
+- The following sections contains platform-specific notes.
 
 ### Windows
 
