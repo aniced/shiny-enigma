@@ -49,6 +49,13 @@ void init(int argc, char* argv[]) {
 	lua_pushcfunction(L, quit_lua);
 	lua_setfield(L, -2, "exit");
 	lua_pop(L, 1);
+	// remove io.open, io.popen, io.tmpfile and io.close
+	lua_getglobal(L, "io");
+	lua_pushnil(L); lua_setfield(L, -2, "open");
+	lua_pushnil(L); lua_setfield(L, -2, "popen");
+	lua_pushnil(L); lua_setfield(L, -2, "tmpfile");
+	lua_pushnil(L); lua_setfield(L, -2, "close");
+	lua_pop(L, 1);
 	// open game libraries
 	UTF8::init();
 	Geometry::init();
