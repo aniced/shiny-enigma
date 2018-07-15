@@ -1,5 +1,5 @@
 //=============================================================================
-// ■ input.cpp
+// ■ Input
 //-----------------------------------------------------------------------------
 //   A Lua module for handling input states which are updated per frame.
 //   All SDL events are dealt with here.
