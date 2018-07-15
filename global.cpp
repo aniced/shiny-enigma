@@ -46,9 +46,13 @@ void msgbox(const char* s) {
 }
 
 void error(const char* m) {
-	sprintf(msgbox_buf, "%s\nSDL_GetError(): %s", m, SDL_GetError());
-	msgbox(msgbox_buf);
+	msgbox(m);
 	quit(1);
+}
+
+void sdlerror(const char* m) {
+	sprintf(msgbox_buf, "%s\nSDL_GetError(): %s", m, SDL_GetError());
+	error(msgbox_buf);
 }
 
 int panic(lua_State* L) {

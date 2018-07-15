@@ -52,7 +52,7 @@ namespace IOStream {
 			case 'r':
 				break;
 			default:
-				luaL_argerror(L, 2, "");
+				luaL_argerror(L, 2, "unexpected mode");
 			}
 			mode++;
 		}

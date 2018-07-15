@@ -53,7 +53,7 @@ namespace Audio {
 			&obtained,
 			0
 		);
-		if (!id) error("SDL_OpenAudioDevice");
+		if (!id) Util::sdlerror(L, "SDL_OpenAudioDevice == 0");
 		lua_pushlightuserdata(L, (void*) id);
 		lua_rawseti(L, -2, 0);
 		const luaL_reg reg[] = {

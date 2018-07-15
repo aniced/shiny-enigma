@@ -281,7 +281,9 @@ namespace Graphics {
 			SDL_TEXTUREACCESS_TARGET,
 			w, h
 		);
-		if (!texture) error("SDL_CreateTexture(SDL_TEXTUREACCESS_TARGET) == NULL");
+		if (!texture) {
+			Util::sdlerror(L, "SDL_CreateTexture(SDL_TEXTUREACCESS_TARGET) == NULL");
+		}
 		return texture;
 	}
 	//-------------------------------------------------------------------------

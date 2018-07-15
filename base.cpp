@@ -5,7 +5,7 @@
 //=============================================================================
 
 void init(int argc, char* argv[]) {
-	if (SDL_Init(0) < 0) error("/* 1st */ SDL_Init() < 0");
+	if (SDL_Init(0) < 0) sdlerror("/* 1st */ SDL_Init() < 0");
 	SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 	if (SDL_InitSubSystem(
@@ -13,10 +13,10 @@ void init(int argc, char* argv[]) {
 		| SDL_INIT_TIMER
 		| SDL_INIT_AUDIO
 	) < 0) {
-		error("/* 2nd */ SDL_Init() < 0");
+		sdlerror("/* 2nd */ SDL_Init() < 0");
 	}
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
-	if (TTF_Init() == -1) error("TTF_Init() == -1");
+	if (TTF_Init() == -1) sdlerror("TTF_Init() == -1");
 	Util::init_rtp();
 	$window = SDL_CreateWindow(
 		APPLICATION_TITLE,

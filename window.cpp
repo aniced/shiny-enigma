@@ -39,7 +39,7 @@ namespace Window {
 			return luaL_error(L, "unknown fullscreen mode");
 		}
 		if (SDL_SetWindowFullscreen($window, flags) < 0) {
-			error("SDL_SetWindowFullscreen() < 0");
+			Util::sdlerror(L, "SDL_SetWindowFullscreen() < 0");
 		}
 		return 0;
 	}
