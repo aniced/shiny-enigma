@@ -42,6 +42,8 @@ namespace IOStream {
 	int lua_new_instance(lua_State* L) {
 		int size = luaL_checkinteger(L, 1);
 		void* mem = malloc(size);
+		if (!mem) luaL_error(L, "cannot allocate memory");
+
 		bool readonly = true;
 		const char* mode = luaL_checkstring(L, 2);
 		while (mode) {
@@ -56,11 +58,15 @@ namespace IOStream {
 			}
 			mode++;
 		}
+
 		SDL_RWops* context;
 		if (readonly) {
 			context = SDL_RWFromMem(mem, size);
 		} else {
 			context = SDL_RWFromConstMem(mem, size);
+		}
+		if (!context) {
+			Util::sdlerror(L, "SDL_RWFromMem/SDL_RWFromConstMem() == NULL");
 		}
 		create_iostream(L, context, mem);
 		return 1;
