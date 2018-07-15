@@ -1,5 +1,3 @@
-require 'binaryfilereader'
-require 'binaryfilewriter'
 require 'typesetting'
 
 function on.update()
