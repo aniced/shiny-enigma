@@ -6,6 +6,12 @@
 
 namespace IOStream {
 	//-------------------------------------------------------------------------
+	// ● check_iostream
+	//-------------------------------------------------------------------------
+	SDL_RWops* check_iostream(lua_State* L, int index) {
+		return (SDL_RWops*) Util::check_usertable(L, index, "IOStream");
+	}
+	//-------------------------------------------------------------------------
 	// ● close()
 	//-------------------------------------------------------------------------
 	int lua_close(lua_State* L) {
@@ -16,6 +22,45 @@ namespace IOStream {
 		void* freeme = lua_touserdata(L, -1);
 		if (freeme) free(freeme);
 		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● get_size()
+	//   Returns -1 if the size can't be determined.
+	//-------------------------------------------------------------------------
+	int lua_get_size(lua_State* L) {
+		lua_pushnumber(L, SDL_RWsize(check_iostream(L, lua_upvalueindex(1))));
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● get_pos()
+	//   Returns -1 if the pos can't be determined.
+	//-------------------------------------------------------------------------
+	int lua_get_pos(lua_State* L) {
+		lua_pushnumber(L, SDL_RWtell(check_iostream(L, lua_upvalueindex(1))));
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● set_pos(offset, whence = "set")
+	//    whence: "set", "cur" or "end"
+	//-------------------------------------------------------------------------
+	int lua_set_pos(lua_State* L) {
+		Sint64 offset = luaL_checkinteger(L, 1);
+		int whence;
+		const char* s = luaL_optstring(L, 2, "set");
+		if (strcmp(s, "set") == 0) {
+			whence = RW_SEEK_SET;
+		} else if (strcmp(s, "cur") == 0) {
+			whence = RW_SEEK_CUR;
+		} else if (strcmp(s, "end") == 0) {
+			whence = RW_SEEK_END;
+		}
+		Sint64 r = SDL_RWseek(
+			check_iostream(L, lua_upvalueindex(1)),
+			offset, whence
+		);
+		if (r == -1) Util::sdlerror(L, "SDL_RWseek() == -1");
+		lua_pushnumber(L, r);
+		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● create_iostream
@@ -31,6 +76,9 @@ namespace IOStream {
 		lua_rawseti(L, -2, 1);
 		const luaL_reg reg[] = {
 			{"close", lua_close},
+			{"get_size", lua_get_size},
+			{"get_pos", lua_get_pos},
+			{"set_pos", lua_set_pos},
 			{NULL, NULL}
 		};
 		Util::instance_register(L, reg);
@@ -89,7 +137,7 @@ namespace IOStream {
 			{"open", lua_open_instance},
 			{NULL, NULL}
 		};
-		luaL_register(L, "Audio", reg);
+		luaL_register(L, "IOStream", reg);
 		lua_pop(L, 1);
 	}
 }
