@@ -75,7 +75,9 @@ namespace IOStream {
 	// ● open(filename, mode)
 	//-------------------------------------------------------------------------
 	int lua_open_instance(lua_State* L) {
-		create_iostream(L, SDL_RWFromFile(luaL_checkstring(L, 1), luaL_checkstring(L, 2)));
+		SDL_RWops* context = SDL_RWFromFile(luaL_checkstring(L, 1), luaL_checkstring(L, 2));
+		if (!context) Util::sdlerror(L, "SDL_RWFromFile() == NULL");
+		create_iostream(L, context);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
