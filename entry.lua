@@ -1,4 +1,6 @@
+require 'util'
 require 'typesetting'
+Util.subrequire 'apps/program/main'
 
 function on.update()
 	-- only for first frame as this function itself
