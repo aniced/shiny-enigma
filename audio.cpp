@@ -8,7 +8,7 @@ namespace Audio {
 	//-------------------------------------------------------------------------
 	// ● check_audio
 	//-------------------------------------------------------------------------
-	SDL_AudioDeviceID check_audio(lua_State* L, int index) {
+	inline SDL_AudioDeviceID check_audio(lua_State* L, int index) {
 		return (SDL_AudioDeviceID) Util::check_usertable(L, index, "audio device");
 	}
 	//-------------------------------------------------------------------------

@@ -8,7 +8,7 @@ namespace IOStream {
 	//-------------------------------------------------------------------------
 	// ● check_iostream
 	//-------------------------------------------------------------------------
-	SDL_RWops* check_iostream(lua_State* L, int index) {
+	inline SDL_RWops* check_iostream(lua_State* L, int index) {
 		return (SDL_RWops*) Util::check_usertable(L, index, "IOStream");
 	}
 	//-------------------------------------------------------------------------
@@ -92,6 +92,20 @@ namespace IOStream {
 	DEFINE(u32_be, Uint32, SDL_SwapBE32)
 	#undef DEFINE
 	//-------------------------------------------------------------------------
+	// ● write(string)
+	//-------------------------------------------------------------------------
+	int lua_write(lua_State* L) {
+		size_t len;
+		const char* str = luaL_checklstring(L, 1, &len);
+		SDL_RWops* context = check_iostream(L, lua_upvalueindex(1));
+		while (len) {
+			SDL_WriteU8(context, *str);
+			str++;
+			len--;
+		}
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● create_iostream
 	//-------------------------------------------------------------------------
 	void create_iostream(lua_State* L, SDL_RWops* context, void* freeme = NULL) {
@@ -118,6 +132,7 @@ namespace IOStream {
 			{"write_u32_le", lua_write_u32_le},
 			{"write_u16_be", lua_write_u16_be},
 			{"write_u32_be", lua_write_u32_be},
+			{"write", lua_write},
 			{NULL, NULL}
 		};
 		Util::instance_register(L, reg);
