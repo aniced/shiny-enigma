@@ -63,6 +63,20 @@ namespace IOStream {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
+	// ● read_…()
+	//   where … is one of u8, u16_le, u32_le, u16_be, u32_be.
+	//-------------------------------------------------------------------------
+	template <class T, T (*swap_function)(T)> int lua_read(lua_State* L) {
+    T x;
+    if (SDL_RWread(check_iostream(L, lua_upvalueindex(1)), &x, sizeof(x), 1)) {
+			if (swap_function) x = swap_function(x);
+			lua_pushnumber(L, x);
+		} else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+	//-------------------------------------------------------------------------
 	// ● create_iostream
 	//-------------------------------------------------------------------------
 	void create_iostream(lua_State* L, SDL_RWops* context, void* freeme = NULL) {
@@ -79,6 +93,11 @@ namespace IOStream {
 			{"get_size", lua_get_size},
 			{"get_pos", lua_get_pos},
 			{"set_pos", lua_set_pos},
+			{"read_u8", lua_read<Uint8, NULL>},
+			{"read_u16_le", lua_read<Uint16, SDL_SwapLE16>},
+			{"read_u32_le", lua_read<Uint32, SDL_SwapLE32>},
+			{"read_u16_be", lua_read<Uint16, SDL_SwapBE16>},
+			{"read_u32_be", lua_read<Uint32, SDL_SwapBE32>},
 			{NULL, NULL}
 		};
 		Util::instance_register(L, reg);
