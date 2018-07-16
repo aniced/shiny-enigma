@@ -58,6 +58,7 @@ void init(int argc, char* argv[]) {
 	lua_pop(L, 1);
 	// open game libraries
 	UTF8::init();
+	IOStream::init();
 	Geometry::init();
 	Graphics::init();
 	Texture::init();

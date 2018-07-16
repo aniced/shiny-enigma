@@ -15,10 +15,10 @@ namespace IOStream {
 	// ● close()
 	//-------------------------------------------------------------------------
 	int lua_close(lua_State* L) {
-		lua_rawgeti(L, 1, 0);
+		lua_rawgeti(L, lua_upvalueindex(1), 0);
 		SDL_RWops* context = (SDL_RWops*) lua_touserdata(L, -1);
 		SDL_RWclose(context);
-		lua_rawgeti(L, 1, 1);
+		lua_rawgeti(L, lua_upvalueindex(1), 1);
 		void* freeme = lua_touserdata(L, -1);
 		if (freeme) free(freeme);
 		return 0;
@@ -140,7 +140,7 @@ namespace IOStream {
 	}
 	//-------------------------------------------------------------------------
 	// ● new(size, mode)
-	//    mode: "r" or "r+"
+	//    mode: "rb" or "rb+"
 	//-------------------------------------------------------------------------
 	int lua_new_instance(lua_State* L) {
 		int size = luaL_checkinteger(L, 1);
@@ -155,6 +155,7 @@ namespace IOStream {
 				readonly = false;
 				break;
 			case 'r':
+			case 'b':
 				break;
 			default:
 				luaL_argerror(L, 2, "unexpected mode");
