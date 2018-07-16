@@ -63,19 +63,34 @@ namespace IOStream {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● read_…()
-	//   where … is one of u8, u16_le, u32_le, u16_be, u32_be.
+	// ● read_…() & write_…()
+	//   Reading functions return nil if there is an error.
+	//   Writing functions raise their errors.
+	//   SDL_Read… functions are not used because they silence the errors.
 	//-------------------------------------------------------------------------
-	template <class T, T (*swap_function)(T)> int lua_read(lua_State* L) {
-    T x;
-    if (SDL_RWread(check_iostream(L, lua_upvalueindex(1)), &x, sizeof(x), 1)) {
-			if (swap_function) x = swap_function(x);
-			lua_pushnumber(L, x);
-		} else {
-			lua_pushnil(L);
+	#define DEFINE(name, T, swap_function) \
+		int lua_read_##name(lua_State* L) { \
+			T x; \
+			if (SDL_RWread(check_iostream(L, lua_upvalueindex(1)), &x, sizeof(x), 1)) { \
+				lua_pushnumber(L, swap_function(x)); \
+			} else { \
+				lua_pushnil(L); \
+			} \
+			return 1; \
+		} \
+		int lua_write_##name(lua_State* L) { \
+			T x = swap_function((T) luaL_checknumber(L, 1)); \
+			if (!SDL_RWwrite(check_iostream(L, lua_upvalueindex(1)), &x, sizeof(x), 1)) { \
+				Util::sdlerror(L, "SDL_RWwrite(, , , 1) == 0"); \
+			} \
+			return 0; \
 		}
-		return 1;
-	}
+	DEFINE(u8, Uint8, )
+	DEFINE(u16_le, Uint16, SDL_SwapLE16)
+	DEFINE(u32_le, Uint32, SDL_SwapLE32)
+	DEFINE(u16_be, Uint16, SDL_SwapBE16)
+	DEFINE(u32_be, Uint32, SDL_SwapBE32)
+	#undef DEFINE
 	//-------------------------------------------------------------------------
 	// ● create_iostream
 	//-------------------------------------------------------------------------
@@ -93,11 +108,16 @@ namespace IOStream {
 			{"get_size", lua_get_size},
 			{"get_pos", lua_get_pos},
 			{"set_pos", lua_set_pos},
-			{"read_u8", lua_read<Uint8, NULL>},
-			{"read_u16_le", lua_read<Uint16, SDL_SwapLE16>},
-			{"read_u32_le", lua_read<Uint32, SDL_SwapLE32>},
-			{"read_u16_be", lua_read<Uint16, SDL_SwapBE16>},
-			{"read_u32_be", lua_read<Uint32, SDL_SwapBE32>},
+			{"read_u8", lua_read_u8},
+			{"read_u16_le", lua_read_u16_le},
+			{"read_u32_le", lua_read_u32_le},
+			{"read_u16_be", lua_read_u16_be},
+			{"read_u32_be", lua_read_u32_be},
+			{"write_u8", lua_write_u8},
+			{"write_u16_le", lua_write_u16_le},
+			{"write_u32_le", lua_write_u32_le},
+			{"write_u16_be", lua_write_u16_be},
+			{"write_u32_be", lua_write_u32_be},
 			{NULL, NULL}
 		};
 		Util::instance_register(L, reg);
