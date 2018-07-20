@@ -1,17 +1,20 @@
 Interpreter = {}
 
-function Interpreter.new(max_depth)
+function Interpreter.new(program)
 	local self = {}
 
-	-- max_depth is decreased recursively, e.g.,
-	-- if the parent Interpreter has a max_depth of 100,
-	-- the child Interpreter created by it will have a max_depth of 99,
-	-- the grandchild 98, and so on.
-	if max_depth < 0 then
-		error("Interpreter: too much recursion")
-	end
+	-- Instruction pointer points to the one to be executed.
+	self.program = program
+	self.ip = {module_id = program.entry_module_id, index = 1}
+
+	-- Jump here when executing Return.
+	self.stack = {}
+	self.return_value = nil
 
 	function self.run()
+		if type(self.program) ~= "table" then
+			error("Interpreter: missing program")
+		end
 	end
 
 	return self
