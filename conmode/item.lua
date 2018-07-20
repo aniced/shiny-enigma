@@ -1,9 +1,5 @@
 Item = {styles = require 'conmode/itemstyles'}
 
-function Item.get_rect(i)
-	return {x = 0, y = i * WLH, w = Graphics.w, h = WLH}
-end
-
 -- update: an update function which will be called regardless of the state
 function Item.new(text, help_items, update)
 	local self = {}
@@ -12,16 +8,12 @@ function Item.new(text, help_items, update)
 	self.state = nil
 	self.update = update
 
-	function self.draw(i, style)
+	function self.draw(rect, style)
 		if type(style) ~= "table" then
 			style = Item.styles[style]
 		end
-		local rect = Item.get_rect(i)
-		style.draw_background(i)
-		Typesetting.draw_text({
-			x = 0,
-			y = i * WLH,
-		}, self.text, style.color)
+		style.draw_background(rect)
+		Typesetting.draw_text({x = rect.x, y = rect.y}, self.text, style.color)
 	end
 
 	return self

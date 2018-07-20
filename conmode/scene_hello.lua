@@ -2,10 +2,13 @@ Scene_Hello = {}
 
 function Scene_Hello.new()
 	local self = Scene.new()
+	self.cursor = 4
+	self.column_count = 3
+
 	self.items[0] = Item.new("你好！")
 	for i = 1, 30 do
 		self.items[i] = Item.new(string.format(
-			"%d\ft[4]%f\ft[-2]\fc[r255g0b0]{\fi[16]}",
+			"%d→%f\fc[r255g0b0]{\fi[16]}",
 			i, math.sqrt(i))
 		)
 	end

@@ -7,8 +7,25 @@ function Scene.new()
 
 	self.items = {}
 	self.help_items = {}
-	self.scroll_top = 1
 	self.cursor = 1
+	self.column_count = 1
+	self.scroll_top_row = 1
+
+	function self.get_page_row_count()
+		return 19 - #self.help_items
+	end
+
+	function self.get_page_item_count()
+		return self.column_count * self.get_page_row_count()
+	end
+
+	function self.get_cursor_row()
+		return math.ceil(self.cursor / self.column_count)
+	end
+
+	function self.get_scroll_top_item()
+		return (self.scroll_top_row - 1) * self.column_count + 1
+	end
 
 	self.update = coroutine.wrap(function ()
 		while true do
@@ -32,10 +49,16 @@ function Scene.new()
 			return
 		end
 		local n = self.cursor -- new cursor index
-		if Input.repeated(81) then n = n + 1 end
-		if Input.repeated(82) then n = n - 1 end
-		if Input.repeated(75) then n = n - 10 end
-		if Input.repeated(78) then n = n + 10 end
+		if Input.repeated(79) then n = n + 1 end
+		if Input.repeated(80) then n = n - 1 end
+		if Input.repeated(81) and n <= #self.items - self.column_count then
+			n = n + self.column_count
+		end
+		if Input.repeated(82) and n > self.column_count then
+			n = n - self.column_count
+		end
+		if Input.repeated(75) then n = n - self.get_page_item_count() end
+		if Input.repeated(78) then n = n + self.get_page_item_count() end
 		if Input.repeated(74) then n = 1 end
 		if Input.repeated(77) then n = #self.items end
 		if n > #self.items then
@@ -45,10 +68,10 @@ function Scene.new()
 		end
 		self.cursor_changed = self.cursor ~= n
 		self.cursor = n
-		if self.cursor < self.scroll_top then
-			self.scroll_top = self.cursor
-		elseif self.cursor >= self.scroll_top + 19 - #self.help_items then
-			self.scroll_top = self.cursor - 18 + #self.help_items
+		if self.cursor < self.get_scroll_top_item() then
+			self.scroll_top_row = self.get_cursor_row()
+		elseif self.cursor >= self.get_scroll_top_item() + self.get_page_item_count() then
+			self.scroll_top = self.get_cursor_row() - self.get_page_row_count() + 1
 		end
 
 		local item = self.items[self.cursor]
@@ -58,26 +81,57 @@ function Scene.new()
 	end
 
 	function self.on_paint()
-		self.draw_item(0, self.items[0], "title")
-		local help_item_count = #self.help_items
-		local help_items = self.items[self.cursor].help_items or self.help_items
-		for i, v in ipairs(help_items) do
-			self.draw_item(19 - help_item_count + i, v, "help")
+		self.draw_title_item()
+		for i = 1, #self.help_items do
+			self.draw_help_item(i)
 		end
-		for i = 1, 19 - help_item_count do
-			local j = self.scroll_top + i - 1
+		for i = self.get_scroll_top_item(), self.get_scroll_top_item() + self.get_page_item_count() - 1 do
 			local style = "normal"
-			if j == self.cursor then style = "selected" end
-			self.draw_item(i, self.items[j], style)
+			if i == self.cursor then style = "selected" end
+			self.draw_item(i, style)
 		end
 	end
 
-	function self.draw_item(i, item, style)
+	function self.draw_title_item()
+		self.items[0].draw(self.get_title_item_rect(), "title")
+	end
+
+	function self.get_title_item_rect()
+		return {x = 0, y = 0, w = 640, h = WLH}
+	end
+
+	function self.draw_item(i, style)
+		local item = self.items[i]
+		local rect = self.get_item_rect(i)
 		if item then
-			item.draw(i, style)
+			item.draw(rect, style)
 		else
-			Item.styles.null.draw_background(i)
+			Item.styles["null"].draw_background(rect)
 		end
+	end
+
+	function self.get_item_rect(i)
+		local w = 640 / self.column_count
+		return {
+			x = ((i - 1) % self.column_count) * w,
+			y = (math.ceil(i / self.column_count) - self.scroll_top_row + 1) * WLH,
+			w = w,
+			h = WLH
+		}
+	end
+
+	function self.draw_help_item(i)
+		local help_items = self.items[self.cursor].help_items or self.help_items
+		help_items[i].draw(self.get_help_item_rect(i), "help")
+	end
+
+	function self.get_help_item_rect(i)
+		return {
+			x = 0,
+			y = 480 - WLH * (#self.help_items + i - 1),
+			w = 640,
+			h = WLH
+		}
 	end
 
 	return self
