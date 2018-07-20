@@ -2,18 +2,18 @@ Scene_Hello = {}
 
 function Scene_Hello.new()
 	local self = Scene.new()
-	self.items[0] = Line.new("你好！")
+	self.items[0] = Item.new("你好！")
 	for i = 1, 30 do
-		self.items[i] = Line.new(string.format(
+		self.items[i] = Item.new(string.format(
 			"%d\ft[4]%f\ft[-2]\fc[r255g0b0]{\fi[16]}",
 			i, math.sqrt(i))
 		)
 	end
-	self.help_items[1] = Line.new("Space = Fire a message; Esc = Exit")
+	self.help_items[1] = Item.new("Space = Fire a message; Esc = Exit")
 
 	function self.on_update()
 		if Input.triggered(44) then
-			self.items[1] = Line.new(SceneManager.call(Scene_Message.new()))
+			self.items[1] = Item.new(SceneManager.call(Scene_Message.new()))
 		end
 		if Input.triggered(41) then
 			os.exit()

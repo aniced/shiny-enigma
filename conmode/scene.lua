@@ -58,25 +58,25 @@ function Scene.new()
 	end
 
 	function self.on_paint()
-		self.draw_line(0, self.items[0], "title")
-		local help_lines = #self.help_items
+		self.draw_item(0, self.items[0], "title")
+		local help_item_count = #self.help_items
 		local help_items = self.items[self.cursor].help_items or self.help_items
 		for i, v in ipairs(help_items) do
-			self.draw_line(19 - help_lines + i, v, "help")
+			self.draw_item(19 - help_item_count + i, v, "help")
 		end
-		for i = 1, 19 - help_lines do
+		for i = 1, 19 - help_item_count do
 			local j = self.scroll_top + i - 1
 			local style = "normal"
 			if j == self.cursor then style = "selected" end
-			self.draw_line(i, self.items[j], style)
+			self.draw_item(i, self.items[j], style)
 		end
 	end
 
-	function self.draw_line(i, line, style)
-		if line then
-			line.draw(i, style)
+	function self.draw_item(i, item, style)
+		if item then
+			item.draw(i, style)
 		else
-			Line.styles.null.draw_background(i)
+			Item.styles.null.draw_background(i)
 		end
 	end
 

@@ -3,9 +3,9 @@ Scene_Message = {}
 function Scene_Message.new()
 	local self = Scene.new()
 	local i, j = 0, 0
-	self.items[0] = Line.new("Message")
-	self.items[1] = Line.new("Press Ｚ on me", {
-		Line.new("Z = increment; Space = return"),
+	self.items[0] = Item.new("Message")
+	self.items[1] = Item.new("Press Ｚ on me", {
+		Item.new("Z = increment; Space = return"),
 	}, function ()
 		if Input.repeated(29) then
 			i = i + 1
@@ -18,7 +18,7 @@ function Scene_Message.new()
 			SceneManager.back(1.05)
 		end
 	end)
-	self.items[2] = Line.new("---")
-	self.help_items[1] = Line.new("")
+	self.items[2] = Item.new("---")
+	self.help_items[1] = Item.new("")
 	return self
 end
