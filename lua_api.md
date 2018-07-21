@@ -37,3 +37,5 @@ Compatibility with vanilla Lua
 	- Use IOStream, which is capable of handling UTF-8 filenames, instead if you would like to read or write files.
 - os
 	- os.exit is replaced with a C function that also cleans up resources.
+- package
+	- `package`, `require` and `module` are removed, so the entire package library is removed.

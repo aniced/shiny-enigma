@@ -56,6 +56,10 @@ void init(int argc, char* argv[]) {
 	lua_pushnil(L); lua_setfield(L, -2, "tmpfile");
 	lua_pushnil(L); lua_setfield(L, -2, "close");
 	lua_pop(L, 1);
+	// remove package, require and module
+	lua_pushnil(L); lua_setglobal(L, "package");
+	lua_pushnil(L); lua_setglobal(L, "require");
+	lua_pushnil(L); lua_setglobal(L, "module");
 	// open game libraries
 	UTF8::init();
 	IOStream::init();
