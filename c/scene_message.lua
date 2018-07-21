@@ -7,7 +7,7 @@ function Scene_Message.new()
 
 	self.items[0] = Item.new("Message")
 	self.items[1] = Item.new("Press Ｚ on me", {
-		Item.new("Z = increment; Space = return"),
+		Item.new("Z = increment; Esc = return"),
 	}, function ()
 		if Input.repeated(29) then
 			i = i + 1
@@ -16,8 +16,8 @@ function Scene_Message.new()
 			j = j + 1
 			self.items[2].text = string.format("%d～%d", i, j)
 		end
-		if Input.triggered(44) then
-			SceneManager.back(1.05)
+		if Input.triggered(41) then
+			SceneManager.back(os.clock())
 		end
 	end)
 	self.items[2] = Item.new("---")
