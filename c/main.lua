@@ -1,9 +1,9 @@
 WLH = 24
-require 'c/item'
-require 'c/scenemanager'
-require 'c/scene'
-require 'c/scene_hello'
-require 'c/scene_message'
+Util.dofile 'item'
+Util.dofile 'scenemanager'
+Util.dofile 'scene'
+Util.dofile 'scene_hello'
+Util.dofile 'scene_message'
 
 Window.set_resizable(false)
 Graphics.set_animation_enabled(#arg > 3)

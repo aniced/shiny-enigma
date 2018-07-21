@@ -1,4 +1,4 @@
-Item = {styles = require 'c/itemstyles'}
+Item = {styles = Util.dofile 'itemstyles'}
 
 -- update: an update function which will be called regardless of the state
 function Item.new(text, help_items, update)

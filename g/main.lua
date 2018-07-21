@@ -1,8 +1,8 @@
-require 'g/widget'
-require 'g/widget_textbase'
-require 'g/widget_label'
-require 'g/widget_textbox'
-require 'g/widget_button'
+Util.dofile 'widget'
+Util.dofile 'widget_textbase'
+Util.dofile 'widget_label'
+Util.dofile 'widget_textbox'
+Util.dofile 'widget_button'
 
 fullscreen = false
 w = Widget_Button.new()
