@@ -6,7 +6,7 @@ function Scene_Hello.new()
 	self.column_count = 3
 
 	self.items[0] = Item.new("你好！")
-	for i = 1, 30 do
+	for i = 1, 29 do
 		self.items[i] = Item.new(string.format(
 			"%d→%f\fc[r255g0b0]{\fi[16]}",
 			i, math.sqrt(i))
