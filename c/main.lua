@@ -1,9 +1,9 @@
 WLH = 24
-require 'conmode/item'
-require 'conmode/scenemanager'
-require 'conmode/scene'
-require 'conmode/scene_hello'
-require 'conmode/scene_message'
+require 'c/item'
+require 'c/scenemanager'
+require 'c/scene'
+require 'c/scene_hello'
+require 'c/scene_message'
 
 Window.set_resizable(false)
 Graphics.set_animation_enabled(#arg > 3)
