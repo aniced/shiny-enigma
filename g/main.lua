@@ -58,6 +58,7 @@ function on.paint()
 	if x >= 60 then x = 0 end
 	Graphics.stretch_copy(Graphics, Texture.stock[0], {x = 255, y = 255, w = 1, h = 1})
 	Graphics.stretch_copy({x = x, y = y, w = 10, h = 10}, Texture.stock[0], {x = 0, y = 0, w = 1, h = 1})
+	Graphics.tile({x = 300, y = 100, w = 10, h = 10}, Texture.stock[0], {x = 17, y = 0, w = 4, h = 4})
 	w.draw()
 	draw_debug_line(1, string.format("%q", Util.os_encoding_to_utf8("\xc2\xd2\xc2\xeb")))
 	draw_debug_line(2, string.format("%d", utf8.len("你好", 1, 6)))

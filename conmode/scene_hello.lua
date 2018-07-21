@@ -2,7 +2,7 @@ Scene_Hello = {}
 
 function Scene_Hello.new()
 	local self = Scene.new()
-	self.cursor = 4
+	self.cursor = 26
 	self.column_count = 3
 
 	self.items[0] = Item.new("你好！")
