@@ -2,6 +2,7 @@ Program = {}
 
 function Program.new()
 	local self = {}
+	self.class = Program
 
 	-- All objects share the same set of IDs.
 	self.next_id = math.random(1, 999)

@@ -2,6 +2,7 @@ Interpreter = {}
 
 function Interpreter.new(program)
 	local self = {}
+	self.class = Interpreter
 
 	-- Instruction pointer points to the one to be executed.
 	self.program = program

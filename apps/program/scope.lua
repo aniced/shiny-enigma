@@ -3,6 +3,7 @@ Scope = {}
 -- This class is abstract.
 function Scope.new()
 	local self = {}
+	self.class = Scope
 
 	self.name = ""
 
