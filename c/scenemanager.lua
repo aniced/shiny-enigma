@@ -19,6 +19,9 @@ end
 
 function self.call(scene)
 	print("Scene call ", scene)
+	if type(scene) ~= "table" or not scene.is_scene then
+		error("not a scene")
+	end
 	Graphics.freeze()
 	table.insert(self.stack, scene)
 	Graphics.transition()

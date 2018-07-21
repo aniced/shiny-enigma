@@ -4,6 +4,7 @@ Scene = {}
 
 function Scene.new()
 	local self = {}
+	self.is_scene = true
 
 	self.items = {}
 	self.help_items = {}
