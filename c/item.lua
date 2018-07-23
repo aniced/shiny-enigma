@@ -1,9 +1,14 @@
 Item = {styles = Util.dofile 'itemstyles'}
 
+-- text: a string or a function without parameters
+-- help_items: an array of items
 -- update: an update function which will be called regardless of the state
 function Item.new(text, help_items, update)
 	local self = {}
-	self.text = tostring(text)
+	if type(text) ~= "function" then
+		text = tostring(text)
+	end
+	self.text = text
 	self.help_items = help_items
 	self.state = nil
 	self.update = update
@@ -13,7 +18,11 @@ function Item.new(text, help_items, update)
 			style = Item.styles[style]
 		end
 		style.draw_background(rect)
-		Typesetting.draw_text({x = rect.x, y = rect.y}, self.text, style.color)
+		local text = self.text
+		if type(text) == "function" then
+			text = tostring(text())
+		end
+		Typesetting.draw_text({x = rect.x, y = rect.y}, text, style.color)
 	end
 
 	return self
