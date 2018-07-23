@@ -4,6 +4,8 @@ function Program.new()
 	local self = {}
 	self.class = Program
 
+	self.display_name = ""
+
 	-- All objects share the same set of IDs.
 	self.next_id = math.random(1, 999)
 	function self.new_id()

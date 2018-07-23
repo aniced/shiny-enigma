@@ -8,7 +8,7 @@ function Scene_Hello.new()
 	self.items[1] = Item.new("Program", nil, function ()
 		if Input.triggered(40) or Input.triggered(44) then
 			local app = Application.load("program")
-			SceneManager.call(app.Scene_Program)
+			SceneManager.call(app.Scene_Program.new())
 		end
 	end)
 	for i = 2, 29 do

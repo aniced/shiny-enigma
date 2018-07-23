@@ -12,7 +12,6 @@ function Util.dofile(filename)
 		name = name .. ".lua"
 	end
 	Util.path = path
-	print(path .. " / " .. name)
 	local ret = {setfenv(assert(loadfile(path .. "/" .. name)), getfenv(2))()}
 	Util.path = old_path
 	return unpack(ret)
