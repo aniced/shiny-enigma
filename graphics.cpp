@@ -27,6 +27,7 @@ namespace Graphics {
 		SDL_Texture* old_texture;
 		// ‘new_texture’ should be the framebuffer.
 	} transition_state;
+	bool frame_persistent = false;
 	double frame_opacity = 1.0;
 	// These brightnesses are multiplied.
 	double brightness = 1.0;
@@ -101,7 +102,7 @@ namespace Graphics {
 			Util::call_handler("paint");
 			SDL_SetRenderTarget($renderer, NULL);
 		}
-		if (false) {
+		if (!frame_persistent) {
 			SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
 			SDL_RenderClear($renderer);
 		}
@@ -373,29 +374,37 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
+	// ● get_frame_persistent()
+	//   set_frame_persistent(persistent)
+	//-------------------------------------------------------------------------
+	int lua_get_frame_persistent(lua_State* L) {
+		lua_pushboolean(L, frame_persistent);
+		return 1;
+	}
+	int lua_set_frame_persistent(lua_State* L) {
+		frame_persistent = Util::check_boolean(L, 1);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● get_frame_opacity()
+	//   set_frame_opacity(opacity ∈ [0, 1])
 	//-------------------------------------------------------------------------
 	int lua_get_frame_opacity(lua_State* L) {
 		lua_pushnumber(L, frame_opacity);
 		return 1;
 	}
-	//-------------------------------------------------------------------------
-	// ● set_frame_opacity(opacity ∈ [0, 1])
-	//-------------------------------------------------------------------------
 	int lua_set_frame_opacity(lua_State* L) {
 		frame_opacity = Util::clamp(luaL_checknumber(L, 1), 0.0, 1.0);
 		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● get_brightness()
+	//   set_brightness(brightness ∈ [0, 1])
 	//-------------------------------------------------------------------------
 	int lua_get_brightness(lua_State* L) {
 		lua_pushnumber(L, brightness);
 		return 1;
 	}
-	//-------------------------------------------------------------------------
-	// ● set_brightness(brightness ∈ [0, 1])
-	//-------------------------------------------------------------------------
 	int lua_set_brightness(lua_State* L) {
 		brightness = Util::clamp(luaL_checknumber(L, 1), 0.0, 1.0);
 		return 0;
@@ -448,6 +457,8 @@ namespace Graphics {
 			{"freeze", lua_freeze},
 			{"transition", lua_transition},
 			{"stop_transition", lua_stop_transition},
+			{"get_frame_persistent", lua_get_frame_persistent},
+			{"set_frame_persistent", lua_set_frame_persistent},
 			{"get_frame_opacity", lua_get_frame_opacity},
 			{"set_frame_opacity", lua_set_frame_opacity},
 			{"get_brightness", lua_get_brightness},

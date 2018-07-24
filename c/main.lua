@@ -7,6 +7,7 @@ Util.dofile 'scene_message'
 
 Window.set_resizable(false)
 Graphics.set_animation_enabled(#arg > 3)
+Graphics.set_frame_persistent(true)
 Graphics.set_frame_opacity(0.125)
 
 function on.update()
