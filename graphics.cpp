@@ -14,12 +14,18 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	// ● Module variables
 	//-------------------------------------------------------------------------
+	Uint32 last_frame_end_tick;
+	// Normally all drawing operations apply to this buffer, so that
+	// while logic and drawing seem mixed together in the client code,
+	// they are actually separated, so that effects like transitions
+	// can be done without requesting the client to redraw themselves.
+	SDL_Texture* framebuffer;
 	struct transition_state {
 		bool active = false;
 		int duration;
 		int frame;
 		SDL_Texture* old_texture;
-		SDL_Texture* new_texture;
+		// ‘new_texture’ should be the framebuffer.
 	} transition_state;
 	double brightness = 1.0;
 	struct fade_state {
@@ -29,6 +35,20 @@ namespace Graphics {
 		bool go_dark; // true = fade out
 	} fade_state;
 	//-------------------------------------------------------------------------
+	// ● get_fps & set_fps
+	//-------------------------------------------------------------------------
+	int fps = 60;
+	Uint32 frame_ticks = 1000 / fps;
+	int lua_get_fps(lua_State* L) {
+		lua_pushnumber(L, fps);
+		return 1;
+	}
+	int lua_set_fps(lua_State* L) {
+		fps = luaL_checkinteger(L, 1);
+		frame_ticks = 1000 / fps;
+		return 0;
+	}
+	//-------------------------------------------------------------------------
 	// ● update_transition
 	//-------------------------------------------------------------------------
 	void update_transition() {
@@ -37,13 +57,12 @@ namespace Graphics {
 		if (transition_state.duration) {
 			// duration != 0: transitioning
 			int alpha = 255 * transition_state.frame / transition_state.duration;
-			SDL_SetTextureAlphaMod(transition_state.new_texture, alpha);
-			SDL_RenderCopy($renderer, transition_state.new_texture, NULL, NULL);
+			SDL_SetTextureAlphaMod(framebuffer, alpha);
+			SDL_RenderCopy($renderer, framebuffer, NULL, NULL);
 			transition_state.frame++;
 			if (transition_state.frame > transition_state.duration) {
 				transition_state.active = false;
 				SDL_DestroyTexture(transition_state.old_texture);
-				SDL_DestroyTexture(transition_state.new_texture);
 			}
 		} else {
 			// duration == 0: freezing
@@ -71,15 +90,28 @@ namespace Graphics {
 	// ● update
 	//-------------------------------------------------------------------------
 	void update() {
+		if (transition_state.active && transition_state.frame == 0) {
+			// skip the call to paint to avoid an early update
+		} else {
+			SDL_SetRenderTarget($renderer, framebuffer);
+			Util::call_handler("paint");
+			SDL_SetRenderTarget($renderer, NULL);
+		}
 		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
 		SDL_RenderClear($renderer);
 		if (transition_state.active) {
 			update_transition();
 		} else {
-			Util::call_handler("paint");
+			SDL_RenderCopy($renderer, framebuffer, NULL, NULL);
 		}
 		update_brightness();
 		SDL_RenderPresent($renderer);
+		// adjust the speed to fps
+		Uint32 this_frame_end_tick = SDL_GetTicks();
+		if (this_frame_end_tick - last_frame_end_tick < frame_ticks) {
+			SDL_Delay(frame_ticks - (this_frame_end_tick - last_frame_end_tick));
+			last_frame_end_tick = this_frame_end_tick;
+		}
 	}
 	//-------------------------------------------------------------------------
 	// ● set_size
@@ -91,20 +123,6 @@ namespace Graphics {
 		lua_gettable(L, LUA_REGISTRYINDEX);
 		lua_pushnumber(L, w); lua_setfield(L, -2, "w");
 		lua_pushnumber(L, h); lua_setfield(L, -2, "h");
-	}
-	//-------------------------------------------------------------------------
-	// ● get_fps & set_fps
-	//-------------------------------------------------------------------------
-	int fps = 60;
-	Uint32 frame_time = 1000 / fps;
-	int lua_get_fps(lua_State* L) {
-		lua_pushnumber(L, fps);
-		return 1;
-	}
-	int lua_set_fps(lua_State* L) {
-		fps = luaL_checkinteger(L, 1);
-		frame_time = 1000 / fps;
-		return 0;
 	}
 	//-------------------------------------------------------------------------
 	// ● copy(dest_point, texture, src_rect)
@@ -318,7 +336,8 @@ namespace Graphics {
 		// capture the current picture
 		transition_state.old_texture = create_target_texture();
 		SDL_SetRenderTarget($renderer, transition_state.old_texture);
-		update();
+		Util::call_handler("paint");
+		SDL_SetRenderTarget($renderer, NULL);
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -330,11 +349,6 @@ namespace Graphics {
 		transition_state.duration = luaL_optint(L, 1, 10);
 		if (!transition_state.duration) return luaL_error(L, "duration cannot be zero");
 		transition_state.frame = 0;
-		transition_state.new_texture = create_target_texture();
-		SDL_SetTextureBlendMode(transition_state.new_texture, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderTarget($renderer, transition_state.new_texture);
-		update(); // paint
-		SDL_SetRenderTarget($renderer, NULL);
 		transition_state.active = true;
 		return 0;
 	}
@@ -380,6 +394,8 @@ namespace Graphics {
 	// ● init
 	//-------------------------------------------------------------------------
 	void init() {
+		framebuffer = create_target_texture();
+		SDL_SetTextureBlendMode(framebuffer, SDL_BLENDMODE_BLEND);
 		const luaL_reg reg[] = {
 			{"x", NULL},
 			{"y", NULL},

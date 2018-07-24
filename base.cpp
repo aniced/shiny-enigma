@@ -85,18 +85,11 @@ void init(int argc, char* argv[]) {
 	SDL_free(script_filename);
 }
 
-void loop() {
-	Uint32 frame_start = SDL_GetTicks();
-	Input::update();
-	Util::call_handler("update");
-	Graphics::update();
-	Uint32 frame_time = SDL_GetTicks() - frame_start;
-	if (frame_time < Graphics::frame_time) {
-		SDL_Delay(Graphics::frame_time - frame_time);
-	}
-}
-
 int main(int argc, char* argv[]) {
 	init(argc, argv);
-	for (;;) loop();
+	for (;;) {
+		Input::update();
+		Util::call_handler("update");
+		Graphics::update();
+	}
 }
