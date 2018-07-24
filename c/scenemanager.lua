@@ -1,5 +1,6 @@
 local self = {
-	stack = nil
+	stack = nil,
+	transition_speed = 10,
 }
 SceneManager = self
 
@@ -32,7 +33,7 @@ function self.call(scene)
 	self.check_scene(scene)
 	Graphics.freeze()
 	table.insert(self.stack, scene)
-	Graphics.transition()
+	Graphics.transition(self.transition_speed)
 	if coroutine.running() then
 		coroutine.yield()
 		return unpack(self.back_value)
@@ -44,5 +45,5 @@ function self.back(...) -- ‘return’ is a keyword
 	Graphics.freeze()
 	table.remove(self.stack)
 	self.back_value = {...}
-	Graphics.transition()
+	Graphics.transition(self.transition_speed)
 end

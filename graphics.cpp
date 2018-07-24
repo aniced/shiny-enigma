@@ -27,7 +27,10 @@ namespace Graphics {
 		SDL_Texture* old_texture;
 		// ‘new_texture’ should be the framebuffer.
 	} transition_state;
+	double frame_opacity = 1.0;
+	// These brightnesses are multiplied.
 	double brightness = 1.0;
+	double brightness_for_fade = 1.0;
 	struct fade_state {
 		bool active = false;
 		int duration;
@@ -73,15 +76,16 @@ namespace Graphics {
 	//-------------------------------------------------------------------------
 	void update_brightness() {
 		if (fade_state.active) {
-			// interpolate the brightness
-			brightness = (double) fade_state.frame / fade_state.duration;
-			if (fade_state.go_dark) brightness = 1 - brightness;
+			// interpolate the brightness for fade
+			brightness_for_fade = (double) fade_state.frame / fade_state.duration;
+			if (fade_state.go_dark) brightness_for_fade = 1 - brightness_for_fade;
 			fade_state.frame++;
 			if (fade_state.frame > fade_state.duration) {
 				fade_state.active = false;
 			}
 		}
-		Uint8 b = brightness * 255;
+		// multiply the brightnesses
+		Uint8 b = brightness * brightness_for_fade * 255;
 		SDL_SetRenderDrawBlendMode($renderer, SDL_BLENDMODE_MOD);
 		SDL_SetRenderDrawColor($renderer, b, b, b, 255);
 		SDL_RenderFillRect($renderer, NULL);
@@ -97,11 +101,15 @@ namespace Graphics {
 			Util::call_handler("paint");
 			SDL_SetRenderTarget($renderer, NULL);
 		}
-		SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
-		SDL_RenderClear($renderer);
+		if (false) {
+			SDL_SetRenderDrawColor($renderer, 0, 0, 0, 255);
+			SDL_RenderClear($renderer);
+		}
 		if (transition_state.active) {
 			update_transition();
 		} else {
+			Uint8 a = frame_opacity * 255;
+			SDL_SetTextureAlphaMod(framebuffer, a);
 			SDL_RenderCopy($renderer, framebuffer, NULL, NULL);
 		}
 		update_brightness();
@@ -341,13 +349,15 @@ namespace Graphics {
 		return 0;
 	}
 	//-------------------------------------------------------------------------
-	// ● transition(duration = 10)
+	// ● transition(duration)
 	//-------------------------------------------------------------------------
 	int lua_transition(lua_State* L) {
 		if (!animation_enabled) return 0;
 		// fill in the transition state
-		transition_state.duration = luaL_optint(L, 1, 10);
-		if (!transition_state.duration) return luaL_error(L, "duration cannot be zero");
+		transition_state.duration = luaL_checkint(L, 1);
+		if (transition_state.duration <= 0) {
+			return luaL_error(L, "duration must be positive");
+		}
 		transition_state.frame = 0;
 		transition_state.active = true;
 		return 0;
@@ -361,6 +371,27 @@ namespace Graphics {
 	int lua_stop_transition(lua_State* L) {
 		transition_state.active = false;
 		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● get_frame_opacity()
+	//-------------------------------------------------------------------------
+	int lua_get_frame_opacity(lua_State* L) {
+		lua_pushnumber(L, frame_opacity);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● set_frame_opacity(opacity ∈ [0, 1])
+	//-------------------------------------------------------------------------
+	int lua_set_frame_opacity(lua_State* L) {
+		frame_opacity = Util::clamp(luaL_checknumber(L, 1), 0.0, 1.0);
+		return 0;
+	}
+	//-------------------------------------------------------------------------
+	// ● get_brightness()
+	//-------------------------------------------------------------------------
+	int lua_get_brightness(lua_State* L) {
+		lua_pushnumber(L, brightness);
+		return 1;
 	}
 	//-------------------------------------------------------------------------
 	// ● set_brightness(brightness ∈ [0, 1])
@@ -384,10 +415,10 @@ namespace Graphics {
 	}
 	//-------------------------------------------------------------------------
 	// ● stop_fade
-	//   The brightness will remain!
 	//-------------------------------------------------------------------------
 	int lua_stop_fade(lua_State* L) {
 		fade_state.active = false;
+		brightness_for_fade = 1.0;
 		return 0;
 	}
 	//-------------------------------------------------------------------------
@@ -417,6 +448,9 @@ namespace Graphics {
 			{"freeze", lua_freeze},
 			{"transition", lua_transition},
 			{"stop_transition", lua_stop_transition},
+			{"get_frame_opacity", lua_get_frame_opacity},
+			{"set_frame_opacity", lua_set_frame_opacity},
+			{"get_brightness", lua_get_brightness},
 			{"set_brightness", lua_set_brightness},
 			{"fade_in", NULL},
 			{"fade_out", NULL},
