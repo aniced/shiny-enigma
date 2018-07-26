@@ -56,11 +56,22 @@ void sdlerror(const char* m) {
 }
 
 int panic(lua_State* L) {
-	luaL_where(L, 0);
-	strcpy(msgbox_buf, lua_tostring(L, -1));
-	if (*msgbox_buf) strcat(msgbox_buf, "\n");
-	strcat(msgbox_buf, luaL_gsub(L, lua_tostring(L, -2), ": ", ":\n"));
-	lua_pop(L, 1);
+	int lvl = 0;
+	*msgbox_buf = 0;
+	for (;;) {
+		luaL_where(L, lvl);
+		const char* where = lua_tostring(L, -1);
+		if (*where) {
+			strcat(msgbox_buf, where);
+			strcat(msgbox_buf, "\n");
+		} else {
+			lua_pop(L, 1);
+			break;
+		}
+		lua_pop(L, 1);
+		lvl++;
+	}
+	strcat(msgbox_buf, luaL_gsub(L, lua_tostring(L, -1), ": ", ":\n"));
 	fprintf(stderr, "%s\n", msgbox_buf);
 	msgbox(msgbox_buf);
 	quit(1); // never returning
