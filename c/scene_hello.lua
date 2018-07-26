@@ -4,7 +4,7 @@ function Scene_Hello.new()
 	local self = Scene.new()
 	self.column_count = 3
 
-	self.items[0] = Item.new("你好！")
+	self.title = "你好！"
 	self.items[1] = Item.new("Program", nil, function ()
 		if Input.triggered(40) or Input.triggered(44) then
 			local app = Application.load("program")
@@ -15,7 +15,7 @@ function Scene_Hello.new()
 		if Input.triggered(40) or Input.triggered(44) then
 			SceneManager.call(Scene_Form.new("Hello Forms!", {
 				{field = nil, display_name = "Subheading 1"},
-				{field = "x", value = 0, help_items = {Item.new("𝑥 ∈ ℝ")}},
+				{field = "x", value = 0, help = {"𝑥 ∈ ℝ"}},
 				{field = nil},
 				{field = "y", value = 0, display_name = "Value"},
 			}))
@@ -27,11 +27,11 @@ function Scene_Hello.new()
 			i, math.sqrt(i))
 		)
 	end
-	self.help_items[1] = Item.new("F1 = Fire a message; Esc = Exit")
+	self.help[1] = "F1 = Fire a message; Esc = Exit"
 
 	function self.on_update()
 		if Input.triggered(58) then
-			self.items[0] = Item.new(tostring(SceneManager.call(Scene_Message.new())))
+			self.title = tostring(SceneManager.call(Scene_Message.new()))
 		end
 		if Input.triggered(41) then
 			os.exit()

@@ -6,9 +6,12 @@ function Scene_Program.new()
 	self.program = Program.new()
 	self.program.display_name = "Untitled"
 
-	self.items[0] = Item.new(function ()
+	self.title = function ()
 		return "Program - " .. self.program.display_name
-	end)
+	end
+
+	function self.on_update()
+	end
 
 	return self
 end

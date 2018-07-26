@@ -5,10 +5,8 @@ function Scene_Message.new()
 	local i, j = 0, 0
 	self.column_count = 2
 
-	self.items[0] = Item.new("Message")
-	self.items[1] = Item.new("Press Ｚ on me", {
-		Item.new("Z = increment; Esc = return"),
-	}, function ()
+	self.title = "Message"
+	self.items[1] = Item.new("Press Ｚ on me", {"Z = increment; Esc = return"}, function ()
 		if Input.repeated(29) then
 			i = i + 1
 		end
@@ -21,6 +19,6 @@ function Scene_Message.new()
 		end
 	end)
 	self.items[2] = Item.new("---")
-	self.help_items[1] = Item.new("")
+	self.help[1] = ""
 	return self
 end

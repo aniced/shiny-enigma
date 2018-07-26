@@ -7,13 +7,13 @@ function Scene.new()
 	self.is_scene = true
 
 	self.items = {}
-	self.help_items = {}
+	self.help = {}
 	self.cursor = 1
 	self.column_count = 1
 	self.scroll_top_row = 1
 
 	function self.get_page_row_count()
-		return 19 - #self.help_items
+		return 19 - #self.help
 	end
 
 	function self.get_page_item_count()
@@ -83,7 +83,7 @@ function Scene.new()
 
 	function self.on_paint()
 		self.draw_title_item()
-		for i = 1, #self.help_items do
+		for i = 1, #self.help do
 			self.draw_help_item(i)
 		end
 		for i = self.get_scroll_top_item(), self.get_scroll_top_item() + self.get_page_item_count() - 1 do
@@ -94,7 +94,7 @@ function Scene.new()
 	end
 
 	function self.draw_title_item()
-		self.items[0].draw(self.get_title_item_rect(), "title")
+		Item.draw(self.title, self.get_title_item_rect(), "title")
 	end
 
 	function self.get_title_item_rect()
@@ -122,14 +122,14 @@ function Scene.new()
 	end
 
 	function self.draw_help_item(i)
-		local help_items = self.items[self.cursor].help_items or self.help_items
-		help_items[i].draw(self.get_help_item_rect(i), "help")
+		local help = self.items[self.cursor].help or self.help
+		Item.draw(help[i], self.get_help_item_rect(i), "help")
 	end
 
 	function self.get_help_item_rect(i)
 		return {
 			x = 0,
-			y = 480 - WLH * (#self.help_items + i - 1),
+			y = 480 - WLH * (#self.help + i - 1),
 			w = 640,
 			h = WLH
 		}

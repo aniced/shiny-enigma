@@ -28,9 +28,9 @@ function Scene_ListEditor.new(title, data, item_editor_function)
 		end
 	end
 
-	self.items[0] = Item.new(title)
+	self.title = title
 	self.sync_items()
-	self.help_items[1] = Item.new("Enter = Insert; Space = Edit; Delete = Remove")
+	self.help[1] = "Enter = Insert; Space = Edit; Delete = Remove"
 
 	function self.on_update()
 		local i = self.cursor
