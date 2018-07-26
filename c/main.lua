@@ -4,6 +4,8 @@ Util.dofile 'scenemanager'
 Util.dofile 'scene'
 Util.dofile 'scene_hello'
 Util.dofile 'scene_message'
+Util.dofile 'scene_form'
+Util.dofile 'scene_listeditor'
 
 Window.set_resizable(false)
 Graphics.set_animation_enabled(#arg > 3)

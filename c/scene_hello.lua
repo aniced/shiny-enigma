@@ -11,7 +11,17 @@ function Scene_Hello.new()
 			SceneManager.call(app.Scene_Program.new())
 		end
 	end)
-	for i = 2, 29 do
+	self.items[2] = Item.new("Form", nil, function ()
+		if Input.triggered(40) or Input.triggered(44) then
+			SceneManager.call(Scene_Form.new("Hello Forms!", {
+				{field = nil, display_name = "Subheading 1"},
+				{field = "x", value = 0, help_items = {Item.new("𝑥 ∈ ℝ")}},
+				{field = nil},
+				{field = "y", value = 0, display_name = "Value"},
+			}))
+		end
+	end)
+	for i = 3, 29 do
 		self.items[i] = Item.new(string.format(
 			"%d→%f\fc[r255g0b0]{\fi[16]}",
 			i, math.sqrt(i))
