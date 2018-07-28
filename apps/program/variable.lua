@@ -1,7 +1,7 @@
 Variable = {}
 
 function Variable.new()
-	local self = {}
+	local self = Object.new()
 	self.class = Variable
 
 	self.constant = false

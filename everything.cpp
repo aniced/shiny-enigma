@@ -26,6 +26,7 @@ extern "C" {
 
 #include "global.cpp"
 #include "util.cpp"
+#include "object.cpp"
 #include "utf8.cpp"
 #include "iostream.cpp"
 #include "geometry.cpp"

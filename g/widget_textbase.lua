@@ -6,7 +6,7 @@ function Widget_TextBase.new(text)
 	self.rect.h = WLH
 
 	function self.set_text(text)
-		self.text = text
+		rawset(self, "text", text)
 		if self.text:len() == 0 then
 			self.texture = nil
 		else

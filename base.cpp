@@ -61,6 +61,7 @@ void init(int argc, char* argv[]) {
 	lua_pushnil(L); lua_setglobal(L, "require");
 	lua_pushnil(L); lua_setglobal(L, "module");
 	// open game libraries
+	Object::init();
 	UTF8::init();
 	IOStream::init();
 	Geometry::init();

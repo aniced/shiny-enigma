@@ -1,7 +1,7 @@
 Instruction = {}
 
 function Instruction.new()
-	local self = {}
+	local self = Object.new()
 	self.class = Instruction
 
 	function self.write_c(stream)

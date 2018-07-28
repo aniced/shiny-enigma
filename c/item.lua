@@ -4,7 +4,7 @@ Item = {styles = Util.dofile 'itemstyles'}
 -- help: an array of items
 -- update: an update function which will be called regardless of the state
 function Item.new(text, help, update)
-	local self = {}
+	local self = Object.new()
 	if type(text) ~= "function" then
 		text = tostring(text)
 	end

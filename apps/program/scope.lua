@@ -2,7 +2,7 @@ Scope = {}
 
 -- This class is abstract.
 function Scope.new()
-	local self = {}
+	local self = Object.new()
 	self.class = Scope
 
 	self.display_name = ""

@@ -1,7 +1,7 @@
 Interpreter = {}
 
 function Interpreter.new(program)
-	local self = {}
+	local self = Object.new()
 	self.class = Interpreter
 
 	-- Instruction pointer points to the one to be executed.

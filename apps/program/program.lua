@@ -1,7 +1,7 @@
 Program = {}
 
 function Program.new()
-	local self = {}
+	local self = Object.new()
 	self.class = Program
 
 	self.display_name = ""

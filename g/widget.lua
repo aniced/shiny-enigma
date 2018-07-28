@@ -4,7 +4,7 @@ Widget = {}
 WLH = 24
 
 function Widget.new()
-	local self = {}
+	local self = Object.new()
 	self.rect = {x = 0, y = 0, w = 100, h = 100}
 	self.margin = {t = 3, r = 3, b = 3, l = 3}
 	self.padding = {t = 1, r = 1, b = 1, l = 1}

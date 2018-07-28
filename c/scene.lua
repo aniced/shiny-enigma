@@ -3,7 +3,7 @@
 Scene = {}
 
 function Scene.new()
-	local self = {}
+	local self = Object.new()
 	self.is_scene = true
 
 	self.items = {}
