@@ -56,24 +56,18 @@ void sdlerror(const char* m) {
 }
 
 int panic(lua_State* L) {
-	int lvl = 0;
-	*msgbox_buf = 0;
-	for (;;) {
-		luaL_where(L, lvl);
-		const char* where = lua_tostring(L, -1);
-		if (*where) {
-			strcat(msgbox_buf, where);
-			strcat(msgbox_buf, "\n");
-		} else {
-			lua_pop(L, 1);
-			break;
-		}
-		lua_pop(L, 1);
-		lvl++;
-	}
-	strcat(msgbox_buf, luaL_gsub(L, lua_tostring(L, -1), ": ", ":\n"));
+	strcpy(msgbox_buf, lua_tostring(L, -1));
 	fprintf(stderr, "%s\n", msgbox_buf);
 	msgbox(msgbox_buf);
 	quit(1); // never returning
 	abort(); // never getting here
+}
+
+int errfunc(lua_State* L) {
+	// return debug.traceback(message:gsub(": ", ":\n"))
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
+	lua_pushstring(L, luaL_gsub(L, lua_tostring(L, -1), ": ", ":\n"));
+	lua_call(L, 1, 1);
+	return 1;
 }

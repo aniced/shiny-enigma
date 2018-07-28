@@ -80,10 +80,16 @@ void init(int argc, char* argv[]) {
 	lua_newtable(L);
 	lua_setglobal(L, "on");
 	// execute the main script
-	char* script_filename;
-	script_filename = Util::rtp("entry.lua");
-	if (luaL_dofile(L, script_filename) != 0) panic(L);
-	SDL_free(script_filename);
+	{
+		lua_pushcfunction(L, errfunc);
+		int errfunc_index = lua_gettop(L);
+		char* script_filename;
+		script_filename = Util::rtp("entry.lua");
+		if (luaL_loadfile(L, script_filename) || lua_pcall(L, 0, 0, errfunc_index)) {
+			panic(L);
+		}
+		lua_pop(L, 1);
+	}
 }
 
 int main(int argc, char* argv[]) {
