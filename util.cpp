@@ -157,8 +157,8 @@ namespace Util {
 		return 1;
 	}
 	//-------------------------------------------------------------------------
-	// ● os_encoding_to_utf8
-	//   This function accepts no strings with embedded zeros.
+	// ● os_encoding_to_utf8(os_string) & utf8_to_os_encoding(utf8_string)
+	//   These functions accept no strings with embedded zeros.
 	//-------------------------------------------------------------------------
 	char* os_encoding_to_utf8(const char* os_string) {
 		static char r[1024]; // result
@@ -186,6 +186,32 @@ namespace Util {
 		lua_pushstring(L, os_encoding_to_utf8(luaL_checkstring(L, 1)));
 		return 1;
 	}
+	char* utf8_to_os_encoding(const char* utf8_string) {
+		static char r[1024];
+		#ifdef __WINDOWS__
+			static wchar_t unicode[1024];
+			MultiByteToWideChar(
+				CP_UTF8,
+				0,
+				utf8_string, -1,
+				unicode, ARRAY_SIZE(unicode)
+			);
+			WideCharToMultiByte(
+				CP_ACP,
+				0,
+				unicode, ARRAY_SIZE(unicode),
+				r, ARRAY_SIZE(r),
+				NULL, NULL
+			);
+			return r;
+		#else
+			return utf8_string;
+		#endif
+	}
+	int lua_utf8_to_os_encoding(lua_State* L) {
+		lua_pushstring(L, utf8_to_os_encoding(luaL_checkstring(L, 1)));
+		return 1;
+	}
 	//-------------------------------------------------------------------------
 	// ● sdlerror
 	//-------------------------------------------------------------------------
@@ -201,6 +227,7 @@ namespace Util {
 			{"rtp", lua_rtp},
 			{"shallow_copy", lua_shallow_copy},
 			{"os_encoding_to_utf8", lua_os_encoding_to_utf8},
+			{"utf8_to_os_encoding", lua_utf8_to_os_encoding},
 			{NULL, NULL}
 		};
 		luaL_register(L, "Util", reg);
