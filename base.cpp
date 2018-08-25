@@ -68,6 +68,7 @@ void init(int argc, char* argv[]) {
 	Graphics::init();
 	Texture::init();
 	Window::init();
+	Dialog::init();
 	Input::init();
 	Audio::init();
 	#ifdef ENABLE_MIDI

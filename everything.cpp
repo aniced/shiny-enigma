@@ -23,6 +23,7 @@ extern "C" {
 	#include <windows.h>
 	#define ENABLE_MIDI
 #endif
+#include "SDL_syswm.h"
 
 #include "global.cpp"
 #include "util.cpp"
@@ -41,5 +42,10 @@ extern "C" {
 		#include "midiin_windows.cpp"
 		#include "midiout_windows.cpp"
 	#endif
+#endif
+#ifdef __WINDOWS__
+	#include "dialog_windows.cpp"
+#else
+	#include "dialog_sdl.cpp"
 #endif
 #include "base.cpp"
