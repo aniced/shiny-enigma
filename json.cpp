@@ -10,6 +10,22 @@ namespace JSON {
 	// ● parse(s)
 	//-------------------------------------------------------------------------
 	int lua_parse(lua_State* L) {
+		size_t size;
+		const char* mem = lua_tolstring(L, 1, &size);
+		SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
+		ParseState state(L, rw);
+		parse_value(&state);
+		SDL_RWclose(rw);
+		return 1;
+	}
+	//-------------------------------------------------------------------------
+	// ● parse_file(filename)
+	//-------------------------------------------------------------------------
+	int lua_parse_file(lua_State* L) {
+		SDL_RWops* rw = SDL_RWFromFile(luaL_checkstring(L, 1), "r");
+		ParseState state(L, rw);
+		parse_value(&state);
+		SDL_RWclose(rw);
 		return 1;
 	}
 	//-------------------------------------------------------------------------
@@ -155,6 +171,7 @@ namespace JSON {
 	void init() {
 		const luaL_reg reg[] = {
 			{"parse", lua_parse},
+			{"parse_file", lua_parse_file},
 			{"stringify", lua_stringify},
 			{NULL, NULL}
 		};

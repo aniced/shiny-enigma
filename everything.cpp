@@ -32,6 +32,7 @@ extern "C" {
 #include "object.cpp"
 #include "utf8.cpp"
 #include "iostream.cpp"
+#include "json_parse_state.cpp"
 #include "json.cpp"
 #include "geometry.cpp"
 #include "font.cpp"
