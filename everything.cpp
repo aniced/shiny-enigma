@@ -7,6 +7,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <cinttypes>
+#include <climits>
+#include <cfloat>
+#include <cmath>
 #include <cstdlib>
 #include <cstdio>
 #include "SDL.h"
@@ -29,6 +32,7 @@ extern "C" {
 #include "object.cpp"
 #include "utf8.cpp"
 #include "iostream.cpp"
+#include "json.cpp"
 #include "geometry.cpp"
 #include "font.cpp"
 #include "graphics.cpp"

@@ -75,6 +75,7 @@ void init(int argc, char* argv[]) {
 	MIDIOut::init();
 	#endif
 	Font::init();
+	JSON::init();
 	Util::init();
 	// _G.on = {}
 	lua_newtable(L);
