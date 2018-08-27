@@ -14,7 +14,7 @@ namespace JSON {
 		const char* mem = lua_tolstring(L, 1, &size);
 		SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
 		ParseState state(L, rw);
-		parse_value(&state);
+		state.parse_value();
 		SDL_RWclose(rw);
 		return 1;
 	}
@@ -24,7 +24,7 @@ namespace JSON {
 	int lua_parse_file(lua_State* L) {
 		SDL_RWops* rw = SDL_RWFromFile(luaL_checkstring(L, 1), "r");
 		ParseState state(L, rw);
-		parse_value(&state);
+		state.parse_value();
 		SDL_RWclose(rw);
 		return 1;
 	}

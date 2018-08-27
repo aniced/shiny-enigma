@@ -24,8 +24,9 @@ public:
 		return tmp;
 	}
 	void read_char(char expected) {
-		if (read_char() != expected) {
-			luaL_error(L, "%c expected", expected);
+		char actual = read_char();
+		if (expected != actual) {
+			luaL_error(L, "%c expected (got %c)", expected, actual);
 		}
 	}
 	//-------------------------------------------------------------------------
@@ -122,11 +123,9 @@ public:
 			if (c == '\\') {
 				c = read_char();
 				switch (c) {
-				case 'b': luaL_addchar(&B, '\b'); break;
-				case 't': luaL_addchar(&B, '\t'); break;
-				case 'n': luaL_addchar(&B, '\n'); break;
-				case 'f': luaL_addchar(&B, '\f'); break;
-				case 'r': luaL_addchar(&B, '\r'); break;
+				case 'b': case 't': case 'n': case 'f': case 'r':
+					luaL_addchar(&B, " \b \f   \n \r\t"[(c >> 1) & 15]);
+					break;
 				case '\"': case '\\': case '/':
 					luaL_addchar(&B, c);
 					break;
@@ -152,7 +151,7 @@ public:
 							sscanf(s, "%" SCNxLEAST32, (uint_least32_t*) &codepoint);
 							codepoint = (codepoint & 0x3ff) | ((codepoint >> 16) & 0x3ff);
 						}
-						luaL_addchar(&B, );
+						UTF8::add_encode(&B, codepoint);
 					}
 					break;
 				default:
@@ -162,18 +161,45 @@ public:
 				luaL_addchar(&B, c);
 			}
 		}
+		luaL_pushresult(&B);
 	}
 	//-------------------------------------------------------------------------
 	// ● Parse an array
 	//-------------------------------------------------------------------------
 	void parse_array() {
 		skip_whitespace();
+		read_char('[');
+		lua_newtable(L);
+		for (int i = 0; skip_whitespace(), next_char != ']'; i++) {
+			if (i) read_char(',');
+			parse_value();
+			lua_rawseti(L, -2, i);
+		}
+		read_char(']');
 	}
 	//-------------------------------------------------------------------------
 	// ● Parse an object
 	//-------------------------------------------------------------------------
 	void parse_object() {
 		skip_whitespace();
+		read_char('{');
+		lua_newtable(L);
+		bool first = true;
+		for (;;) {
+			skip_whitespace();
+			if (next_char == '}') break;
+			if (first) {
+				first = false;
+			} else {
+				read_char(',');
+			}
+			parse_string();
+			skip_whitespace();
+			read_char(':');
+			parse_value();
+			lua_rawset(L, -3);
+		}
+		read_char('}');
 	}
 	//-------------------------------------------------------------------------
 	// ● Parse and push the next JSON value in the specified RWops [-0, +1, e]
