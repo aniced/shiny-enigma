@@ -1,29 +1,8 @@
 //=============================================================================
-// ■ Dialog
-//-----------------------------------------------------------------------------
-//   A Lua module providing access to native or emulated modal dialogs.
-//   A few optional parameters are common among the preset dialogs:
-//       context: "error", "warning", "information" (the default) or ""
-//           "info" shows a question mark in dialogs that require the user
-//           to input, or an “i” icon in dialogs that do not.
+// ■ Dialog for Windows
 //=============================================================================
 
 namespace Dialog {
-	//-------------------------------------------------------------------------
-	// ● check_context
-	//-------------------------------------------------------------------------
-	Uint32 check_context(lua_State* L, int narg) {
-		const char* s = luaL_optstring(L, narg, NULL);
-		if (!s || strcmp(s, "information") == 0) {
-			return SDL_MESSAGEBOX_INFORMATION;
-		} else if (strcmp(s, "warning") == 0) {
-			return SDL_MESSAGEBOX_WARNING;
-		} else if (strcmp(s, "error") == 0) {
-			return SDL_MESSAGEBOX_ERROR;
-		} else {
-			return 0;
-		}
-	}
 	//-------------------------------------------------------------------------
 	// ● check_context_windows
 	//-------------------------------------------------------------------------
@@ -39,15 +18,33 @@ namespace Dialog {
 			return 0;
 		}
 	}
+	PCWSTR check_context_windows_task_dialog(lua_State* L, int narg, bool question) {
+		switch (check_context(L, narg)) {
+		case SDL_MESSAGEBOX_INFORMATION:
+			return TD_INFORMATION_ICON;
+		case SDL_MESSAGEBOX_WARNING:
+			return TD_WARNING_ICON;
+		case SDL_MESSAGEBOX_ERROR:
+			return MB_ERROR_ICON;
+		default:
+			return NULL;
+		}
+	}
+	//-------------------------------------------------------------------------
+	// ● get_hwnd
+	//-------------------------------------------------------------------------
+	HWND get_hwnd() {
+		SDL_SysWMinfo wm_info;
+		SDL_VERSION(&wm_info.version);
+		SDL_GetWindowWMInfo($window, &wm_info);
+		return wm_info.info.win.window;
+	}
 	//-------------------------------------------------------------------------
 	// ● show_message(message[, context])
 	//-------------------------------------------------------------------------
 	int lua_show_message(lua_State* L) {
-		SDL_SysWMinfo wm_info;
-		SDL_VERSION(&wm_info.version);
-		SDL_GetWindowWMInfo($window, &wm_info);
 		MessageBoxA(
-			wm_info.info.win.window,
+			get_hwnd(),
 			Util::utf8_to_os_encoding(luaL_checkstring(L, 1)),
 			APPLICATION_TITLE,
 			check_context_windows(L, 2, false)
@@ -56,27 +53,32 @@ namespace Dialog {
 	}
 	//-------------------------------------------------------------------------
 	// ● show_choice(message, buttons[, context])
-	//    buttons : an array of strings
 	//-------------------------------------------------------------------------
 	int lua_show_choice(lua_State* L) {
-		SDL_MessageBoxData data;
-		data.flags = check_context(L, 3);
-		data.window = $window;
-		data.title = APPLICATION_TITLE;
-		data.message = luaL_checkstring(L, 1);
-		data.numbuttons = lua_objlen(L, 2);
-		SDL_MessageBoxButtonData buttons[data.numbuttons];
-		data.buttons = (const SDL_MessageBoxButtonData*) &buttons;
-		for (int i = 1; i <= data.numbuttons; i++) {
-			lua_rawgeti(L, 2, i);
-			buttons[i - 1].flags = 0;
-			buttons[i - 1].buttonid = i;
-			buttons[i - 1].text = lua_tostring(L, -1);
+		TASKDIALOGCONFIG config = {0};
+		config.cbSize = sizeof(config);
+		config.hwndParent = get_hwnd();
+		config.hInstance = NULL;
+		config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION
+			| TDF_USE_COMMAND_LINKS
+			| TDF_USE_COMMAND_LINKS_NO_ICON
+			| TDF_POSITION_RELATIVE_TO_WINDOW
+			| TDF_CAN_BE_MINIMIZED;
+		config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
+		config.pszWindowTitle = APPLICATION_TITLE;
+		config.pszMainIcon = check_context_windows_task_dialog(L, 3, true);
+		config.pszMainInstruction = L"Change Password";
+		config.pszContent = L"Remember your changed password.";
+		config.cButtons = lua_objlen(L, 2);
+		TASKDIALOG_BUTTON buttons[config.cButtons];
+		for (int i = 0; i < config.cButtons; i++) {
+			buttons[i].nButtonID = 100 + i;
+			buttons[i].pszButtonText = L"X";
 		}
+		config.pButtons = buttons;
+		config.nDefaultButton = IDCANCEL;
 		int buttonid;
-		if (!SDL_ShowMessageBox(&data, &buttonid)) {
-			Util::sdlerror(L, "SDL_ShowMessageBox() < 0");
-		}
+		TaskDialogIndirect(&config, &buttonid, NULL, NULL);
 		lua_pushnumber(L, buttonid);
 		return 1;
 	}
@@ -91,18 +93,5 @@ namespace Dialog {
 	//-------------------------------------------------------------------------
 	int lua_show_(lua_State* L) {
 		return 0;
-	}
-	//-------------------------------------------------------------------------
-	// ● init
-	//-------------------------------------------------------------------------
-	void init() {
-		const luaL_reg reg[] = {
-			{"show_message", lua_show_message},
-			{"show_choice", lua_show_choice},
-			{"show_input", lua_show_input},
-			{NULL, NULL}
-		};
-		luaL_register(L, "Dialog", reg);
-		lua_pop(L, 1);
 	}
 }

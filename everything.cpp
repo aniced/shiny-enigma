@@ -20,6 +20,7 @@ extern "C" {
 
 #ifdef __WINDOWS__
 	#undef WIN32_LEAN_AND_MEAN
+	#define NTDDI_VERSION NTDDI_VISTA
 	#include <windows.h>
 	#define ENABLE_MIDI
 #endif
@@ -43,6 +44,7 @@ extern "C" {
 		#include "midiout_windows.cpp"
 	#endif
 #endif
+#include "dialog.cpp"
 #ifdef __WINDOWS__
 	#include "dialog_windows.cpp"
 #else
