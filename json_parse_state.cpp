@@ -51,40 +51,27 @@ public:
 		skip_whitespace();
 		switch(read_char()) {
 		case 't':
-			if (read_char() == 'r') {
-				if (read_char() == 'u') {
-					if (read_char() == 'e') {
-						lua_pushboolean(L, true);
-					} else goto on_error;
-				} else goto on_error;
-			} else goto on_error;
+			read_char('r');
+			read_char('u');
+			read_char('e');
+			lua_pushboolean(L, true);
 			break;
 		case 'f':
-			if (read_char() == 'a') {
-				if (read_char() == 'l') {
-					if (read_char() == 's') {
-						if (read_char() == 'e') {
-							lua_pushboolean(L, false);
-						} else goto on_error;
-					} else goto on_error;
-				} else goto on_error;
-			} else goto on_error;
+			read_char('a');
+			read_char('l');
+			read_char('s');
+			read_char('e');
+			lua_pushboolean(L, false);
 			break;
 		case 'n':
-			if (read_char() == 'u') {
-				if (read_char() == 'l') {
-					if (read_char() == 'l') {
-						lua_pushnil(L);
-					} else goto on_error;
-				} else goto on_error;
-			} else goto on_error;
+			read_char('u');
+			read_char('l');
+			read_char('l');
+			lua_pushnil(L);
 			break;
 		default:
-			goto on_error;
+			luaL_error(L, "invalid literal");
 		}
-		return;
-	on_error:
-		luaL_error(L, "invalid literal");
 	}
 	//-------------------------------------------------------------------------
 	// ● Parse a number
