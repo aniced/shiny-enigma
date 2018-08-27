@@ -125,8 +125,7 @@ public:
 						s[2] = read_char();
 						s[3] = read_char();
 						s[4] = 0;
-						sscanf(s, "%" SCNxLEAST32, (uint_least32_t*) &codepoint);
-						if ((codepoint & 0xd800) == 0xd800) {
+						if ((s[0] == 'D' || s[0] == 'd') && strchr("89abAB", s[1])) {
 							if (read_char() != '\\' || read_char() != 'u') {
 								luaL_error(L, "incomplete surrogate pair");
 							}
@@ -135,8 +134,11 @@ public:
 							s[6] = read_char();
 							s[7] = read_char();
 							s[8] = 0;
-							sscanf(s, "%" SCNxLEAST32, (uint_least32_t*) &codepoint);
-							codepoint = (codepoint & 0x3ff) | ((codepoint >> 16) & 0x3ff);
+						}
+						sscanf(s, "%" SCNxLEAST32, (uint_least32_t*) &codepoint);
+						if (s[4]) {
+							codepoint = (codepoint & 0x3ff) | (((codepoint >> 16) & 0x3ff) << 10);
+							codepoint += 0x10000;
 						}
 						UTF8::add_encode(&B, codepoint);
 					}
