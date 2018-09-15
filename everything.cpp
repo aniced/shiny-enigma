@@ -27,6 +27,8 @@ extern "C" {
 	#define ENABLE_MIDI
 #endif
 
+#define luaL_reg luaL_Reg
+
 #include "global.cpp"
 #include "util.cpp"
 #include "object.cpp"
