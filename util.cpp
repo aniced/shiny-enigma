@@ -179,7 +179,7 @@ namespace Util {
 			);
 			return r;
 		#else
-			return os_string;
+			return (char*)os_string;
 		#endif
 	}
 	int lua_os_encoding_to_utf8(lua_State* L) {
@@ -205,7 +205,7 @@ namespace Util {
 			);
 			return r;
 		#else
-			return utf8_string;
+			return (char*)utf8_string;
 		#endif
 	}
 	int lua_utf8_to_os_encoding(lua_State* L) {

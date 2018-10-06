@@ -27,5 +27,7 @@ Compiling
 
 ### \*nix
 
-- This is not tested.
-- In theory, this project can run smoothly on these platforms. sdl2-config should be called to get the right command line.
+- GCC 7.3 is not going to work
+- You need clang with -std=gnu++11
+- clang everything.cpp `sdl2-config --cflags --libs` `pkg-config --cflags --libs luajit SDL2_image SDL2_ttf` -o shiny -std=gnu++11
+- And something in lua will get wrong probably
